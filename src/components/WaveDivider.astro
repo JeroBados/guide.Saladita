@@ -1,0 +1,56 @@
+<div class="wave-divider" aria-hidden="true">
+  <svg class="wave-divider__svg" viewBox="0 0 1440 80" preserveAspectRatio="none">
+    <path
+      class="wave-divider__path wave-divider__path--back"
+      d="M0,40 C240,80 480,0 720,40 C960,80 1200,0 1440,40 L1440,80 L0,80 Z"
+    ></path>
+    <path
+      class="wave-divider__path wave-divider__path--front"
+      d="M0,50 C360,10 720,70 1080,30 C1260,10 1380,50 1440,45 L1440,80 L0,80 Z"
+    ></path>
+  </svg>
+</div>
+
+<style>
+  .wave-divider {
+    position: absolute;
+    left: 0;
+    right: 0;
+    bottom: -1px;
+    z-index: 2;
+    color: var(--cream);
+    line-height: 0;
+  }
+
+  .wave-divider__svg {
+    display: block;
+    width: 200%;
+    height: 64px;
+    animation: waveDrift 14s linear infinite;
+  }
+
+  .wave-divider__path {
+    fill: currentColor;
+  }
+
+  .wave-divider__path--back {
+    opacity: 0.45;
+  }
+
+  @keyframes waveDrift {
+    from {
+      transform: translateX(0);
+    }
+
+    to {
+      transform: translateX(-50%);
+    }
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .wave-divider__svg {
+      animation: none;
+      width: 100%;
+    }
+  }
+</style>

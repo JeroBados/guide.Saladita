@@ -1,0 +1,305 @@
+---
+import LangToggle from './LangToggle.astro';
+import WaveDivider from './WaveDivider.astro';
+import type { Lang } from '../utils/i18n';
+
+interface Props {
+  lang: Lang;
+  altPath: string;
+  eyebrow: string;
+  titleLine1: string;
+  titleLine2: string;
+  sub: string;
+  langLabel: string;
+  bookCta: string;
+  bookHint: string;
+  checkInLabel: string;
+  checkOutLabel: string;
+  bookMessage: string;
+  bookError: string;
+}
+
+const {
+  lang,
+  altPath,
+  eyebrow,
+  titleLine1,
+  titleLine2,
+  sub,
+  langLabel,
+  bookCta,
+  bookHint,
+  checkInLabel,
+  checkOutLabel,
+  bookMessage,
+  bookError,
+} = Astro.props;
+
+const today = new Date().toISOString().slice(0, 10);
+---
+
+<section class="hero">
+  <div class="hero__media" aria-hidden="true">
+    <img
+      class="hero__image"
+      src="/media/hero.jpg"
+      alt=""
+      width="1920"
+      height="1080"
+      fetchpriority="high"
+      decoding="async"
+    />
+    <div class="hero__overlay"></div>
+  </div>
+
+  <header class="hero__bar container">
+    <a class="hero__logo" href={lang === 'en' ? '/' : '/es/'} aria-label="Saladita Rentals">
+      <img class="hero__logo-image" src="/logo.png" alt="" width="140" height="140" />
+    </a>
+    <LangToggle lang={lang} altPath={altPath} label={langLabel} />
+  </header>
+
+  <div class="hero__content container">
+    <span class="hero__eyebrow eyebrow hero-fade-in" style="--delay: 0">{eyebrow}</span>
+    <h1 class="hero__title">
+      <span class="hero-line" style="--delay: 0">{titleLine1}</span>
+      <span class="hero-line hero-line--accent" style="--delay: 1"><em>{titleLine2}</em></span>
+    </h1>
+    <p class="hero__sub hero-fade-in" style="--delay: 1">{sub}</p>
+
+    <form class="hero__book hero-fade-in" data-book-form style="--delay: 2">
+      <p class="hero__book-hint">{bookHint}</p>
+      <div class="hero__book-fields">
+        <label class="hero__book-field">
+          <span>{checkInLabel}</span>
+          <input type="date" name="checkin" min={today} required />
+        </label>
+        <label class="hero__book-field">
+          <span>{checkOutLabel}</span>
+          <input type="date" name="checkout" min={today} required />
+        </label>
+      </div>
+      <button class="hero__book-cta" type="submit">{bookCta}</button>
+      <p class="hero__book-error" data-book-error hidden role="alert"></p>
+    </form>
+  </div>
+
+  <WaveDivider />
+</section>
+
+<script type="application/json" id="hero-book-config" set:html={JSON.stringify({ template: bookMessage, error: bookError })} />
+
+<script>
+  function bindHeroBookForm() {
+    const form = document.querySelector('[data-book-form]');
+    const configEl = document.getElementById('hero-book-config');
+    if (!form || !configEl) return;
+
+    if (form.dataset.bound === 'true') return;
+    form.dataset.bound = 'true';
+
+    let template = '';
+    let errorText = '';
+    try {
+      const config = JSON.parse(configEl.textContent || '{}');
+      template = config.template || '';
+      errorText = config.error || '';
+    } catch {
+      return;
+    }
+
+    const errorEl = form.querySelector('[data-book-error]');
+    const checkinInput = form.querySelector('[name="checkin"]');
+    const checkoutInput = form.querySelector('[name="checkout"]');
+
+    function showError(message) {
+      if (!errorEl) return;
+      errorEl.textContent = message;
+      errorEl.hidden = !message;
+    }
+
+    checkinInput?.addEventListener('change', () => {
+      if (checkoutInput && checkinInput.value) {
+        checkoutInput.min = checkinInput.value;
+      }
+    });
+
+    form.addEventListener('submit', (event) => {
+      event.preventDefault();
+
+      const data = new FormData(form);
+      const checkin = String(data.get('checkin') || '');
+      const checkout = String(data.get('checkout') || '');
+      if (!checkin || !checkout) {
+        showError(errorText);
+        return;
+      }
+      if (checkout <= checkin) {
+        showError(errorText);
+        return;
+      }
+
+      showError('');
+      const message = template.replaceAll('{checkin}', checkin).replaceAll('{checkout}', checkout);
+      const url = `https://wa.me/525611073849?text=${encodeURIComponent(message)}`;
+
+      if (typeof window.gtag === 'function') {
+        window.gtag('event', 'cta_click', { place: 'hero-book-house', type: 'whatsapp' });
+      }
+
+      window.location.href = url;
+    });
+  }
+
+  bindHeroBookForm();
+  document.addEventListener('astro:page-load', () => {
+    const form = document.querySelector('[data-book-form]');
+    if (form) form.dataset.bound = 'false';
+    bindHeroBookForm();
+  });
+</script>
+
+<style>
+  .hero {
+    position: relative;
+    min-height: 100svh;
+    display: grid;
+    align-content: end;
+    color: var(--cream);
+    overflow: hidden;
+  }
+
+  .hero__media {
+    position: absolute;
+    inset: 0;
+    background: var(--navy);
+  }
+
+  .hero__image {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    object-position: center 35%;
+  }
+
+  .hero__overlay {
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(
+      180deg,
+      rgba(21, 52, 72, 0.45) 0%,
+      rgba(60, 91, 111, 0.62) 55%,
+      rgba(21, 52, 72, 0.92) 100%
+    );
+  }
+
+  .hero__bar {
+    position: relative;
+    z-index: 3;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 1rem;
+    padding-block: 1.25rem;
+  }
+
+  .hero__logo {
+    display: inline-flex;
+    align-items: center;
+  }
+
+  .hero__logo-image {
+    width: 72px;
+    height: auto;
+    filter: drop-shadow(0 4px 12px rgba(0, 0, 0, 0.25));
+  }
+
+  .hero__content {
+    position: relative;
+    z-index: 3;
+    padding-block: 1.5rem 5.5rem;
+    max-width: 36rem;
+  }
+
+  .hero__eyebrow {
+    color: var(--sand);
+  }
+
+  .hero__title {
+    font-size: var(--text-hero);
+    line-height: 1.05;
+    margin-bottom: 1rem;
+  }
+
+  .hero__sub {
+    max-width: 34ch;
+    font-size: clamp(1rem, 2.5vw, 1.12rem);
+    color: rgba(224, 225, 220, 0.92);
+    margin-bottom: 1.25rem;
+  }
+
+  .hero__book {
+    display: grid;
+    gap: 0.85rem;
+    padding: 1rem;
+    border-radius: var(--radius);
+    background: rgba(21, 52, 72, 0.55);
+    border: 1px solid rgba(231, 216, 192, 0.25);
+    backdrop-filter: blur(8px);
+  }
+
+  .hero__book-hint {
+    font-size: var(--text-small);
+    color: var(--sand);
+  }
+
+  .hero__book-fields {
+    display: grid;
+    gap: 0.65rem;
+  }
+
+  .hero__book-field {
+    display: grid;
+    gap: 0.35rem;
+    font-size: var(--text-small);
+    color: var(--cream);
+  }
+
+  .hero__book-field input {
+    padding: 0.65rem 0.75rem;
+    border: 1px solid rgba(231, 216, 192, 0.35);
+    border-radius: 12px;
+    background: rgba(224, 225, 220, 0.95);
+    color: var(--navy);
+    font: inherit;
+  }
+
+  .hero__book-cta {
+    padding: 0.85rem 1.1rem;
+    border-radius: var(--radius-chip);
+    background: var(--sand);
+    color: var(--navy);
+    font-weight: 700;
+    font-size: var(--text-small);
+    transition: transform var(--dur) var(--ease-out);
+  }
+
+  .hero__book-cta:active {
+    transform: scale(0.98);
+  }
+
+  .hero__book-error {
+    font-size: var(--text-small);
+    color: #ffb4a8;
+  }
+
+  @media (min-width: 640px) {
+    .hero__book-fields {
+      grid-template-columns: 1fr 1fr;
+    }
+
+    .hero__logo-image {
+      width: 88px;
+    }
+  }
+</style>

@@ -1,0 +1,348 @@
+[
+  {
+    "id": "saladita-rentals",
+    "category": "stay",
+    "chip": "stay",
+    "name": "Saladita Rentals",
+    "lat": 17.8424,
+    "lng": -101.7686,
+    "badge": { "en": "Property Management", "es": "Administración" },
+    "desc": {
+      "en": "Your local hosts and experts in La Saladita.",
+      "es": "Tus anfitriones y expertos locales en La Saladita."
+    },
+    "cta": { "type": "maps" }
+  },
+  {
+    "id": "gato-surf-houses",
+    "category": "stay",
+    "chip": "stay",
+    "name": "Gato Surf Houses",
+    "lat": 17.8423,
+    "lng": -101.7688,
+    "badge": { "en": "Beachfront Houses", "es": "Casas frente al mar" },
+    "desc": {
+      "en": "Intimate, perfectly designed houses for couples or solo surfers, just 20m from the break.",
+      "es": "Casas de diseño íntimo para parejas o surfistas solitarios, a solo 20m de la ola."
+    },
+    "cta": { "type": "maps" }
+  },
+  {
+    "id": "bennys",
+    "category": "eat",
+    "chip": "eat",
+    "name": "Benny's",
+    "lat": 17.842,
+    "lng": -101.7683,
+    "badge": { "en": "Lunch by the beach", "es": "Almuerzo frente al mar" },
+    "desc": {
+      "en": "Fresh seafood and a casual beachside vibe. The go-to for a relaxed daytime meal.",
+      "es": "Mariscos frescos y ambiente relajado junto a la playa. El clásico para comer de día."
+    },
+    "cta": { "type": "maps" }
+  },
+  {
+    "id": "marea",
+    "category": "eat",
+    "chip": "eat",
+    "name": "Marea",
+    "lat": 17.8422,
+    "lng": -101.7685,
+    "badge": { "en": "Sunset spot", "es": "Atardeceres" },
+    "desc": {
+      "en": "The most popular spot in town — ocean-view dinners and cocktails at sunset.",
+      "es": "El lugar más popular del pueblo: cenas con vista al mar y cócteles al atardecer."
+    },
+    "note": {
+      "en": "Arrive early at sunset, it fills up fast.",
+      "es": "Llega temprano al atardecer, se llena rápido."
+    },
+    "cta": { "type": "maps" }
+  },
+  {
+    "id": "queen-bar",
+    "category": "eat",
+    "chip": "eat",
+    "name": "Queen Bar",
+    "lat": 17.8419,
+    "lng": -101.768,
+    "badge": { "en": "Drinks & Vibe", "es": "Tragos y buen ambiente" },
+    "desc": {
+      "en": "A great spot for evening drinks and enjoying the local social scene.",
+      "es": "Un excelente lugar para tomar algo por la noche y disfrutar del ambiente social."
+    },
+    "cta": { "type": "maps" }
+  },
+  {
+    "id": "pacos",
+    "category": "eat",
+    "chip": "eat",
+    "name": "Paco's",
+    "lat": 17.8428,
+    "lng": -101.7692,
+    "badge": { "en": "All-day reliable", "es": "Rinde todo el día" },
+    "desc": {
+      "en": "Local dishes, consistent quality, any time of day. A safe bet, always.",
+      "es": "Platos locales, calidad constante, a cualquier hora. Apuesta segura, siempre."
+    },
+    "cta": { "type": "maps" }
+  },
+  {
+    "id": "ilianet",
+    "category": "eat",
+    "chip": "eat",
+    "name": "Ilianet",
+    "lat": 17.8425,
+    "lng": -101.7689,
+    "badge": { "en": "Dinner classic", "es": "Cena clásica" },
+    "desc": {
+      "en": "Traditional cuisine and a relaxed nighttime atmosphere. A memorable dinner spot.",
+      "es": "Cocina tradicional y ambiente nocturno relajado. Una cena para recordar."
+    },
+    "cta": { "type": "maps" }
+  },
+  {
+    "id": "acadia",
+    "category": "cafe",
+    "chip": "eat",
+    "name": "Acadia",
+    "lat": 17.8417,
+    "lng": -101.7677,
+    "badge": { "en": "Café · bar · events", "es": "Café · bar · eventos" },
+    "desc": {
+      "en": "Coffee and breakfast by day, drinks by night, events on weekends. The town's meeting point.",
+      "es": "Café y desayuno de día, tragos de noche, eventos los findes. El punto de encuentro del pueblo."
+    },
+    "cta": { "type": "maps" }
+  },
+  {
+    "id": "angelinas",
+    "category": "eat",
+    "chip": "eat",
+    "name": "Angelina's (Los Llanos)",
+    "lat": 17.8667,
+    "lng": -101.7333,
+    "badge": { "en": "Authentic local food", "es": "Comida local auténtica" },
+    "desc": {
+      "en": "In the nearby town of Los Llanos — traditional Mexican dishes, truly local experience.",
+      "es": "En el pueblo vecino de Los Llanos: platos mexicanos tradicionales, experiencia 100% local."
+    },
+    "cta": { "type": "maps" }
+  },
+  {
+    "id": "hacienda-cafe",
+    "category": "cafe",
+    "chip": "eat",
+    "name": "Hacienda Café",
+    "lat": 17.8432,
+    "lng": -101.7696,
+    "badge": { "en": "Best WiFi in town", "es": "El mejor WiFi del pueblo" },
+    "desc": {
+      "en": "Good coffee, reliable internet, small market with basics. Remote-work friendly.",
+      "es": "Buen café, internet confiable y tiendita con básicos. Ideal para trabajar remoto."
+    },
+    "cta": { "type": "maps" }
+  },
+  {
+    "id": "saladita-point",
+    "category": "surf",
+    "chip": "surf",
+    "name": "La Saladita",
+    "lat": 17.841,
+    "lng": -101.771,
+    "badge": { "en": "The endless left", "es": "La izquierda infinita" },
+    "desc": {
+      "en": "The wave that put Saladita on the map — a long, mellow left made for longboarding.",
+      "es": "La ola que puso a Saladita en el mapa: una izquierda larga y noble, hecha para longboard."
+    },
+    "cta": { "type": "maps" }
+  },
+  {
+    "id": "casa-esmeralda",
+    "category": "stay",
+    "chip": "stay",
+    "name": "Casa Esmeralda (Brandom Surf)",
+    "lat": 17.8421,
+    "lng": -101.7687,
+    "badge": { "en": "Beach house · board rental", "es": "Casa de playa · renta de tablas" },
+    "desc": {
+      "en": "Beachfront stay with premium boards on site — book accommodation and gear through Saladita Rentals.",
+      "es": "Estancia frente al mar con tablas premium — reserva alojamiento y equipo con Saladita Rentals."
+    },
+    "cta": {
+      "type": "whatsapp",
+      "waText": {
+        "en": "Hi! I'd like info about Casa Esmeralda (Brandom Surf) through Saladita Rentals 🏠",
+        "es": "¡Hola! Quiero info de Casa Esmeralda (Brandom Surf) con Saladita Rentals 🏠"
+      }
+    }
+  },
+  {
+    "id": "mezcalli-surf-school",
+    "category": "service",
+    "chip": "surf",
+    "name": "Mezcalli Surf School",
+    "lat": null,
+    "lng": null,
+    "badge": { "en": "Surf lessons · book with us", "es": "Clases de surf · reserva con nosotros" },
+    "desc": {
+      "en": "Professional local instructors — lessons are booked through Saladita Rentals.",
+      "es": "Instructores locales profesionales — las clases se reservan con Saladita Rentals."
+    },
+    "cta": {
+      "type": "whatsapp",
+      "waText": {
+        "en": "Hi! I'd like to book a surf lesson with Mezcalli through Saladita Rentals 🏄",
+        "es": "¡Hola! Quiero reservar una clase de surf con Mezcalli con Saladita Rentals 🏄"
+      }
+    }
+  },
+  {
+    "id": "rancho",
+    "category": "surf",
+    "chip": "surf",
+    "name": "Rancho",
+    "lat": 17.852,
+    "lng": -101.774,
+    "badge": { "en": "Step it up", "es": "Un nivel más" },
+    "desc": {
+      "en": "Bigger and more exposed than the point, often less crowded. For intermediate surfers.",
+      "es": "Más grande y expuesta que el point, y muchas veces con menos gente. Para intermedios."
+    },
+    "cta": { "type": "maps" }
+  },
+  {
+    "id": "la-boca",
+    "category": "surf",
+    "chip": "surf",
+    "name": "La Boca",
+    "lat": 17.831,
+    "lng": -101.762,
+    "badge": { "en": "Fast & punchy", "es": "Rápida y con fuerza" },
+    "desc": {
+      "en": "A nearby beach break with faster, more powerful sections. Intermediate level.",
+      "es": "Beach break cercano con secciones rápidas y potentes. Nivel intermedio."
+    },
+    "cta": { "type": "maps" }
+  },
+  {
+    "id": "massage",
+    "category": "service",
+    "chip": "relax",
+    "name": "Massage & wellness",
+    "lat": null,
+    "lng": null,
+    "badge": { "en": "At your house", "es": "En tu casa" },
+    "desc": {
+      "en": "Post-surf massage at your rental, ocean sounds included.",
+      "es": "Masaje post-surf en tu casa, con sonido de mar incluido."
+    },
+    "cta": {
+      "type": "whatsapp",
+      "waText": {
+        "en": "Hi! I'd like to book a massage in La Saladita 💆",
+        "es": "¡Hola! Quiero reservar un masaje en La Saladita 💆"
+      }
+    }
+  },
+  {
+    "id": "private-chef",
+    "category": "service",
+    "chip": "relax",
+    "name": "Private chef",
+    "lat": null,
+    "lng": null,
+    "badge": { "en": "Dinner at home", "es": "Cena en casa" },
+    "desc": {
+      "en": "A local chef cooks fresh seafood at your place. Ideal for groups and special nights.",
+      "es": "Un chef local cocina mariscos frescos en tu casa. Ideal para grupos y noches especiales."
+    },
+    "cta": {
+      "type": "whatsapp",
+      "waText": {
+        "en": "Hi! I'd like info about a private chef dinner 👨‍🍳",
+        "es": "¡Hola! Quiero info de cena con chef privado 👨‍🍳"
+      }
+    }
+  },
+  {
+    "id": "airport-transfer",
+    "category": "service",
+    "chip": "move",
+    "name": "Airport transfers & drivers",
+    "lat": null,
+    "lng": null,
+    "badge": { "en": "ZIH ⇄ Saladita", "es": "ZIH ⇄ Saladita" },
+    "desc": {
+      "en": "Private transfer from Zihuatanejo airport, with a grocery stop on the way if you want.",
+      "es": "Traslado privado desde el aeropuerto de Zihuatanejo, con parada para súper si quieres."
+    },
+    "cta": {
+      "type": "whatsapp",
+      "waText": {
+        "en": "Hi! I'd like to book an airport transfer to La Saladita 🚗",
+        "es": "¡Hola! Quiero reservar un traslado al aeropuerto desde/hacia La Saladita 🚗"
+      }
+    }
+  },
+  {
+    "id": "car-rental",
+    "category": "service",
+    "chip": "move",
+    "name": "Car rental",
+    "lat": null,
+    "lng": null,
+    "badge": { "en": "Explore the coast", "es": "Explora la costa" },
+    "desc": {
+      "en": "Reliable cars to explore Troncones, Zihuatanejo and the coast at your own pace.",
+      "es": "Autos confiables para explorar Troncones, Zihuatanejo y la costa a tu ritmo."
+    },
+    "cta": {
+      "type": "whatsapp",
+      "waText": {
+        "en": "Hi! I'd like info about car rental in La Saladita 🚙",
+        "es": "¡Hola! Quiero info de renta de auto en La Saladita 🚙"
+      }
+    }
+  },
+  {
+    "id": "moto-rental",
+    "category": "service",
+    "chip": "move",
+    "name": "Motorcycle rental",
+    "lat": null,
+    "lng": null,
+    "badge": { "en": "Coast runs", "es": "Rutas costeras" },
+    "desc": {
+      "en": "Scooters and motorcycles for quick trips around town and nearby beaches.",
+      "es": "Scooters y motos para moverte rápido por el pueblo y playas cercanas."
+    },
+    "cta": {
+      "type": "whatsapp",
+      "waText": {
+        "en": "Hi! I'd like info about motorcycle rental in La Saladita 🏍️",
+        "es": "¡Hola! Quiero info de renta de moto en La Saladita 🏍️"
+      }
+    }
+  },
+  {
+    "id": "atv-rental",
+    "category": "service",
+    "chip": "move",
+    "name": "ATV rental",
+    "lat": null,
+    "lng": null,
+    "badge": { "en": "Off-road fun", "es": "Aventura off-road" },
+    "desc": {
+      "en": "ATVs for dirt roads, beach runs and exploring the hills around La Saladita.",
+      "es": "Cuatrimotos para caminos de terracería, playa y cerros alrededor de La Saladita."
+    },
+    "cta": {
+      "type": "whatsapp",
+      "waText": {
+        "en": "Hi! I'd like info about ATV rental in La Saladita 🛞",
+        "es": "¡Hola! Quiero info de renta de cuatrimoto en La Saladita 🛞"
+      }
+    }
+  }
+]

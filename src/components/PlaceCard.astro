@@ -1,0 +1,157 @@
+---
+import type { Lang } from '../utils/i18n';
+import type { Place } from '../types/place';
+import { getCtaLabel, getCtaUrl } from '../utils/wa';
+
+interface Props {
+  place: Place;
+  lang: Lang;
+  directionsLabel: string;
+  whatsappLabel: string;
+  revealIndex?: number;
+}
+
+const { place, lang, directionsLabel, whatsappLabel, revealIndex = 0 } = Astro.props;
+const ctaUrl = getCtaUrl(place, lang);
+const ctaLabel = getCtaLabel(place, lang, { directions: directionsLabel, whatsapp: whatsappLabel });
+const image = `/media/places/${place.id}.jpg`;
+---
+
+<article
+  class="place-card reveal"
+  data-chip={place.chip}
+  data-place-id={place.id}
+  style={`--i: ${revealIndex}`}
+>
+  <div class="place-card__media">
+    <img
+      class="place-card__image"
+      src={image}
+      alt=""
+      loading="lazy"
+      decoding="async"
+      data-place-image
+    />
+  </div>
+
+  <div class="place-card__body">
+    <span class="place-card__badge">{place.badge[lang]}</span>
+    <h3 class="place-card__name">{place.name}</h3>
+    <p class="place-card__desc">{place.desc[lang]}</p>
+    {place.note && <p class="place-card__note">{place.note[lang]}</p>}
+
+    {
+      ctaUrl && (
+        <a
+          class="place-card__cta"
+          href={ctaUrl}
+          target={place.cta.type === 'link' ? '_blank' : undefined}
+          rel={place.cta.type === 'link' ? 'noopener noreferrer' : undefined}
+          data-track-cta
+          data-place-id={place.id}
+          data-cta-type={place.cta.type}
+        >
+          {ctaLabel}
+        </a>
+      )
+    }
+  </div>
+</article>
+
+<script>
+  document.querySelectorAll<HTMLImageElement>('[data-place-image]').forEach((img) => {
+    img.addEventListener('error', () => {
+      img.remove();
+    });
+  });
+</script>
+
+<style>
+  .place-card {
+    display: flex;
+    flex-direction: column;
+    background: var(--sand);
+    border-radius: var(--radius);
+    overflow: hidden;
+    box-shadow: var(--shadow-card);
+    transition:
+      transform var(--dur) var(--ease-out),
+      box-shadow var(--dur) var(--ease-out);
+  }
+
+  .place-card:hover,
+  .place-card:focus-within {
+    transform: translateY(-4px);
+    box-shadow: var(--shadow-float);
+  }
+
+  .place-card__media {
+    position: relative;
+    aspect-ratio: 4 / 3;
+    overflow: hidden;
+    background:
+      linear-gradient(135deg, rgba(21, 52, 72, 0.12), rgba(164, 178, 176, 0.35)),
+      var(--cream);
+  }
+
+  .place-card__image {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    transition: transform var(--dur) var(--ease-out);
+  }
+
+  .place-card:hover .place-card__image,
+  .place-card:active .place-card__image {
+    transform: scale(1.04);
+  }
+
+  .place-card__body {
+    display: flex;
+    flex-direction: column;
+    gap: 0.65rem;
+    padding: 1.25rem;
+    flex: 1;
+  }
+
+  .place-card__badge {
+    align-self: flex-start;
+    padding: 0.35rem 0.75rem;
+    border-radius: var(--radius-chip);
+    background: var(--sage);
+    color: var(--navy);
+    font-size: var(--text-small);
+    font-weight: 600;
+  }
+
+  .place-card__name {
+    font-family: var(--font-display);
+    font-size: var(--text-h3);
+    line-height: 1.2;
+  }
+
+  .place-card__desc {
+    color: var(--navy);
+    flex: 1;
+  }
+
+  .place-card__note {
+    font-style: italic;
+    color: var(--taupe);
+    font-size: var(--text-small);
+  }
+
+  .place-card__cta {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    margin-top: 0.35rem;
+    padding: 0.75rem 1rem;
+    border-radius: var(--radius-chip);
+    background: var(--navy);
+    color: var(--cream);
+    font-size: var(--text-small);
+    font-weight: 600;
+    text-align: center;
+  }
+</style>

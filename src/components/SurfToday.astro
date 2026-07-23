@@ -1,0 +1,188 @@
+---
+import type { Lang } from '../utils/i18n';
+import type { Place } from '../types/place';
+import { buildWhatsAppUrl } from '../utils/wa';
+
+interface Props {
+  lang: Lang;
+  titleHtml: string;
+  forecastLabel: string;
+  bookLessonLabel: string;
+  schoolsNote: string;
+  surfPlaces: Place[];
+  lessonWaText: string;
+}
+
+const { lang, titleHtml, forecastLabel, bookLessonLabel, schoolsNote, surfPlaces, lessonWaText } =
+  Astro.props;
+
+const miniSpots = surfPlaces.slice(0, 3);
+const forecastUrl =
+  lang === 'es'
+    ? 'https://es.surf-forecast.com/breaks/La-Saladita/forecasts/latest'
+    : 'https://www.surf-forecast.com/breaks/La-Saladita/forecasts/latest';
+const widgetUrl = 'https://www.surf-forecast.com/breaks/La-Saladita/forecasts/widget/a';
+const surflineUrl = 'https://www.surfline.com/surf-report/la-saladita-guerrero-mexico/5842041f4e65fad6a7703db1';
+const lessonUrl = buildWhatsAppUrl(lessonWaText);
+---
+
+<section class="surf-today section section--dark" data-section-chip="surf" aria-labelledby="surf-today-title">
+  <div class="container">
+    <div class="section__header reveal">
+      <h2 id="surf-today-title" set:html={titleHtml} />
+    </div>
+
+    <div class="surf-today__forecast reveal">
+      <iframe
+        class="surf-today__iframe"
+        src={widgetUrl}
+        title="La Saladita surf forecast"
+        loading="lazy"
+        referrerpolicy="no-referrer-when-downgrade"
+      ></iframe>
+
+      <a
+        class="surf-today__forecast-link"
+        href={surflineUrl}
+        target="_blank"
+        rel="noopener noreferrer"
+        data-track-cta
+        data-place-id="surfline"
+        data-cta-type="link"
+      >
+        {forecastLabel}
+      </a>
+    </div>
+
+    <div class="surf-today__spots">
+      {
+        miniSpots.map((place, index) => (
+          <article class="surf-today__spot reveal" data-chip={place.chip} style={`--i: ${index}`}>
+            <span class="surf-today__spot-badge">{place.badge[lang]}</span>
+            <h3 class="surf-today__spot-name">{place.name}</h3>
+            <p class="surf-today__spot-desc">{place.desc[lang]}</p>
+          </article>
+        ))
+      }
+    </div>
+
+    <p class="surf-today__schools reveal">{schoolsNote}</p>
+
+    <a
+      class="surf-today__cta reveal"
+      href={lessonUrl}
+      target="_blank"
+      rel="noopener noreferrer"
+      data-track-cta
+      data-place-id="surf-lesson"
+      data-cta-type="whatsapp"
+    >
+      {bookLessonLabel}
+    </a>
+
+    <p class="surf-today__source">
+      <a href={forecastUrl} target="_blank" rel="noopener noreferrer">
+        surf-forecast.com
+      </a>
+    </p>
+  </div>
+</section>
+
+<style>
+  .surf-today {
+    background: var(--navy);
+    color: var(--cream);
+    padding-block: 4rem;
+  }
+
+  .surf-today__forecast {
+    display: grid;
+    gap: 1rem;
+    margin-bottom: 2rem;
+  }
+
+  .surf-today__iframe {
+    width: 100%;
+    min-height: 320px;
+    border: 0;
+    border-radius: var(--radius);
+    background: rgba(240, 237, 230, 0.08);
+  }
+
+  .surf-today__forecast-link {
+    justify-self: start;
+    padding: 0.75rem 1.25rem;
+    border: 1px solid var(--sage);
+    border-radius: var(--radius-chip);
+    color: var(--cream);
+    font-size: var(--text-small);
+    font-weight: 600;
+  }
+
+  .surf-today__spots {
+    display: grid;
+    gap: 1rem;
+    margin-bottom: 1.5rem;
+  }
+
+  .surf-today__spot {
+    padding: 1rem 1.1rem;
+    border-radius: var(--radius);
+    background: rgba(15, 39, 54, 0.55);
+    border: 1px solid rgba(164, 178, 176, 0.25);
+  }
+
+  .surf-today__spot-badge {
+    display: inline-block;
+    margin-bottom: 0.45rem;
+    font-size: var(--text-small);
+    color: var(--sage);
+    font-weight: 600;
+  }
+
+  .surf-today__spot-name {
+    font-family: var(--font-display);
+    font-size: 1.1rem;
+    margin-bottom: 0.35rem;
+  }
+
+  .surf-today__spot-desc {
+    color: rgba(240, 237, 230, 0.88);
+    font-size: var(--text-small);
+  }
+
+  .surf-today__schools {
+    margin-bottom: 1rem;
+    font-size: var(--text-small);
+    color: var(--sage);
+    font-style: italic;
+  }
+
+  .surf-today__cta {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    padding: 0.85rem 1.35rem;
+    border-radius: var(--radius-chip);
+    background: var(--sand);
+    color: var(--navy);
+    font-weight: 600;
+  }
+
+  .surf-today__source {
+    margin-top: 1rem;
+    font-size: var(--text-small);
+    color: var(--sage);
+  }
+
+  .surf-today__source a {
+    text-decoration: underline;
+    text-underline-offset: 0.15em;
+  }
+
+  @media (min-width: 768px) {
+    .surf-today__spots {
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+    }
+  }
+</style>

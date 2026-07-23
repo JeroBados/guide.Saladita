@@ -1,0 +1,37 @@
+---
+import Base from '../layouts/Base.astro';
+import Hero from '../components/Hero.astro';
+import GuideContent from '../components/GuideContent.astro';
+import Footer from '../components/Footer.astro';
+import { getTranslations } from '../utils/i18n';
+
+const lang = 'en';
+const t = getTranslations(lang);
+---
+
+<Base
+  lang={lang}
+  title={t['meta.title']}
+  description={t['meta.description']}
+  canonicalPath="/"
+  floatingWaMessage={t['wa.floating']}
+  floatingWaLabel="WhatsApp Saladita Rentals"
+>
+  <Hero
+    lang={lang}
+    altPath="/es/"
+    eyebrow={t['hero.eyebrow']}
+    titleLine1={t['hero.titleLine1']}
+    titleLine2={t['hero.titleLine2']}
+    sub={t['hero.sub']}
+    langLabel={t['nav.lang']}
+    bookCta={t['hero.bookCta']}
+    bookHint={t['hero.bookHint']}
+    checkInLabel={t['hero.checkIn']}
+    checkOutLabel={t['hero.checkOut']}
+    bookMessage={t['hero.bookMessage']}
+    bookError={t['hero.bookError']}
+  />
+  <GuideContent lang={lang} t={t} />
+  <Footer lang={lang} shareLabel={t['footer.share']} tagline={t['footer.tagline']} />
+</Base>

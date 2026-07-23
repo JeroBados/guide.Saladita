@@ -1,0 +1,139 @@
+/* 1. Reveal en cascada al scroll — CSS scroll-driven */
+@supports (animation-timeline: view()) {
+  .reveal {
+    animation: rise var(--dur) var(--ease-out) both;
+    animation-timeline: view();
+    animation-range: entry 0% entry 40%;
+  }
+
+  .reveal:nth-child(2) {
+    animation-range: entry 5% entry 45%;
+  }
+
+  .reveal:nth-child(3) {
+    animation-range: entry 10% entry 50%;
+  }
+
+  .reveal:nth-child(n + 4) {
+    animation-range: entry 15% entry 55%;
+  }
+}
+
+@keyframes rise {
+  from {
+    opacity: 0;
+    transform: translateY(28px);
+  }
+
+  to {
+    opacity: 1;
+    transform: none;
+  }
+}
+
+/* Fallback: .reveal-in added via IntersectionObserver */
+.reveal:not(.reveal-in) {
+  opacity: 0;
+  transform: translateY(28px);
+}
+
+.reveal.reveal-in {
+  opacity: 1;
+  transform: none;
+  transition:
+    opacity var(--dur) var(--ease-out),
+    transform var(--dur) var(--ease-out);
+  transition-delay: calc(var(--i, 0) * 0.06s);
+}
+
+@supports (animation-timeline: view()) {
+  .reveal:not(.reveal-in) {
+    opacity: 1;
+    transform: none;
+  }
+}
+
+/* Hero fade-in blocks */
+.hero-fade-in {
+  opacity: 0;
+  animation: heroFadeIn 0.85s var(--ease-out) forwards;
+  animation-delay: calc(0.45s + (var(--delay, 0) * 0.14s));
+}
+
+@keyframes heroFadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(18px);
+  }
+
+  to {
+    opacity: 1;
+    transform: none;
+  }
+}
+
+/* Intent chips entrance */
+.intent-chips {
+  animation: slideDown 0.55s var(--ease-out) both;
+  animation-delay: 0.2s;
+}
+
+@keyframes slideDown {
+  from {
+    opacity: 0;
+    transform: translateY(-12px);
+  }
+
+  to {
+    opacity: 1;
+    transform: none;
+  }
+}
+
+/* Hero title reveal al load */
+.hero-line {
+  display: block;
+  clip-path: inset(0 0 100% 0);
+  animation: heroLineReveal 0.85s var(--ease-out) forwards;
+  animation-delay: calc(var(--delay, 0) * 0.12s);
+}
+
+.hero-line--accent em {
+  font-style: italic;
+  font-weight: 400;
+  color: var(--sage);
+}
+
+@keyframes heroLineReveal {
+  from {
+    clip-path: inset(0 0 100% 0);
+    opacity: 0;
+  }
+
+  to {
+    clip-path: inset(0 0 0 0);
+    opacity: 1;
+  }
+}
+
+/* Chip filter — View Transitions primary; fade handled in IntentChips */
+
+/* 2. Respeto reduced motion — obligatorio */
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation: none !important;
+    transition: none !important;
+  }
+
+  .hero-line {
+    clip-path: none;
+    opacity: 1;
+  }
+
+  .reveal {
+    opacity: 1;
+    transform: none;
+  }
+}

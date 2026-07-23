@@ -1,0 +1,239 @@
+---
+import IntentChips from './IntentChips.astro';
+import MapSection from './MapSection.astro';
+import SurfToday from './SurfToday.astro';
+import PlaceCard from './PlaceCard.astro';
+import ServiceCard from './ServiceCard.astro';
+import TipsTeaser from './TipsTeaser.astro';
+import StayRebook from './StayRebook.astro';
+import type { Lang } from '../utils/i18n';
+import {
+  allPlaces,
+  getEatPlaces,
+  getMapPlaces,
+  getServicePlaces,
+  getStayPlaces,
+  getSurfPlaces,
+} from '../utils/places';
+import { WA_CATALOG_URL } from '../utils/wa';
+
+interface Props {
+  lang: Lang;
+  t: Record<string, string>;
+}
+
+const { lang, t } = Astro.props;
+
+const eatPlaces = getEatPlaces();
+const surfPlaces = getSurfPlaces();
+const servicePlaces = getServicePlaces();
+const stayPlaces = getStayPlaces();
+const mapPlaces = getMapPlaces(lang, {
+  directions: t['map.directions'],
+  whatsapp: t['services.cta'],
+});
+
+const mezcalli = allPlaces.find((place) => place.id === 'mezcalli-surf-school');
+const lessonWaText =
+  mezcalli?.cta.type === 'whatsapp' && mezcalli.cta.waText
+    ? mezcalli.cta.waText[lang]
+    : lang === 'en'
+      ? "Hi! I'd like to book a surf lesson through Saladita Rentals 🏄"
+      : '¡Hola! Quiero reservar una clase de surf con Saladita Rentals 🏄';
+
+const tipItems = [
+  { id: 'cash', title: t['tips.accordion.cash.title'], body: t['tips.accordion.cash.body'] },
+  { id: 'signal', title: t['tips.accordion.signal.title'], body: t['tips.accordion.signal.body'] },
+  { id: 'roads', title: t['tips.accordion.roads.title'], body: t['tips.accordion.roads.body'] },
+  {
+    id: 'groceries',
+    title: t['tips.accordion.groceries.title'],
+    body: t['tips.accordion.groceries.body'],
+  },
+  { id: 'respect', title: t['tips.accordion.respect.title'], body: t['tips.accordion.respect.body'] },
+];
+---
+
+<IntentChips
+  question={t['chips.question']}
+  labels={{
+    eat: t['chips.eat'],
+    surf: t['chips.surf'],
+    move: t['chips.move'],
+    relax: t['chips.relax'],
+    tips: t['chips.tips'],
+  }}
+/>
+
+<MapSection lang={lang} titleHtml={t['map.title']} mapPlaces={mapPlaces} />
+
+<SurfToday
+  lang={lang}
+  titleHtml={t['surf.title']}
+  forecastLabel={t['surf.forecast']}
+  bookLessonLabel={t['surf.bookLesson']}
+  schoolsNote={t['surf.schoolsNote']}
+  surfPlaces={surfPlaces}
+  lessonWaText={lessonWaText}
+/>
+
+<section class="section" aria-labelledby="eat-title">
+  <div class="container">
+    <div class="section__header reveal">
+      <h2 id="eat-title" set:html={t['eat.title']} />
+    </div>
+    <div class="card-grid">
+      {
+        eatPlaces.map((place, index) => (
+          <PlaceCard
+            place={place}
+            lang={lang}
+            directionsLabel={t['map.directions']}
+            whatsappLabel={t['services.cta']}
+            revealIndex={index}
+          />
+        ))
+      }
+    </div>
+  </div>
+</section>
+
+<section class="section" aria-labelledby="surf-spots-title">
+  <div class="container">
+    <div class="section__header reveal">
+      <h2 id="surf-spots-title" set:html={t['surf.spots']} />
+    </div>
+    <div class="card-grid">
+      {
+        surfPlaces.map((place, index) => (
+          <PlaceCard
+            place={place}
+            lang={lang}
+            directionsLabel={t['map.directions']}
+            whatsappLabel={t['services.cta']}
+            revealIndex={index}
+          />
+        ))
+      }
+    </div>
+  </div>
+</section>
+
+<section class="section" aria-labelledby="services-title">
+  <div class="container">
+    <div class="section__header reveal">
+      <h2 id="services-title" set:html={t['services.title']} />
+    </div>
+    <div class="card-grid">
+      {
+        servicePlaces.map((place, index) => (
+          <ServiceCard place={place} lang={lang} ctaLabel={t['services.cta']} revealIndex={index} />
+        ))
+      }
+    </div>
+  </div>
+</section>
+
+{
+  stayPlaces.length > 0 && (
+    <section class="section" aria-labelledby="stay-places-title">
+      <div class="container">
+        <div class="section__header reveal">
+          <h2 id="stay-places-title" set:html={t['stay.places']} />
+        </div>
+
+        <div class="stay-catalog reveal">
+          <p class="stay-catalog__hint">{t['stay.catalogHint']}</p>
+          <a
+            class="stay-catalog__cta"
+            href={WA_CATALOG_URL}
+            target="_blank"
+            rel="noopener noreferrer"
+            data-track-cta
+            data-place-id="stay-catalog"
+            data-cta-type="link"
+          >
+            {t['stay.catalog']}
+          </a>
+        </div>
+
+        <div class="card-grid">
+          {stayPlaces.map((place, index) => (
+            <PlaceCard
+              place={place}
+              lang={lang}
+              directionsLabel={t['map.directions']}
+              whatsappLabel={t['services.cta']}
+              revealIndex={index}
+            />
+          ))}
+        </div>
+      </div>
+    </section>
+  )
+}
+
+<TipsTeaser
+  titleHtml={t['tips.title']}
+  eyebrow={t['chips.tips']}
+  teaser={t['tips.teaser']}
+  teaserCard={t['tips.teaserCard']}
+  items={tipItems}
+/>
+
+<StayRebook
+  titleHtml={t['stay.title']}
+  sub={t['stay.sub']}
+  catalogLabel={t['stay.catalog']}
+  rebookLabel={t['stay.rebookWa']}
+  websiteLabel={t['stay.website']}
+  instagramLabel={t['stay.instagram']}
+  ratingLabel={t['stay.stat.rating']}
+  occupancyLabel={t['stay.stat.occupancy']}
+  rebookMessage={t['stay.rebookMessage']}
+/>
+
+<script>
+  import { trackCtaClick } from '../utils/analytics';
+
+  document.addEventListener('click', (event) => {
+    const target = (event.target as HTMLElement).closest<HTMLElement>('[data-track-cta]');
+    if (!target) return;
+
+    const placeId = target.dataset.placeId;
+    const ctaType = target.dataset.ctaType;
+    if (placeId && ctaType) trackCtaClick(placeId, ctaType);
+  });
+</script>
+
+<style>
+  .stay-catalog {
+    display: grid;
+    gap: 0.85rem;
+    margin-bottom: 1.75rem;
+    padding: 1.25rem;
+    border-radius: var(--radius);
+    background: var(--sand);
+    border: 1px solid rgba(148, 137, 121, 0.25);
+  }
+
+  .stay-catalog__hint {
+    color: var(--navy);
+    max-width: 36rem;
+  }
+
+  .stay-catalog__cta {
+    justify-self: start;
+    padding: 0.8rem 1.2rem;
+    border-radius: var(--radius-chip);
+    background: var(--navy);
+    color: var(--cream);
+    font-size: var(--text-small);
+    font-weight: 700;
+    transition: transform var(--dur) var(--ease-out);
+  }
+
+  .stay-catalog__cta:hover {
+    transform: translateY(-2px);
+  }
+</style>

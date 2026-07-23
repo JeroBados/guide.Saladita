@@ -1,0 +1,31 @@
+:root {
+  /* Paleta Saladita Rentals (oficial) */
+  --navy: #153448;
+  --navy-2: #3c5b6f;
+  --slate: #3c5b6f;
+  --cream: #e0e1dc;
+  --sand: #e7d8c0;
+  --taupe: #948979;
+  --sage: #a4b2b0;
+
+  /* Tipografía */
+  --font-display: 'Fraunces Variable', Georgia, serif;
+  --font-body: 'DM Sans Variable', system-ui, sans-serif;
+
+  /* Escala tipográfica (mobile-first, fluida) */
+  --text-hero: clamp(2.2rem, 8vw, 4.5rem);
+  --text-h2: clamp(1.6rem, 5vw, 2.6rem);
+  --text-h3: 1.25rem;
+  --text-body: 1rem;
+  --text-small: 0.85rem;
+
+  /* Superficies */
+  --radius: 18px;
+  --radius-chip: 999px;
+  --shadow-card: 0 4px 24px rgba(21, 52, 72, 0.1);
+  --shadow-float: 0 12px 40px rgba(21, 52, 72, 0.18);
+
+  /* Motion */
+  --ease-out: cubic-bezier(0.16, 1, 0.3, 1);
+  --dur: 0.6s;
+}

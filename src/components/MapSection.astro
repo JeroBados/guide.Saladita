@@ -1,0 +1,354 @@
+---
+import type { Lang } from '../utils/i18n';
+import type { MapPlace } from '../types/place';
+import { getMapCenter } from '../utils/places';
+
+interface Props {
+  lang: Lang;
+  titleHtml: string;
+  mapPlaces: MapPlace[];
+}
+
+const { lang, titleHtml, mapPlaces } = Astro.props;
+const [centerLat, centerLng] = getMapCenter(mapPlaces);
+const mapConfig = JSON.stringify({ places: mapPlaces, centerLat, centerLng });
+---
+
+<section class="map-section section" data-map-section aria-labelledby="map-title">
+  <div class="container">
+    <div class="section__header reveal">
+      <h2 id="map-title" set:html={titleHtml} />
+    </div>
+  </div>
+
+  <script type="application/json" class="map-places-data" set:html={mapConfig} />
+
+  <div class="map-section__map reveal" data-map-root></div>
+  <p class="map-section__note container reveal">
+    {lang === 'en'
+      ? 'Pin locations are approximate — tap a place card for exact directions.'
+      : 'Ubicaciones aproximadas — tocá una tarjeta para direcciones exactas.'}
+  </p>
+</section>
+
+<link
+  rel="stylesheet"
+  href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"
+  integrity="sha256-p4NxAoJBhIIN+hmNHrzRCf9tD/miZyoHS5obTRR9BMY="
+  crossorigin=""
+/>
+
+<script>
+  const PIN_COLORS: Record<string, { fill: string; border?: string }> = {
+    eat: { fill: '#153448' },
+    cafe: { fill: '#153448' },
+    surf: { fill: '#a4b2b0' },
+    service: { fill: '#948979' },
+    tip: { fill: '#e7d8c0', border: '#153448' },
+    stay: { fill: '#e7d8c0', border: '#153448' },
+  };
+
+  type MapPlaceData = {
+    id: string;
+    lat: number;
+    lng: number;
+    category: string;
+    chip: string;
+    name: string;
+    badge: string;
+    image: string;
+    ctaType: string;
+    ctaUrl: string | null;
+    directionsLabel: string;
+    whatsappLabel: string;
+  };
+
+  type LeafletMap = {
+    remove: () => void;
+    removeLayer: (layer: unknown) => void;
+    invalidateSize: () => void;
+  };
+
+  type LeafletMarker = {
+    addTo: (map: LeafletMap) => LeafletMarker;
+    bindPopup: (html: string) => LeafletMarker;
+    getElement?: () => HTMLElement | null;
+  };
+
+  type LeafletLayer = {
+    divIcon: (options: Record<string, unknown>) => unknown;
+    marker: (latlng: [number, number], options: Record<string, unknown>) => LeafletMarker;
+    tileLayer: (url: string, options: Record<string, unknown>) => { addTo: (map: LeafletMap) => unknown };
+    map: (element: HTMLElement, options: Record<string, unknown>) => LeafletMap;
+  };
+
+  declare global {
+    interface Window {
+      L?: LeafletLayer;
+      __saladitaMap?: {
+        map: LeafletMap;
+        markersById: Record<string, LeafletMarker>;
+        places: MapPlaceData[];
+      };
+    }
+  }
+
+  function escapeHtml(value: string) {
+    return value
+      .replaceAll('&', '&amp;')
+      .replaceAll('<', '&lt;')
+      .replaceAll('>', '&gt;')
+      .replaceAll('"', '&quot;')
+      .replaceAll("'", '&#39;');
+  }
+
+  async function loadLeaflet() {
+    if (window.L) return;
+
+    if (!document.querySelector('link[href*="leaflet.css"]')) {
+      const link = document.createElement('link');
+      link.rel = 'stylesheet';
+      link.href = 'https://unpkg.com/leaflet@1.9.4/dist/leaflet.css';
+      document.head.appendChild(link);
+    }
+
+    await new Promise<void>((resolve, reject) => {
+      const script = document.createElement('script');
+      script.src = 'https://unpkg.com/leaflet@1.9.4/dist/leaflet.js';
+      script.onload = () => resolve();
+      script.onerror = () => reject(new Error('Leaflet failed to load'));
+      document.head.appendChild(script);
+    });
+  }
+
+  function destroyMap() {
+    if (window.__saladitaMap) {
+      window.__saladitaMap.map.remove();
+      window.__saladitaMap = undefined;
+    }
+  }
+
+  function createPinIcon(category: string) {
+    const colors = PIN_COLORS[category] ?? PIN_COLORS.eat;
+    const border = colors.border ? `2px solid ${colors.border}` : 'none';
+
+    return window.L!.divIcon({
+      className: 'map-pin',
+      html: `<span style="display:block;width:14px;height:14px;border-radius:999px;background:${colors.fill};border:${border};box-shadow:0 2px 8px rgba(21,52,72,.35);"></span>`,
+      iconSize: [14, 14],
+      iconAnchor: [7, 7],
+      popupAnchor: [0, -8],
+    });
+  }
+
+  function popupHtml(place: MapPlaceData) {
+    const ctaLabel = place.ctaType === 'whatsapp' ? place.whatsappLabel : place.directionsLabel;
+    const cta = place.ctaUrl
+      ? `<a class="map-popup__cta" href="${escapeHtml(place.ctaUrl)}" target="_blank" rel="noopener noreferrer" data-track-cta data-place-id="${escapeHtml(place.id)}" data-cta-type="${escapeHtml(place.ctaType)}">${escapeHtml(ctaLabel)}</a>`
+      : '';
+
+    return `
+      <div class="map-popup">
+        <img class="map-popup__image" src="${escapeHtml(place.image)}" alt="" loading="lazy" onerror="this.remove()" />
+        <strong class="map-popup__name">${escapeHtml(place.name)}</strong>
+        <span class="map-popup__badge">${escapeHtml(place.badge)}</span>
+        ${cta}
+      </div>
+    `;
+  }
+
+  function setMarkerVisibility(chip: string | null) {
+    const state = window.__saladitaMap;
+    if (!state) return;
+
+    Object.entries(state.markersById).forEach(([id, marker]) => {
+      const place = state.places.find((item) => item.id === id);
+      if (!place) return;
+
+      const visible = chip === null || place.chip === chip;
+      if (visible) {
+        marker.addTo(state.map);
+      } else {
+        state.map.removeLayer(marker);
+      }
+    });
+  }
+
+  async function initMap(section: HTMLElement) {
+    const configEl = section.querySelector('.map-places-data');
+    const root = section.querySelector<HTMLElement>('[data-map-root]');
+    if (!configEl || !root || root.dataset.ready === 'true') return;
+
+    let config: { places: MapPlaceData[]; centerLat: number; centerLng: number };
+    try {
+      config = JSON.parse(configEl.textContent || '{}');
+    } catch {
+      root.innerHTML = '<p class="map-error">Map unavailable — refresh the page.</p>';
+      return;
+    }
+
+    if (!config.places?.length) return;
+
+    destroyMap();
+    await loadLeaflet();
+
+    const mapInstance = window.L!.map(root, {
+      center: [config.centerLat, config.centerLng],
+      zoom: 15,
+      scrollWheelZoom: false,
+    });
+
+    window.L!.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+      attribution: '&copy; OpenStreetMap contributors',
+      maxZoom: 18,
+    }).addTo(mapInstance);
+
+    const markersById: Record<string, LeafletMarker> = {};
+
+    config.places.forEach((place, index) => {
+      const marker = window.L!.marker([place.lat, place.lng], {
+        icon: createPinIcon(place.category),
+      }).bindPopup(popupHtml(place));
+
+      markersById[place.id] = marker;
+      marker.addTo(mapInstance);
+
+      const iconEl = marker.getElement?.();
+      if (iconEl) {
+        iconEl.style.opacity = '0';
+        iconEl.style.transform = 'scale(0)';
+        iconEl.style.transition = `transform 0.35s cubic-bezier(.16,1,.3,1) ${index * 0.04}s, opacity 0.35s ease ${index * 0.04}s`;
+        requestAnimationFrame(() => {
+          iconEl.style.opacity = '1';
+          iconEl.style.transform = 'scale(1)';
+        });
+      }
+    });
+
+    window.__saladitaMap = { map: mapInstance, markersById, places: config.places };
+    root.dataset.ready = 'true';
+
+    requestAnimationFrame(() => {
+      mapInstance.invalidateSize();
+    });
+  }
+
+  function onChipFilter(event: Event) {
+    const detail = (event as CustomEvent<{ chip: string | null }>).detail;
+    setMarkerVisibility(detail.chip);
+  }
+
+  function setupMapSection() {
+    const section = document.querySelector<HTMLElement>('[data-map-section]');
+    if (!section) return;
+
+    const root = section.querySelector<HTMLElement>('[data-map-root]');
+    if (root) {
+      root.dataset.ready = 'false';
+      root.innerHTML = '';
+    }
+
+    window.removeEventListener('chip-filter', onChipFilter);
+    window.addEventListener('chip-filter', onChipFilter);
+
+    const observer = new IntersectionObserver(
+      (entries) => {
+        if (entries.some((entry) => entry.isIntersecting)) {
+          initMap(section).catch(() => {
+            const mapRoot = section.querySelector<HTMLElement>('[data-map-root]');
+            if (mapRoot) mapRoot.dataset.ready = 'false';
+          });
+          observer.disconnect();
+        }
+      },
+      { rootMargin: '120px' },
+    );
+
+    observer.observe(section);
+  }
+
+  setupMapSection();
+  document.addEventListener('astro:page-load', setupMapSection);
+</script>
+
+<style is:global>
+  .map-section__map {
+    height: 60svh;
+    min-height: 320px;
+    width: 100%;
+    background: var(--sand);
+  }
+
+  .map-pin {
+    background: transparent;
+    border: none;
+  }
+
+  .leaflet-container {
+    font-family: var(--font-body);
+    z-index: 1;
+  }
+
+  .map-popup {
+    display: grid;
+    gap: 0.45rem;
+    min-width: 180px;
+  }
+
+  .map-popup__image {
+    width: 100%;
+    aspect-ratio: 4 / 3;
+    object-fit: cover;
+    border-radius: 12px;
+    background: var(--cream);
+  }
+
+  .map-popup__name {
+    font-family: var(--font-display);
+    font-size: 1rem;
+    color: var(--navy);
+  }
+
+  .map-popup__badge {
+    font-size: var(--text-small);
+    color: var(--taupe);
+  }
+
+  .map-popup__cta {
+    display: inline-flex;
+    justify-content: center;
+    padding: 0.55rem 0.85rem;
+    border-radius: var(--radius-chip);
+    background: var(--navy);
+    color: var(--cream) !important;
+    font-size: var(--text-small);
+    font-weight: 600;
+    text-decoration: none;
+  }
+
+  .map-error {
+    display: grid;
+    place-items: center;
+    height: 100%;
+    padding: 1rem;
+    text-align: center;
+    color: var(--taupe);
+  }
+</style>
+
+<style>
+  .map-section {
+    padding-top: 3rem;
+    padding-bottom: 0;
+  }
+
+  .map-section .section__header {
+    margin-bottom: 1.5rem;
+  }
+
+  .map-section__note {
+    padding-block: 0.85rem 1.5rem;
+    font-size: var(--text-small);
+    color: var(--taupe);
+  }
+</style>

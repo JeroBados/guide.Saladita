@@ -1,0 +1,7 @@
+User-agent: *
+Allow: /
+
+Disallow: /secrets
+Disallow: /es/secrets
+
+Sitemap: https://guide.lasaladitarentals.com/sitemap-index.xml

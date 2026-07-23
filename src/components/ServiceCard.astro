@@ -1,0 +1,144 @@
+---
+import type { Lang } from '../utils/i18n';
+import type { Place } from '../types/place';
+import { getCtaUrl } from '../utils/wa';
+
+interface Props {
+  place: Place;
+  lang: Lang;
+  ctaLabel: string;
+  revealIndex?: number;
+}
+
+const { place, lang, ctaLabel, revealIndex = 0 } = Astro.props;
+const ctaUrl = getCtaUrl(place, lang);
+const image = `/media/places/${place.id}.jpg`;
+---
+
+<article
+  class="service-card reveal"
+  data-chip={place.chip}
+  data-place-id={place.id}
+  style={`--i: ${revealIndex}`}
+>
+  <div class="service-card__media">
+    <img
+      class="service-card__image"
+      src={image}
+      alt=""
+      loading="lazy"
+      decoding="async"
+      data-service-image
+    />
+  </div>
+
+  <div class="service-card__body">
+    <span class="service-card__badge">{place.badge[lang]}</span>
+    <h3 class="service-card__name">{place.name}</h3>
+    <p class="service-card__desc">{place.desc[lang]}</p>
+
+    {
+      ctaUrl && (
+        <a
+          class="service-card__cta"
+          href={ctaUrl}
+          target="_blank"
+          rel="noopener noreferrer"
+          data-track-cta
+          data-place-id={place.id}
+          data-cta-type={place.cta.type}
+        >
+          {ctaLabel}
+        </a>
+      )
+    }
+  </div>
+</article>
+
+<script>
+  document.querySelectorAll<HTMLImageElement>('[data-service-image]').forEach((img) => {
+    img.addEventListener('error', () => {
+      img.remove();
+    });
+  });
+</script>
+
+<style>
+  .service-card {
+    display: flex;
+    flex-direction: column;
+    background: var(--sand);
+    border-radius: var(--radius);
+    overflow: hidden;
+    box-shadow: var(--shadow-card);
+    transition:
+      transform var(--dur) var(--ease-out),
+      box-shadow var(--dur) var(--ease-out);
+  }
+
+  .service-card:hover,
+  .service-card:focus-within {
+    transform: translateY(-4px);
+    box-shadow: var(--shadow-float);
+  }
+
+  .service-card__media {
+    aspect-ratio: 4 / 3;
+    overflow: hidden;
+    background:
+      linear-gradient(135deg, rgba(21, 52, 72, 0.12), rgba(164, 178, 176, 0.35)),
+      var(--cream);
+  }
+
+  .service-card__image {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    transition: transform var(--dur) var(--ease-out);
+  }
+
+  .service-card:hover .service-card__image,
+  .service-card:active .service-card__image {
+    transform: scale(1.04);
+  }
+
+  .service-card__body {
+    display: flex;
+    flex-direction: column;
+    gap: 0.65rem;
+    padding: 1.25rem;
+    flex: 1;
+  }
+
+  .service-card__badge {
+    align-self: flex-start;
+    padding: 0.35rem 0.75rem;
+    border-radius: var(--radius-chip);
+    background: var(--sage);
+    color: var(--navy);
+    font-size: var(--text-small);
+    font-weight: 600;
+  }
+
+  .service-card__name {
+    font-family: var(--font-display);
+    font-size: var(--text-h3);
+  }
+
+  .service-card__desc {
+    flex: 1;
+  }
+
+  .service-card__cta {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    margin-top: 0.35rem;
+    padding: 0.75rem 1rem;
+    border-radius: var(--radius-chip);
+    background: var(--navy);
+    color: var(--cream);
+    font-size: var(--text-small);
+    font-weight: 600;
+  }
+</style>

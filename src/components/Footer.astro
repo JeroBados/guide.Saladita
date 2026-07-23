@@ -1,0 +1,142 @@
+---
+import type { Lang } from '../utils/i18n';
+
+interface Props {
+  lang: Lang;
+  shareLabel: string;
+  tagline: string;
+}
+
+const { shareLabel, tagline } = Astro.props;
+const whatsapp = 'https://wa.me/525611073849';
+const instagram = 'https://instagram.com/saladitarentals';
+const email = 'mailto:hello@lasaladitarentals.com';
+---
+
+<footer class="footer section--dark">
+  <div class="footer__inner container">
+    <div class="footer__brand">
+      <img class="footer__logo-image" src="/logo.png" alt="Saladita Rentals" width="72" height="72" />
+      <p class="footer__tagline">{tagline}</p>
+    </div>
+
+    <nav class="footer__links" aria-label="Contact links">
+      <a
+        href={whatsapp}
+        target="_blank"
+        rel="noopener noreferrer"
+        data-track-cta
+        data-place-id="footer-whatsapp"
+        data-cta-type="whatsapp"
+      >
+        WhatsApp
+      </a>
+      <a
+        href={instagram}
+        target="_blank"
+        rel="noopener noreferrer"
+        data-track-cta
+        data-place-id="footer-instagram"
+        data-cta-type="link"
+      >
+        Instagram
+      </a>
+      <a
+        href={email}
+        data-track-cta
+        data-place-id="footer-email"
+        data-cta-type="link"
+      >
+        Email
+      </a>
+    </nav>
+
+    <button class="footer__share" type="button" data-share>
+      {shareLabel}
+    </button>
+  </div>
+</footer>
+
+<script>
+  const button = document.querySelector<HTMLButtonElement>('[data-share]');
+  button?.addEventListener('click', async () => {
+    const shareData = {
+      title: document.title,
+      text: document.querySelector('meta[name="description"]')?.getAttribute('content') ?? '',
+      url: window.location.href,
+    };
+
+    if (navigator.share) {
+      try {
+        await navigator.share(shareData);
+      } catch {
+        /* user cancelled */
+      }
+      return;
+    }
+
+    try {
+      await navigator.clipboard.writeText(window.location.href);
+      button.textContent = 'Link copied';
+    } catch {
+      /* clipboard unavailable */
+    }
+  });
+</script>
+
+<style>
+  .footer {
+    background: var(--navy);
+    color: var(--cream);
+    padding-block: 3rem;
+  }
+
+  .footer__inner {
+    display: grid;
+    gap: 1.5rem;
+  }
+
+  .footer__logo-image {
+    width: 72px;
+    height: auto;
+    margin-bottom: 0.5rem;
+  }
+
+  .footer__tagline {
+    color: var(--sage);
+    font-size: var(--text-small);
+  }
+
+  .footer__links {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 1rem 1.5rem;
+    font-size: var(--text-small);
+  }
+
+  .footer__links a {
+    color: var(--sand);
+    text-decoration: underline;
+    text-underline-offset: 0.2em;
+  }
+
+  .footer__share {
+    justify-self: start;
+    padding: 0.75rem 1.25rem;
+    border-radius: var(--radius-chip);
+    background: var(--sand);
+    color: var(--navy);
+    font-weight: 600;
+  }
+
+  @media (min-width: 768px) {
+    .footer__inner {
+      grid-template-columns: 1fr auto auto;
+      align-items: center;
+    }
+
+    .footer__share {
+      justify-self: end;
+    }
+  }
+</style>

@@ -1,0 +1,98 @@
+---
+interface Props {
+  titleHtml: string;
+  eyebrow: string;
+  teaser: string;
+  teaserCard: string;
+  items: Array<{ id: string; title: string; body: string }>;
+}
+
+const { titleHtml, eyebrow, teaser, teaserCard, items } = Astro.props;
+---
+
+<section class="tips-teaser section" data-section="tips" aria-labelledby="tips-title">
+  <div class="container">
+    <div class="section__header reveal">
+      <span class="eyebrow">{eyebrow}</span>
+      <h2 id="tips-title" set:html={titleHtml} />
+    </div>
+
+    <div class="tips-teaser__accordions">
+      {
+        items.map((item, index) => (
+          <details class="tips-teaser__item reveal" style={`--i: ${index}`}>
+            <summary class="tips-teaser__summary">{item.title}</summary>
+            <p class="tips-teaser__body">{item.body}</p>
+          </details>
+        ))
+      }
+    </div>
+
+    <div class="tips-teaser__card reveal" style="--i: 2">
+      <p class="tips-teaser__card-copy">{teaser}</p>
+      <p class="tips-teaser__card-note">{teaserCard}</p>
+    </div>
+  </div>
+</section>
+
+<style>
+  .tips-teaser__accordions {
+    display: grid;
+    gap: 0.75rem;
+    margin-bottom: 2rem;
+  }
+
+  .tips-teaser__item {
+    border: 1px solid rgba(148, 137, 121, 0.35);
+    border-radius: var(--radius);
+    background: var(--cream);
+    overflow: hidden;
+  }
+
+  .tips-teaser__summary {
+    padding: 1rem 1.1rem;
+    font-weight: 600;
+    cursor: pointer;
+    list-style: none;
+  }
+
+  .tips-teaser__summary::-webkit-details-marker {
+    display: none;
+  }
+
+  .tips-teaser__body {
+    padding: 0 1.1rem 1rem;
+    color: var(--taupe);
+    animation: tipBodyOpen 0.35s var(--ease-out);
+  }
+
+  @keyframes tipBodyOpen {
+    from {
+      opacity: 0;
+      transform: translateY(-6px);
+    }
+
+    to {
+      opacity: 1;
+      transform: none;
+    }
+  }
+
+  .tips-teaser__card {
+    padding: 1.5rem;
+    border-radius: var(--radius);
+    background: var(--navy);
+    color: var(--cream);
+  }
+
+  .tips-teaser__card-copy {
+    margin-bottom: 0.75rem;
+    max-width: 42rem;
+  }
+
+  .tips-teaser__card-note {
+    font-size: var(--text-small);
+    color: var(--sage);
+    font-style: italic;
+  }
+</style>

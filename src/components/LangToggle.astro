@@ -1,0 +1,46 @@
+---
+import type { Lang } from '../utils/i18n';
+
+interface Props {
+  lang: Lang;
+  altPath: string;
+  label: string;
+}
+
+const { lang, altPath, label } = Astro.props;
+---
+
+<a
+  class="lang-toggle"
+  href={altPath}
+  hreflang={lang === 'en' ? 'es' : 'en'}
+  lang={lang === 'en' ? 'es' : 'en'}
+  aria-label={lang === 'en' ? 'Ver en español' : 'View in English'}
+>
+  {label}
+</a>
+
+<style>
+  .lang-toggle {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    min-width: 2.75rem;
+    padding: 0.45rem 0.85rem;
+    border: 1px solid rgba(240, 237, 230, 0.35);
+    border-radius: var(--radius-chip);
+    font-size: var(--text-small);
+    font-weight: 600;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    color: var(--cream);
+    backdrop-filter: blur(8px);
+    transition: background-color var(--dur) var(--ease-out);
+  }
+
+  .lang-toggle:hover,
+  .lang-toggle:focus-visible {
+    background: rgba(240, 237, 230, 0.12);
+    outline: none;
+  }
+</style>
