@@ -1,0 +1,135 @@
+---
+interface Props {
+  label: string;
+  items: Array<{ id: string; label: string; href: string }>;
+}
+
+const { label, items } = Astro.props;
+---
+
+<nav class="guide-nav" aria-label={label}>
+  <div class="guide-nav__inner container">
+    <div class="guide-nav__list" role="list">
+      {
+        items.map((item) => (
+          <a class="guide-nav__link" href={item.href} role="listitem" data-nav-link={item.id}>
+            {item.label}
+          </a>
+        ))
+      }
+    </div>
+  </div>
+</nav>
+
+<script>
+  function initGuideNav() {
+    const links = Array.from(document.querySelectorAll<HTMLAnchorElement>('[data-nav-link]'));
+    if (!links.length) return;
+
+    links.forEach((link) => {
+      if (link.dataset.bound === 'true') return;
+      link.dataset.bound = 'true';
+
+      link.addEventListener('click', (event) => {
+        const href = link.getAttribute('href');
+        if (!href?.startsWith('#')) return;
+
+        const target = document.querySelector(href);
+        if (!target) return;
+
+        event.preventDefault();
+        const navHeight = document.querySelector('.guide-nav')?.getBoundingClientRect().height ?? 0;
+        const top = target.getBoundingClientRect().top + window.scrollY - navHeight - 12;
+        window.scrollTo({ top, behavior: 'smooth' });
+        history.replaceState(null, '', href);
+      });
+    });
+
+    const sections = links
+      .map((link) => {
+        const id = link.getAttribute('href')?.slice(1);
+        const el = id ? document.getElementById(id) : null;
+        return el ? { link, el } : null;
+      })
+      .filter(Boolean) as Array<{ link: HTMLAnchorElement; el: HTMLElement }>;
+
+    if (!sections.length) return;
+
+    const nav = document.querySelector('.guide-nav');
+    if (nav?.dataset.observerReady === 'true') return;
+    if (nav) nav.dataset.observerReady = 'true';
+
+    const observer = new IntersectionObserver(
+      (entries) => {
+        const visible = entries
+          .filter((e) => e.isIntersecting)
+          .sort((a, b) => b.intersectionRatio - a.intersectionRatio)[0];
+
+        if (!visible) return;
+
+        sections.forEach(({ link, el }) => {
+          link.classList.toggle('is-active', el === visible.target);
+        });
+      },
+      { rootMargin: '-30% 0px -55% 0px', threshold: [0, 0.25, 0.5] },
+    );
+
+    sections.forEach(({ el }) => observer.observe(el));
+  }
+
+  initGuideNav();
+  document.addEventListener('astro:page-load', initGuideNav);
+</script>
+
+<style>
+  .guide-nav {
+    position: sticky;
+    top: 0;
+    z-index: 20;
+    background: rgba(240, 237, 230, 0.96);
+    backdrop-filter: blur(10px);
+    border-bottom: 1px solid rgba(148, 137, 121, 0.2);
+  }
+
+  .guide-nav__inner {
+    padding-block: 0.75rem;
+  }
+
+  .guide-nav__list {
+    display: flex;
+    gap: 0.5rem;
+    overflow-x: auto;
+    padding-bottom: 0.1rem;
+    scrollbar-width: none;
+  }
+
+  .guide-nav__list::-webkit-scrollbar {
+    display: none;
+  }
+
+  .guide-nav__link {
+    flex: 0 0 auto;
+    padding: 0.6rem 0.95rem;
+    border-radius: var(--radius-chip);
+    border: 1px solid transparent;
+    background: transparent;
+    color: var(--navy);
+    font-size: var(--text-small);
+    font-weight: 600;
+    white-space: nowrap;
+    transition:
+      background-color var(--dur) var(--ease-out),
+      color var(--dur) var(--ease-out);
+  }
+
+  .guide-nav__link.is-active,
+  .guide-nav__link:hover {
+    background: var(--navy);
+    color: var(--cream);
+  }
+
+  .guide-nav__link:focus-visible {
+    outline: 2px solid var(--navy);
+    outline-offset: 2px;
+  }
+</style>

@@ -16,6 +16,9 @@ export function getCtaUrl(place: Place, lang: Lang): string | null {
   const { cta } = place;
 
   if (cta.type === 'maps') {
+    if (place.mapsQuery) {
+      return `https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(place.mapsQuery)}`;
+    }
     if (place.lat == null || place.lng == null) return null;
     return buildMapsDirectionsUrl(place.lat, place.lng);
   }

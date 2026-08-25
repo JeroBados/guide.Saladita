@@ -144,86 +144,44 @@
     "cta": { "type": "maps" }
   },
   {
-    "id": "saladita-point",
-    "category": "surf",
-    "chip": "surf",
-    "name": "La Saladita",
-    "lat": 17.841,
-    "lng": -101.771,
-    "badge": { "en": "The endless left", "es": "La izquierda infinita" },
-    "desc": {
-      "en": "The wave that put Saladita on the map — a long, mellow left made for longboarding.",
-      "es": "La ola que puso a Saladita en el mapa: una izquierda larga y noble, hecha para longboard."
-    },
-    "cta": { "type": "maps" }
-  },
-  {
-    "id": "casa-esmeralda",
-    "category": "stay",
-    "chip": "stay",
-    "name": "Casa Esmeralda (Brandom Surf)",
-    "lat": 17.8421,
-    "lng": -101.7687,
-    "badge": { "en": "Beach house · board rental", "es": "Casa de playa · renta de tablas" },
-    "desc": {
-      "en": "Beachfront stay with premium boards on site — book accommodation and gear through Saladita Rentals.",
-      "es": "Estancia frente al mar con tablas premium — reserva alojamiento y equipo con Saladita Rentals."
-    },
-    "cta": {
-      "type": "whatsapp",
-      "waText": {
-        "en": "Hi! I'd like info about Casa Esmeralda (Brandom Surf) through Saladita Rentals 🏠",
-        "es": "¡Hola! Quiero info de Casa Esmeralda (Brandom Surf) con Saladita Rentals 🏠"
-      }
-    }
-  },
-  {
-    "id": "mezcalli-surf-school",
+    "id": "surf-lessons",
     "category": "service",
     "chip": "surf",
-    "name": "Mezcalli Surf School",
+    "name": "Surf lessons",
     "lat": null,
     "lng": null,
-    "badge": { "en": "Surf lessons · book with us", "es": "Clases de surf · reserva con nosotros" },
+    "badge": { "en": "Book with us", "es": "Reserva con nosotros" },
     "desc": {
-      "en": "Professional local instructors — lessons are booked through Saladita Rentals.",
-      "es": "Instructores locales profesionales — las clases se reservan con Saladita Rentals."
+      "en": "Local instructors at the main point — beginner to intermediate, equipment included.",
+      "es": "Instructores locales en el point — principiante a intermedio, equipo incluido."
     },
     "cta": {
       "type": "whatsapp",
       "waText": {
-        "en": "Hi! I'd like to book a surf lesson with Mezcalli through Saladita Rentals 🏄",
-        "es": "¡Hola! Quiero reservar una clase de surf con Mezcalli con Saladita Rentals 🏄"
+        "en": "Hi! I'd like to book surf lessons in La Saladita through Saladita Rentals 🏄",
+        "es": "¡Hola! Quiero reservar clases de surf en La Saladita con Saladita Rentals 🏄"
       }
     }
   },
   {
-    "id": "rancho",
-    "category": "surf",
+    "id": "board-rental",
+    "category": "service",
     "chip": "surf",
-    "name": "Rancho",
-    "lat": 17.852,
-    "lng": -101.774,
-    "badge": { "en": "Step it up", "es": "Un nivel más" },
+    "name": "Surfboard rental",
+    "lat": null,
+    "lng": null,
+    "badge": { "en": "Daily · weekly", "es": "Por día · semana" },
     "desc": {
-      "en": "Bigger and more exposed than the point, often less crowded. For intermediate surfers.",
-      "es": "Más grande y expuesta que el point, y muchas veces con menos gente. Para intermedios."
+      "en": "Longboards, midboards and shortboards — pick up through Saladita Rentals.",
+      "es": "Longboards, midboards y shortboards — retira con Saladita Rentals."
     },
-    "cta": { "type": "maps" }
-  },
-  {
-    "id": "la-boca",
-    "category": "surf",
-    "chip": "surf",
-    "name": "La Boca",
-    "lat": 17.831,
-    "lng": -101.762,
-    "badge": { "en": "Fast & punchy", "es": "Rápida y con fuerza" },
-    "desc": {
-      "en": "A nearby beach break with faster, more powerful sections. Intermediate level.",
-      "es": "Beach break cercano con secciones rápidas y potentes. Nivel intermedio."
-    },
-    "cta": { "type": "maps" }
+    "cta": {
+      "type": "whatsapp",
+      "waText": {
+        "en": "Hi! I'd like to rent a surfboard in La Saladita 🏄",
+        "es": "¡Hola! Quiero rentar una tabla de surf en La Saladita 🏄"
+      }
+    }
   },
   {
     "id": "massage",
@@ -269,19 +227,20 @@
     "id": "airport-transfer",
     "category": "service",
     "chip": "move",
-    "name": "Airport transfers & drivers",
+    "name": "Airport transfer",
     "lat": null,
     "lng": null,
-    "badge": { "en": "ZIH ⇄ Saladita", "es": "ZIH ⇄ Saladita" },
+    "featured": true,
+    "badge": { "en": "Best seller · ZIH ⇄ Saladita", "es": "Más vendido · ZIH ⇄ Saladita" },
     "desc": {
-      "en": "Private transfer from Zihuatanejo airport, with a grocery stop on the way if you want.",
-      "es": "Traslado privado desde el aeropuerto de Zihuatanejo, con parada para súper si quieres."
+      "en": "Private door-to-door from Zihuatanejo airport — round trip, AC, optional grocery stop.",
+      "es": "Puerta a puerta desde el aeropuerto de Zihuatanejo — ida y vuelta, A/C, parada en súper opcional."
     },
     "cta": {
       "type": "whatsapp",
       "waText": {
-        "en": "Hi! I'd like to book an airport transfer to La Saladita 🚗",
-        "es": "¡Hola! Quiero reservar un traslado al aeropuerto desde/hacia La Saladita 🚗"
+        "en": "Hi! I'd like to book an airport transfer ZIH ↔ La Saladita 🚗",
+        "es": "¡Hola! Quiero reservar traslado aeropuerto ZIH ↔ La Saladita 🚗"
       }
     }
   },

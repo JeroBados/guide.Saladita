@@ -83,7 +83,7 @@ h2 em {
 }
 
 .container {
-  width: min(1120px, calc(100% - 2rem));
+  width: min(1120px, calc(100% - 1.25rem));
   margin-inline: auto;
 }
 
@@ -113,7 +113,7 @@ h2 em {
 }
 
 .section {
-  padding-block: 4rem;
+  padding-block: 2.75rem;
 }
 
 .section__header {

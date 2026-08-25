@@ -16,7 +16,9 @@ export function getSurfPlaces(): Place[] {
 }
 
 export function getServicePlaces(): Place[] {
-  return allPlaces.filter((place) => place.category === 'service');
+  const order = ['airport-transfer', 'surf-lessons', 'board-rental', 'massage', 'private-chef', 'car-rental', 'moto-rental', 'atv-rental'];
+  const services = allPlaces.filter((place) => place.category === 'service');
+  return services.sort((a, b) => order.indexOf(a.id) - order.indexOf(b.id));
 }
 
 export function getStayPlaces(): Place[] {

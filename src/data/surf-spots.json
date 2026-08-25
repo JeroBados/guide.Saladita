@@ -1,0 +1,61 @@
+[
+  {
+    "id": "saladita-point",
+    "forecastSlug": "La-Saladita",
+    "name": { "en": "La Saladita (Main Point)", "es": "La Saladita (Point principal)" },
+    "badge": { "en": "Main left · +100 m rides", "es": "Izquierda principal · +100 m de ride" },
+    "summary": {
+      "en": "The wave that put Saladita on the map — a long, mellow left-hand point. Not Sayulita: this is Guerrero.",
+      "es": "La ola que puso a Saladita en el mapa — point izquierdo largo y noble. No es Sayulita: esto es Guerrero."
+    },
+    "type": { "en": "Left point break", "es": "Point izquierdo" },
+    "bottom": { "en": "Sand & rock (reef/sand)", "es": "Arena y roca (reef/arena)" },
+    "level": { "en": "Beginner to advanced (by section)", "es": "Principiante a avanzado (por sección)" },
+    "tide": { "en": "Mid to low — very high tide can shut it down", "es": "Media a baja — marea muy alta puede cerrarla" },
+    "wind": { "en": "North / NE offshore", "es": "Norte / NE offshore" },
+    "swell": { "en": "South / SW", "es": "Sur / SO" },
+    "rideLength": { "en": "100+ meters on good days", "es": "+100 metros en días buenos" },
+    "lat": 17.841,
+    "lng": -101.771,
+    "image": "/media/places/saladita-point.jpg"
+  },
+  {
+    "id": "rancho",
+    "forecastSlug": "The-Ranch_1",
+    "name": { "en": "The Ranch", "es": "Rancho" },
+    "badge": { "en": "Heavier · less crowded", "es": "Más pesado · menos gente" },
+    "summary": {
+      "en": "More exposed and powerful than the main point — for confident intermediates and up.",
+      "es": "Más expuesto y potente que el point — para intermedios seguros en adelante."
+    },
+    "type": { "en": "Beach / reef break", "es": "Beach / reef break" },
+    "bottom": { "en": "Rock & sand", "es": "Roca y arena" },
+    "level": { "en": "Intermediate to expert", "es": "Intermedio a experto" },
+    "tide": { "en": "Mid tide often best", "es": "Marea media suele ser ideal" },
+    "wind": { "en": "North / NE offshore", "es": "Norte / NE offshore" },
+    "swell": { "en": "South / SW", "es": "Sur / SO" },
+    "lat": 17.852,
+    "lng": -101.774,
+    "image": "/media/places/rancho.jpg"
+  },
+  {
+    "id": "la-boca",
+    "forecastSlug": "La-Saladita",
+    "name": { "en": "Playa Boca de las Iguanillas", "es": "Playa Boca de las Iguanillas" },
+    "badge": { "en": "Fast beach break", "es": "Beach break rápido" },
+    "summary": {
+      "en": "Nearby punchy sections — search “Playa boca de las Iguanillas” in Maps. Forecast shows nearby town conditions.",
+      "es": "Secciones rápidas cerca — busca “Playa boca de las Iguanillas” en Maps. El pronóstico muestra condiciones de la zona."
+    },
+    "type": { "en": "Beach break", "es": "Beach break" },
+    "bottom": { "en": "Sand", "es": "Arena" },
+    "level": { "en": "Intermediate", "es": "Intermedio" },
+    "tide": { "en": "Low to mid", "es": "Baja a media" },
+    "wind": { "en": "North / NE offshore", "es": "Norte / NE offshore" },
+    "swell": { "en": "South / SW", "es": "Sur / SO" },
+    "lat": 17.8285,
+    "lng": -101.756,
+    "mapsQuery": "Playa boca de las iguanillas La Saladita Guerrero Mexico",
+    "image": "/media/places/la-boca.jpg"
+  }
+]

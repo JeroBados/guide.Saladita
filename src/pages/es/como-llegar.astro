@@ -1,0 +1,182 @@
+---
+import Base from '../../layouts/Base.astro';
+import Footer from '../../components/Footer.astro';
+import { buildWhatsAppUrl } from '../../utils/wa';
+import { getTranslations } from '../../utils/i18n';
+
+const lang = 'es';
+const t = getTranslations(lang);
+const waTransfer = buildWhatsAppUrl(t['getThere.ctaWaMessage']);
+const stayUrl = 'https://lasaladitarentals.com/es?utm_source=guide&utm_medium=logistics&utm_campaign=get_there';
+---
+
+<Base
+  lang={lang}
+  title={t['getThere.meta.title']}
+  description={t['getThere.meta.description']}
+  canonicalPath="/es/como-llegar"
+>
+  <main class="get-there">
+    <div class="container get-there__hero">
+      <a class="get-there__back" href="/es/">← {t['getThere.back']}</a>
+      <h1>{t['getThere.title']}</h1>
+      <p class="get-there__intro">{t['getThere.intro']}</p>
+    </div>
+
+    <div class="container get-there__routes">
+      <article class="route-card route-card--featured">
+        <span class="route-card__tag">{t['getThere.optionA.tag']}</span>
+        <h2>{t['getThere.optionA.title']}</h2>
+        <ul>
+          <li>{t['getThere.optionA.cost']}</li>
+          <li>{t['getThere.optionA.time']}</li>
+          <li>{t['getThere.optionA.pro']}</li>
+        </ul>
+        <a class="route-card__cta" href={waTransfer} target="_blank" rel="noopener noreferrer">{t['getThere.bookTransfer']}</a>
+      </article>
+
+      <article class="route-card">
+        <h2>{t['getThere.optionB.title']}</h2>
+        <ul>
+          <li>{t['getThere.optionB.route']}</li>
+          <li>{t['getThere.optionB.cost']}</li>
+          <li>{t['getThere.optionB.time']}</li>
+        </ul>
+      </article>
+
+      <article class="route-card">
+        <h2>{t['getThere.optionC.title']}</h2>
+        <ul>
+          <li>{t['getThere.optionC.route']}</li>
+          <li>{t['getThere.optionC.note']}</li>
+        </ul>
+      </article>
+    </div>
+
+    <div class="container get-there__services">
+      <h2>{t['getThere.servicesTitle']}</h2>
+      <ul>
+        <li>{t['getThere.services.cash']}</li>
+        <li>{t['getThere.services.signal']}</li>
+        <li>{t['getThere.services.water']}</li>
+      </ul>
+      <a class="get-there__stay" href={stayUrl} target="_blank" rel="noopener noreferrer">{t['getThere.stayCta']}</a>
+    </div>
+  </main>
+  <Footer lang={lang} shareLabel={t['footer.share']} tagline={t['footer.tagline']} />
+</Base>
+
+<style>
+  .get-there {
+    padding-block: 1.5rem 3rem;
+  }
+
+  .get-there__back {
+    display: inline-flex;
+    min-height: var(--touch-min);
+    align-items: center;
+    margin-bottom: 1rem;
+    font-weight: 600;
+    color: var(--navy);
+  }
+
+  .get-there__hero h1 {
+    font-size: clamp(1.6rem, 6vw, 2.2rem);
+    margin-bottom: 0.75rem;
+  }
+
+  .get-there__intro {
+    color: var(--taupe);
+    margin-bottom: 1.5rem;
+    max-width: 40rem;
+  }
+
+  .get-there__routes {
+    display: grid;
+    gap: 1rem;
+    margin-bottom: 2rem;
+  }
+
+  .route-card {
+    padding: 1.25rem;
+    border-radius: var(--radius);
+    background: var(--sand);
+    border: 1px solid rgba(148, 137, 121, 0.25);
+  }
+
+  .route-card--featured {
+    border-color: var(--navy);
+    background: var(--cream);
+  }
+
+  .route-card__tag {
+    display: inline-block;
+    margin-bottom: 0.5rem;
+    padding: 0.3rem 0.65rem;
+    border-radius: var(--radius-chip);
+    background: var(--navy);
+    color: var(--cream);
+    font-size: 0.75rem;
+    font-weight: 700;
+    text-transform: uppercase;
+  }
+
+  .route-card h2 {
+    font-size: 1.15rem;
+    margin-bottom: 0.65rem;
+  }
+
+  .route-card ul {
+    display: grid;
+    gap: 0.4rem;
+    margin-bottom: 1rem;
+    padding-left: 1.1rem;
+    font-size: var(--text-small);
+    color: var(--taupe);
+  }
+
+  .route-card__cta {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    min-height: var(--touch-min);
+    padding: 0.9rem 1rem;
+    border-radius: var(--radius-chip);
+    background: var(--navy);
+    color: var(--cream);
+    font-weight: 700;
+  }
+
+  .get-there__services {
+    padding: 1.25rem;
+    border-radius: var(--radius);
+    background: var(--navy);
+    color: var(--cream);
+  }
+
+  .get-there__services h2 {
+    font-size: 1.15rem;
+    margin-bottom: 0.75rem;
+  }
+
+  .get-there__services ul {
+    display: grid;
+    gap: 0.5rem;
+    margin-bottom: 1rem;
+    padding-left: 1.1rem;
+    font-size: var(--text-small);
+    color: rgba(224, 225, 220, 0.9);
+  }
+
+  .get-there__stay {
+    display: inline-flex;
+    align-items: center;
+    min-height: var(--touch-min);
+    padding: 0.85rem 1rem;
+    border-radius: var(--radius-chip);
+    background: var(--sand);
+    color: var(--navy);
+    font-weight: 700;
+    font-size: var(--text-small);
+  }
+</style>

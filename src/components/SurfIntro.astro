@@ -1,0 +1,71 @@
+---
+import type { Lang } from '../utils/i18n';
+
+interface Props {
+  lang: Lang;
+  title: string;
+  sayulitaNote: string;
+  waterNote: string;
+  seasonNote: string;
+  getThereLabel: string;
+  getTherePath: string;
+}
+
+const { title, sayulitaNote, waterNote, seasonNote, getThereLabel, getTherePath } = Astro.props;
+---
+
+<section class="surf-intro section" aria-labelledby="surf-intro-title">
+  <div class="container surf-intro__inner reveal">
+    <h2 id="surf-intro-title">{title}</h2>
+    <p class="surf-intro__lead">{sayulitaNote}</p>
+    <ul class="surf-intro__facts">
+      <li>{waterNote}</li>
+      <li>{seasonNote}</li>
+    </ul>
+    <a class="surf-intro__link" href={getTherePath}>{getThereLabel} →</a>
+  </div>
+</section>
+
+<style>
+  .surf-intro {
+    padding-block: 1.75rem 0.5rem;
+  }
+
+  .surf-intro__inner {
+    padding: 1.25rem;
+    border-radius: var(--radius);
+    background: var(--sand);
+    border: 1px solid rgba(148, 137, 121, 0.25);
+  }
+
+  .surf-intro__inner h2 {
+    font-size: clamp(1.2rem, 4vw, 1.45rem);
+    margin-bottom: 0.65rem;
+    line-height: 1.25;
+  }
+
+  .surf-intro__lead {
+    font-size: var(--text-body);
+    color: var(--navy);
+    margin-bottom: 0.85rem;
+  }
+
+  .surf-intro__facts {
+    display: grid;
+    gap: 0.5rem;
+    margin-bottom: 1rem;
+    padding-left: 1.1rem;
+    font-size: var(--text-small);
+    color: var(--taupe);
+  }
+
+  .surf-intro__link {
+    display: inline-flex;
+    align-items: center;
+    min-height: var(--touch-min);
+    font-weight: 700;
+    color: var(--navy);
+    text-decoration: underline;
+    text-underline-offset: 0.15em;
+  }
+</style>

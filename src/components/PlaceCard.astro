@@ -14,7 +14,7 @@ interface Props {
 const { place, lang, directionsLabel, whatsappLabel, revealIndex = 0 } = Astro.props;
 const ctaUrl = getCtaUrl(place, lang);
 const ctaLabel = getCtaLabel(place, lang, { directions: directionsLabel, whatsapp: whatsappLabel });
-const image = `/media/places/${place.id}.jpg`;
+const image = place.image ?? `/media/places/${place.id}.jpg`;
 ---
 
 <article

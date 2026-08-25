@@ -1,0 +1,82 @@
+---
+import { buildWhatsAppUrl } from '../utils/wa';
+
+interface Props {
+  title: string;
+  sub: string;
+  cta: string;
+  message: string;
+}
+
+const { title, sub, cta, message } = Astro.props;
+const waUrl = buildWhatsAppUrl(message);
+---
+
+<section class="guest-help section" id="section-help" aria-labelledby="guest-help-title">
+  <div class="container guest-help__inner reveal">
+    <div class="guest-help__copy">
+      <h2 id="guest-help-title">{title}</h2>
+      <p>{sub}</p>
+    </div>
+    <a
+      class="guest-help__cta"
+      href={waUrl}
+      target="_blank"
+      rel="noopener noreferrer"
+      data-track-cta
+      data-place-id="guest-help"
+      data-cta-type="whatsapp"
+    >
+      {cta}
+    </a>
+  </div>
+</section>
+
+<style>
+  .guest-help {
+    padding-block: 2.5rem;
+    background: var(--sand);
+  }
+
+  .guest-help__inner {
+    display: grid;
+    gap: 1.25rem;
+    align-items: center;
+    padding: 1.5rem;
+    border-radius: var(--radius);
+    background: var(--navy);
+    color: var(--cream);
+  }
+
+  .guest-help__copy h2 {
+    font-size: clamp(1.25rem, 3vw, 1.5rem);
+    margin-bottom: 0.5rem;
+  }
+
+  .guest-help__copy p {
+    font-size: var(--text-small);
+    color: rgba(224, 225, 220, 0.9);
+    max-width: 38ch;
+  }
+
+  .guest-help__cta {
+    justify-self: start;
+    padding: 0.9rem 1.35rem;
+    border-radius: var(--radius-chip);
+    background: var(--sand);
+    color: var(--navy);
+    font-weight: 700;
+    font-size: var(--text-small);
+    transition: transform var(--dur) var(--ease-out);
+  }
+
+  .guest-help__cta:active {
+    transform: scale(0.98);
+  }
+
+  @media (min-width: 640px) {
+    .guest-help__inner {
+      grid-template-columns: 1fr auto;
+    }
+  }
+</style>

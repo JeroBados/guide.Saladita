@@ -14,10 +14,13 @@ export interface Place {
   name: string;
   lat: number | null;
   lng: number | null;
+  mapsQuery?: string;
   badge: { en: string; es: string };
   desc: { en: string; es: string };
   note?: { en: string; es: string };
   hours?: string;
+  featured?: boolean;
+  image?: string;
   cta: PlaceCta;
 }
 

@@ -16,8 +16,9 @@
   --text-hero: clamp(2.2rem, 8vw, 4.5rem);
   --text-h2: clamp(1.6rem, 5vw, 2.6rem);
   --text-h3: 1.25rem;
-  --text-body: 1rem;
-  --text-small: 0.85rem;
+  --text-body: 1.0625rem;
+  --text-small: 0.9rem;
+  --touch-min: 48px;
 
   /* Superficies */
   --radius: 18px;

@@ -1,6 +1,7 @@
 ---
 import LangToggle from './LangToggle.astro';
 import WaveDivider from './WaveDivider.astro';
+import { buildWhatsAppUrl } from '../utils/wa';
 import type { Lang } from '../utils/i18n';
 
 interface Props {
@@ -11,8 +12,10 @@ interface Props {
   titleLine2: string;
   sub: string;
   langLabel: string;
-  bookCta: string;
+  helpCta: string;
+  helpMessage: string;
   bookHint: string;
+  bookCta: string;
   checkInLabel: string;
   checkOutLabel: string;
   bookMessage: string;
@@ -27,14 +30,17 @@ const {
   titleLine2,
   sub,
   langLabel,
-  bookCta,
+  helpCta,
+  helpMessage,
   bookHint,
+  bookCta,
   checkInLabel,
   checkOutLabel,
   bookMessage,
   bookError,
 } = Astro.props;
 
+const helpUrl = buildWhatsAppUrl(helpMessage);
 const today = new Date().toISOString().slice(0, 10);
 ---
 
@@ -82,6 +88,19 @@ const today = new Date().toISOString().slice(0, 10);
       <button class="hero__book-cta" type="submit">{bookCta}</button>
       <p class="hero__book-error" data-book-error hidden role="alert"></p>
     </form>
+
+    <a
+      class="hero__help hero-fade-in"
+      style="--delay: 3"
+      href={helpUrl}
+      target="_blank"
+      rel="noopener noreferrer"
+      data-track-cta
+      data-place-id="hero-help"
+      data-cta-type="whatsapp"
+    >
+      {helpCta}
+    </a>
   </div>
 
   <WaveDivider />
@@ -94,7 +113,6 @@ const today = new Date().toISOString().slice(0, 10);
     const form = document.querySelector('[data-book-form]');
     const configEl = document.getElementById('hero-book-config');
     if (!form || !configEl) return;
-
     if (form.dataset.bound === 'true') return;
     form.dataset.bound = 'true';
 
@@ -119,35 +137,21 @@ const today = new Date().toISOString().slice(0, 10);
     }
 
     checkinInput?.addEventListener('change', () => {
-      if (checkoutInput && checkinInput.value) {
-        checkoutInput.min = checkinInput.value;
-      }
+      if (checkoutInput && checkinInput.value) checkoutInput.min = checkinInput.value;
     });
 
     form.addEventListener('submit', (event) => {
       event.preventDefault();
-
       const data = new FormData(form);
       const checkin = String(data.get('checkin') || '');
       const checkout = String(data.get('checkout') || '');
-      if (!checkin || !checkout) {
+      if (!checkin || !checkout || checkout <= checkin) {
         showError(errorText);
         return;
       }
-      if (checkout <= checkin) {
-        showError(errorText);
-        return;
-      }
-
       showError('');
       const message = template.replaceAll('{checkin}', checkin).replaceAll('{checkout}', checkout);
-      const url = `https://wa.me/525611073849?text=${encodeURIComponent(message)}`;
-
-      if (typeof window.gtag === 'function') {
-        window.gtag('event', 'cta_click', { place: 'hero-book-house', type: 'whatsapp' });
-      }
-
-      window.location.href = url;
+      window.location.href = `https://wa.me/525611073849?text=${encodeURIComponent(message)}`;
     });
   }
 
@@ -185,12 +189,7 @@ const today = new Date().toISOString().slice(0, 10);
   .hero__overlay {
     position: absolute;
     inset: 0;
-    background: linear-gradient(
-      180deg,
-      rgba(21, 52, 72, 0.45) 0%,
-      rgba(60, 91, 111, 0.62) 55%,
-      rgba(21, 52, 72, 0.92) 100%
-    );
+    background: linear-gradient(180deg, rgba(21, 52, 72, 0.45) 0%, rgba(60, 91, 111, 0.62) 55%, rgba(21, 52, 72, 0.94) 100%);
   }
 
   .hero__bar {
@@ -200,16 +199,11 @@ const today = new Date().toISOString().slice(0, 10);
     align-items: center;
     justify-content: space-between;
     gap: 1rem;
-    padding-block: 1.25rem;
-  }
-
-  .hero__logo {
-    display: inline-flex;
-    align-items: center;
+    padding-block: 1rem;
   }
 
   .hero__logo-image {
-    width: 72px;
+    width: 64px;
     height: auto;
     filter: drop-shadow(0 4px 12px rgba(0, 0, 0, 0.25));
   }
@@ -217,33 +211,29 @@ const today = new Date().toISOString().slice(0, 10);
   .hero__content {
     position: relative;
     z-index: 3;
-    padding-block: 1.5rem 5.5rem;
-    max-width: 36rem;
-  }
-
-  .hero__eyebrow {
-    color: var(--sand);
+    padding-block: 1rem 4.5rem;
   }
 
   .hero__title {
     font-size: var(--text-hero);
     line-height: 1.05;
-    margin-bottom: 1rem;
+    margin-bottom: 0.85rem;
   }
 
   .hero__sub {
-    max-width: 34ch;
-    font-size: clamp(1rem, 2.5vw, 1.12rem);
+    font-size: 1.05rem;
     color: rgba(224, 225, 220, 0.92);
-    margin-bottom: 1.25rem;
+    margin-bottom: 1.15rem;
+    max-width: 36ch;
   }
 
   .hero__book {
     display: grid;
-    gap: 0.85rem;
+    gap: 0.75rem;
     padding: 1rem;
+    margin-bottom: 0.85rem;
     border-radius: var(--radius);
-    background: rgba(21, 52, 72, 0.55);
+    background: rgba(21, 52, 72, 0.6);
     border: 1px solid rgba(231, 216, 192, 0.25);
     backdrop-filter: blur(8px);
   }
@@ -262,30 +252,27 @@ const today = new Date().toISOString().slice(0, 10);
     display: grid;
     gap: 0.35rem;
     font-size: var(--text-small);
-    color: var(--cream);
   }
 
   .hero__book-field input {
-    padding: 0.65rem 0.75rem;
+    min-height: var(--touch-min);
+    padding: 0.75rem;
     border: 1px solid rgba(231, 216, 192, 0.35);
     border-radius: 12px;
     background: rgba(224, 225, 220, 0.95);
     color: var(--navy);
     font: inherit;
+    font-size: 1rem;
   }
 
   .hero__book-cta {
-    padding: 0.85rem 1.1rem;
+    min-height: var(--touch-min);
+    padding: 0.95rem 1.1rem;
     border-radius: var(--radius-chip);
     background: var(--sand);
     color: var(--navy);
     font-weight: 700;
-    font-size: var(--text-small);
-    transition: transform var(--dur) var(--ease-out);
-  }
-
-  .hero__book-cta:active {
-    transform: scale(0.98);
+    font-size: 1rem;
   }
 
   .hero__book-error {
@@ -293,13 +280,16 @@ const today = new Date().toISOString().slice(0, 10);
     color: #ffb4a8;
   }
 
-  @media (min-width: 640px) {
-    .hero__book-fields {
-      grid-template-columns: 1fr 1fr;
-    }
-
-    .hero__logo-image {
-      width: 88px;
-    }
+  .hero__help {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    min-height: var(--touch-min);
+    padding: 0.85rem 1rem;
+    border-radius: var(--radius-chip);
+    border: 1px solid rgba(164, 178, 176, 0.55);
+    color: var(--cream);
+    font-size: var(--text-small);
+    font-weight: 600;
   }
 </style>

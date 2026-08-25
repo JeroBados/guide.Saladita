@@ -12,11 +12,11 @@ interface Props {
 
 const { place, lang, ctaLabel, revealIndex = 0 } = Astro.props;
 const ctaUrl = getCtaUrl(place, lang);
-const image = `/media/places/${place.id}.jpg`;
+const image = place.image ?? `/media/places/${place.id}.jpg`;
 ---
 
 <article
-  class="service-card reveal"
+  class:list={['service-card reveal', { 'service-card--featured': place.featured }]}
   data-chip={place.chip}
   data-place-id={place.id}
   style={`--i: ${revealIndex}`}
@@ -80,6 +80,16 @@ const image = `/media/places/${place.id}.jpg`;
   .service-card:focus-within {
     transform: translateY(-4px);
     box-shadow: var(--shadow-float);
+  }
+
+  .service-card--featured {
+    border: 2px solid var(--navy);
+    background: var(--cream);
+  }
+
+  .service-card--featured .service-card__badge {
+    background: var(--navy);
+    color: var(--cream);
   }
 
   .service-card__media {
