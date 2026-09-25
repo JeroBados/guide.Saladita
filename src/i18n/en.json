@@ -90,7 +90,7 @@
   "week.gone": "gone",
   "week.daysLabel": "Next 8 days",
   "week.note": "Dawn usually wins. Look at the ocean before you paddle out.",
-  "week.source": "Estimate from the Open-Meteo marine and wind models at the Saladita point. A model, not a dawn report.",
+  "week.source": "Blended from {n} swell models (ECMWF, GFS and Météo-France) plus the wind at the Saladita point. An estimate, not a dawn report.",
   "week.unavailable": "The weekly read isn't loading right now. Rule of thumb: the swell season runs from May to September and October, and the best sessions are early, with offshore wind.",
   "season.title": "Month by month",
   "season.month": "Month",

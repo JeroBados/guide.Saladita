@@ -90,7 +90,7 @@
   "week.gone": "pasó",
   "week.daysLabel": "Próximos 8 días",
   "week.note": "La madrugada casi siempre gana. Mira el mar antes de remar.",
-  "week.source": "Estimación con los modelos marino y de viento de Open-Meteo en el point de Saladita. Es un modelo, no el parte de la madrugada.",
+  "week.source": "Cruce de {n} modelos de oleaje (ECMWF, GFS y Météo-France) con el viento en el point. Una estimación, no el parte de la madrugada.",
   "week.unavailable": "La lectura de la semana no está cargando ahora. Regla general: la temporada de swell va de mayo a septiembre y octubre, y las mejores sesiones son temprano, con viento offshore.",
   "season.title": "Mes a mes",
   "season.month": "Mes",

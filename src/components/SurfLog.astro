@@ -39,6 +39,7 @@ const i18n = {
   falling: t['week.falling'],
   ratings: [t['week.r1'], t['week.r2'], t['week.r3'], t['week.r4']],
   gone: t['week.gone'],
+  source: t['week.source'],
 };
 ---
 
@@ -177,14 +178,28 @@ const i18n = {
     const t = JSON.parse(root.dataset.i18n || '{}');
     const $ = <T extends HTMLElement>(s: string) => root.querySelector<T>(s)!;
 
-    const marineUrl = `https://marine-api.open-meteo.com/v1/marine?latitude=${LAT}&longitude=${LNG}&hourly=wave_height,swell_wave_height,swell_wave_period,swell_wave_direction,sea_level_height_msl&timezone=${encodeURIComponent(TZ)}&forecast_days=8`;
+    const models = ['ecmwf_wam', 'ncep_gfswave025', 'meteofrance_wave'];
+    const marineBase = `https://marine-api.open-meteo.com/v1/marine?latitude=${LAT}&longitude=${LNG}&hourly=wave_height,swell_wave_height,swell_wave_period,swell_wave_direction,sea_level_height_msl&timezone=${encodeURIComponent(TZ)}&forecast_days=8&models=`;
     const windUrl = `https://api.open-meteo.com/v1/forecast?latitude=${LAT}&longitude=${LNG}&hourly=wind_speed_10m,wind_direction_10m&timezone=${encodeURIComponent(TZ)}&forecast_days=8`;
 
     try {
-      const [mr, wr] = await Promise.all([fetch(marineUrl), fetch(windUrl)]);
-      if (!mr.ok || !wr.ok) throw new Error('forecast');
-      const m = (await mr.json()).hourly;
-      const w = (await wr.json()).hourly;
+      const fetched = await Promise.all([
+        ...models.map(async (model) => {
+          try {
+            const res = await fetch(marineBase + model);
+            if (!res.ok) return null;
+            return ((await res.json()).hourly as Record<string, (number | null)[] | string[]> | undefined) ?? null;
+          } catch {
+            return null;
+          }
+        }),
+        fetch(windUrl).then(async (res) => (res.ok ? ((await res.json()).hourly as Record<string, (number | null)[] | string[]>) : null)),
+      ]);
+      const windHours = fetched.pop() as Record<string, (number | null)[] | string[]> | null;
+      const sources = fetched.filter((src): src is Record<string, (number | null)[] | string[]> => src != null && Array.isArray(src.time));
+      if (!sources.length || !windHours) throw new Error('forecast');
+      const m = sources[0];
+      const w = windHours;
       const now = nowParts();
 
       const byDate = new Map<string, number[]>();
@@ -207,21 +222,52 @@ const i18n = {
           const hs = [start, start + 1, start + 2].map(hourIdx).filter((i): i is number => i != null);
           if (hs.length < 3) continue;
           const val = (arr: (number | null)[], i: number, alt?: (number | null)[]) => (arr[i] ?? alt?.[i] ?? 0) as number;
-          const scores = hs.map((i) =>
-            hourScore(val(m.swell_wave_height, i, m.wave_height), val(m.swell_wave_period, i), val(m.swell_wave_direction, i), val(w.wind_direction_10m, i), val(w.wind_speed_10m, i), norm(val(m.sea_level_height_msl, i))),
-          );
-          const score = scores.reduce((a, b) => a + b, 0) / scores.length;
+          const num = (src: Record<string, (number | null)[] | string[]>, key: string, i: number, alt?: string) => {
+            const primary = src[key];
+            const fallback = alt ? src[alt] : undefined;
+            const value = (Array.isArray(primary) ? primary[i] : null) ?? (Array.isArray(fallback) ? fallback[i] : null);
+            return typeof value === 'number' ? value : null;
+          };
+          const blend = (i: number) => {
+            const rows = sources
+              .map((src) => {
+                const swell = num(src, 'swell_wave_height', i, 'wave_height');
+                const period = num(src, 'swell_wave_period', i);
+                const dir = num(src, 'swell_wave_direction', i);
+                if (swell == null || period == null || dir == null) return null;
+                return {
+                  swell,
+                  period,
+                  dir,
+                  score: hourScore(swell, period, dir, val(w.wind_direction_10m, i), val(w.wind_speed_10m, i), norm(val(m.sea_level_height_msl, i))),
+                };
+              })
+              .filter((row): row is { swell: number; period: number; dir: number; score: number } => row != null);
+            if (!rows.length) return null;
+            const sin = rows.reduce((sum, row) => sum + Math.sin((row.dir * Math.PI) / 180), 0);
+            const cos = rows.reduce((sum, row) => sum + Math.cos((row.dir * Math.PI) / 180), 0);
+            return {
+              score: rows.reduce((sum, row) => sum + row.score, 0) / rows.length,
+              swell: rows.reduce((sum, row) => sum + row.swell, 0) / rows.length,
+              period: rows.reduce((sum, row) => sum + row.period, 0) / rows.length,
+              dir: (Math.atan2(sin, cos) * 180) / Math.PI,
+            };
+          };
+          const blends = hs.map(blend).filter((row): row is NonNullable<ReturnType<typeof blend>> => row != null);
+          if (blends.length < 3) continue;
+          const score = blends.reduce((sum, row) => sum + row.score, 0) / blends.length;
           if (!best || score > (best.score ?? -1)) {
             const i = hs[1];
+            const mid = blends[1] ?? blends[0];
             const ws = val(w.wind_speed_10m, i);
             const wd = val(w.wind_direction_10m, i);
             best = {
               date,
               score,
               start,
-              swell: val(m.swell_wave_height, i, m.wave_height),
-              period: val(m.swell_wave_period, i),
-              swellDir: val(m.swell_wave_direction, i),
+              swell: mid.swell,
+              period: mid.period,
+              swellDir: (mid.dir + 360) % 360,
               windSpeed: ws,
               windDir: wd,
               windKind: windKind(wd, ws),
@@ -236,6 +282,9 @@ const i18n = {
       const scored = days.filter((d) => d.score != null);
       if (!scored.length) throw new Error('empty');
       const top = scored.reduce((a, b) => ((b.score ?? 0) > (a.score ?? 0) ? b : a));
+
+      const sourceEl = root.querySelector('.log__source');
+      if (sourceEl && t.source) sourceEl.textContent = String(t.source).replace('{n}', String(sources.length));
 
       const dFmt = (iso: string, o: Intl.DateTimeFormatOptions) => new Intl.DateTimeFormat(locale, { ...o, timeZone: 'UTC' }).format(new Date(`${iso}T12:00:00Z`));
       const windowLabel = (d: Day) => (d.start + 3 < 12 ? `${d.start}–${d.start + 3} am` : `${d.start} am–12 pm`);
