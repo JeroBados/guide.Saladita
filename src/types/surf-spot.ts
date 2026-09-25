@@ -7,9 +7,11 @@ export interface SurfSpot {
   type: { en: string; es: string };
   bottom: { en: string; es: string };
   level: { en: string; es: string };
+  board: { en: string; es: string };
   tide: { en: string; es: string };
   wind: { en: string; es: string };
   swell: { en: string; es: string };
+  access: { en: string; es: string };
   rideLength?: { en: string; es: string };
   lat: number;
   lng: number;

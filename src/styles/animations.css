@@ -116,6 +116,39 @@
   }
 }
 
+.sketch {
+  width: 4.5rem;
+  height: auto;
+  color: currentColor;
+}
+
+.sketch__line {
+  fill: none;
+  stroke: currentColor;
+  stroke-width: 1.7;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+  stroke-dasharray: 1;
+  stroke-dashoffset: 1;
+  animation: ink 1.35s var(--ease-out) forwards;
+}
+
+@keyframes ink {
+  to {
+    stroke-dashoffset: 0;
+  }
+}
+
+.float-draw {
+  animation: bob 5.5s ease-in-out infinite;
+}
+
+@keyframes bob {
+  50% {
+    transform: translateY(-6px);
+  }
+}
+
 /* Chip filter — View Transitions primary; fade handled in IntentChips */
 
 /* 2. Respeto reduced motion — obligatorio */
@@ -135,5 +168,9 @@
   .reveal {
     opacity: 1;
     transform: none;
+  }
+
+  .sketch__line {
+    stroke-dashoffset: 0 !important;
   }
 }

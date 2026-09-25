@@ -2,6 +2,7 @@
 import type { Lang } from '../utils/i18n';
 import type { SurfSpot } from '../types/surf-spot';
 import { buildMapsDirectionsUrl } from '../utils/wa';
+import Sketch from './Sketch.astro';
 
 interface Props {
   spot: SurfSpot;
@@ -10,11 +11,12 @@ interface Props {
   revealIndex?: number;
   labels: {
     type: string;
-    bottom: string;
+    board: string;
     level: string;
     tide: string;
     wind: string;
     swell: string;
+    access: string;
     ride: string;
   };
 }
@@ -28,6 +30,7 @@ const mapsUrl = spot.mapsQuery
 
 <article class="surf-spot-card reveal" style={`--i: ${revealIndex}`}>
   <div class="surf-spot-card__media">
+    <span class="surf-spot-card__draw"><Sketch name="board" /></span>
     <img class="surf-spot-card__image" src={image} alt="" loading="lazy" decoding="async" data-spot-image />
   </div>
 
@@ -37,12 +40,11 @@ const mapsUrl = spot.mapsQuery
     <p class="surf-spot-card__summary">{spot.summary[lang]}</p>
 
     <dl class="surf-spot-card__specs">
-      <div><dt>{labels.type}</dt><dd>{spot.type[lang]}</dd></div>
-      <div><dt>{labels.bottom}</dt><dd>{spot.bottom[lang]}</dd></div>
+      <div><dt>{labels.board}</dt><dd>{spot.board[lang]}</dd></div>
       <div><dt>{labels.level}</dt><dd>{spot.level[lang]}</dd></div>
-      <div><dt>{labels.tide}</dt><dd>{spot.tide[lang]}</dd></div>
       <div><dt>{labels.wind}</dt><dd>{spot.wind[lang]}</dd></div>
-      <div><dt>{labels.swell}</dt><dd>{spot.swell[lang]}</dd></div>
+      <div><dt>{labels.tide}</dt><dd>{spot.tide[lang]}</dd></div>
+      <div><dt>{labels.access}</dt><dd>{spot.access[lang]}</dd></div>
       {
         spot.rideLength && (
           <div class="surf-spot-card__ride">
@@ -67,19 +69,39 @@ const mapsUrl = spot.mapsQuery
 
 <style>
   .surf-spot-card {
-    background: var(--sand);
-    border-radius: var(--radius);
+    background: #f7f4ee;
+    border-radius: 24px;
     overflow: hidden;
     box-shadow: var(--shadow-card);
+    transition: transform var(--dur) var(--ease-out), box-shadow var(--dur) var(--ease-out);
+  }
+
+  .surf-spot-card:active {
+    transform: scale(0.985);
   }
 
   .surf-spot-card__media {
+    position: relative;
     aspect-ratio: 16 / 10;
     overflow: hidden;
-    background: linear-gradient(135deg, rgba(21, 52, 72, 0.15), rgba(164, 178, 176, 0.35)), var(--cream);
+    background: linear-gradient(160deg, #153448, #3c5b6f);
+    color: var(--sand);
+  }
+
+  .surf-spot-card__draw {
+    position: absolute;
+    inset: 0;
+    display: grid;
+    place-items: center;
+  }
+
+  .surf-spot-card__draw :global(.sketch) {
+    width: 6.5rem;
   }
 
   .surf-spot-card__image {
+    position: relative;
+    z-index: 1;
     width: 100%;
     height: 100%;
     object-fit: cover;
@@ -120,8 +142,7 @@ const mapsUrl = spot.mapsQuery
 
   .surf-spot-card__specs div {
     display: grid;
-    grid-template-columns: 5.5rem 1fr;
-    gap: 0.5rem;
+    gap: 0.15rem;
   }
 
   .surf-spot-card__specs dt {

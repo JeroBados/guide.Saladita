@@ -1,19 +1,13 @@
 ---
-import GuideNav from './GuideNav.astro';
-import SurfIntro from './SurfIntro.astro';
-import SurfToday from './SurfToday.astro';
+import WeekBoard from './WeekBoard.astro';
 import SurfSpotCard from './SurfSpotCard.astro';
-import MiniMap from './MiniMap.astro';
-import PackagesSection from './PackagesSection.astro';
 import PlaceCard from './PlaceCard.astro';
-import ServiceCard from './ServiceCard.astro';
-import TipsTeaser from './TipsTeaser.astro';
-import GuestHelp from './GuestHelp.astro';
-import StayRebook from './StayRebook.astro';
+import GuideNav from './GuideNav.astro';
+import Sketch from './Sketch.astro';
 import type { Lang } from '../utils/i18n';
-import { getEatPlaces, getServicePlaces, getStayPlaces } from '../utils/places';
+import { getEatPlaces } from '../utils/places';
 import { getSurfSpots } from '../utils/surf';
-import { WA_CATALOG_URL } from '../utils/wa';
+import { buildWhatsAppUrl } from '../utils/wa';
 
 interface Props {
   lang: Lang;
@@ -21,90 +15,76 @@ interface Props {
 }
 
 const { lang, t } = Astro.props;
-
 const eatPlaces = getEatPlaces();
 const surfSpots = getSurfSpots();
-const servicePlaces = getServicePlaces();
-const stayPlaces = getStayPlaces();
-
-const getTherePath = lang === 'es' ? '/es/como-llegar' : '/get-there';
-const stayBeachfrontUrl =
+const experiencesUrl =
   lang === 'es'
-    ? 'https://lasaladitarentals.com/es?utm_source=guide&utm_medium=surf_report&utm_campaign=beachfront'
-    : 'https://lasaladitarentals.com/en?utm_source=guide&utm_medium=surf_report&utm_campaign=beachfront';
-const mapEmbed =
-  'https://maps.google.com/maps?q=La+Saladita+Guerrero+Mexico&z=13&output=embed';
-const mapOpen = 'https://www.google.com/maps/search/La+Saladita+Guerrero+Mexico';
+    ? 'https://lasaladitarentals.com/en/experiences-in-la-saladita?utm_source=guide&utm_medium=tips'
+    : 'https://lasaladitarentals.com/en/experiences-in-la-saladita?utm_source=guide&utm_medium=tips';
+const askUrl = buildWhatsAppUrl(t['ask.message']);
 
-const tipItems = [
-  { id: 'cash', title: t['tips.accordion.cash.title'], body: t['tips.accordion.cash.body'] },
-  { id: 'signal', title: t['tips.accordion.signal.title'], body: t['tips.accordion.signal.body'] },
-  { id: 'roads', title: t['tips.accordion.roads.title'], body: t['tips.accordion.roads.body'] },
-  {
-    id: 'groceries',
-    title: t['tips.accordion.groceries.title'],
-    body: t['tips.accordion.groceries.body'],
-  },
-  { id: 'respect', title: t['tips.accordion.respect.title'], body: t['tips.accordion.respect.body'] },
+const faqs = [
+  { q: t['faq.airport.q'], a: t['faq.airport.a'] },
+  { q: t['faq.cash.q'], a: t['faq.cash.a'] },
+  { q: t['faq.signal.q'], a: t['faq.signal.a'] },
+  { q: t['faq.water.q'], a: t['faq.water.a'] },
+  { q: t['faq.season.q'], a: t['faq.season.a'] },
+  { q: t['faq.safety.q'], a: t['faq.safety.a'] },
 ];
+
+const faqLd = {
+  '@context': 'https://schema.org',
+  '@type': 'FAQPage',
+  dateModified: '2026-09-01',
+  author: {
+    '@type': 'Organization',
+    name: 'Saladita Rentals',
+    url: 'https://lasaladitarentals.com',
+  },
+  mainEntity: faqs.map((item) => ({
+    '@type': 'Question',
+    name: item.q,
+    acceptedAnswer: { '@type': 'Answer', text: item.a },
+  })),
+};
 
 const navItems = [
   { id: 'surf', label: t['nav.surf'], href: '#section-surf' },
   { id: 'spots', label: t['nav.spots'], href: '#section-spots' },
-  { id: 'packages', label: t['nav.packages'], href: '#section-packages' },
   { id: 'eat', label: t['nav.eat'], href: '#section-eat' },
-  { id: 'services', label: t['nav.services'], href: '#section-services' },
   { id: 'tips', label: t['nav.tips'], href: '#section-tips' },
 ];
 
 const specLabels = {
   type: t['surf.spec.type'],
-  bottom: t['surf.spec.bottom'],
+  board: t['surf.spec.board'],
   level: t['surf.spec.level'],
   tide: t['surf.spec.tide'],
   wind: t['surf.spec.wind'],
   swell: t['surf.spec.swell'],
+  access: t['surf.spec.access'],
   ride: t['surf.spec.ride'],
 };
 ---
 
-<SurfIntro
-  lang={lang}
-  title={t['intro.title']}
-  sayulitaNote={t['intro.sayulita']}
-  waterNote={t['intro.water']}
-  seasonNote={t['intro.season']}
-  getThereLabel={t['intro.getThere']}
-  getTherePath={getTherePath}
-/>
-
 <GuideNav label={t['nav.label']} items={navItems} />
 
-<div id="section-surf">
-  <SurfToday
-    lang={lang}
-    titleHtml={t['surf.title']}
-    forecastLabel={t['surf.forecast']}
-    pickSpotLabel={t['surf.pickSpot']}
-    waterTempLabel={t['surf.waterTemp']}
-    waterTempValue={t['surf.waterTempValue']}
-    seasonLabel={t['surf.season']}
-    seasonValue={t['surf.seasonValue']}
-    bookLessonLabel={t['surf.bookLesson']}
-    lessonWaText={t['surf.lessonWa']}
-    stayCtaLabel={t['surf.stayCta']}
-    stayCtaUrl={stayBeachfrontUrl}
-    spots={surfSpots}
-  />
-</div>
+<WeekBoard
+  lang={lang}
+  title={t['week.title']}
+  note={t['week.note']}
+  source={t['week.source']}
+  unavailable={t['week.unavailable']}
+/>
 
-<section class="section section--alt" id="section-spots" aria-labelledby="surf-spots-title">
+<section class="section" id="section-spots" aria-labelledby="spots-title">
   <div class="container">
-    <div class="section__header reveal">
-      <h2 id="surf-spots-title" set:html={t['surf.spots']} />
+    <div class="section__header section__header--draw">
+      <Sketch name="wave" />
+      <h2 id="spots-title" set:html={t['surf.spots']} />
       <p class="section__lead">{t['surf.spotsLead']}</p>
     </div>
-    <div class="spot-list">
+    <div class="spot-list rail">
       {
         surfSpots.map((spot, index) => (
           <SurfSpotCard
@@ -117,33 +97,28 @@ const specLabels = {
         ))
       }
     </div>
-    <p class="spots-cta reveal">{t['surf.spotsStay']}</p>
-    <a class="spots-cta__link" href={stayBeachfrontUrl} target="_blank" rel="noopener noreferrer">{t['surf.stayCta']}</a>
   </div>
 </section>
 
-<MiniMap
-  title={t['map.title']}
-  embedUrl={mapEmbed}
-  openLabel={t['map.open']}
-  openUrl={mapOpen}
-/>
-
-<PackagesSection
-  lang={lang}
-  titleHtml={t['packages.title']}
-  lead={t['packages.lead']}
-  waLabel={t['services.cta']}
-  webLabel={t['packages.web']}
-/>
+<section class="section section--alt ask" id="section-ask">
+  <div class="container ask__inner">
+    <h2>{t['ask.title']}</h2>
+    <p>{t['ask.body']}</p>
+    <div class="ask__actions">
+      <a class="ask__wa" href={askUrl} target="_blank" rel="noopener noreferrer">{t['ask.cta']}</a>
+      <a class="ask__web" href={experiencesUrl} target="_blank" rel="noopener noreferrer">{t['ask.web']}</a>
+    </div>
+  </div>
+</section>
 
 <section class="section" id="section-eat" aria-labelledby="eat-title">
   <div class="container">
-    <div class="section__header reveal">
+    <div class="section__header section__header--draw">
+      <Sketch name="plate" />
       <h2 id="eat-title" set:html={t['eat.title']} />
       <p class="section__lead">{t['eat.lead']}</p>
     </div>
-    <div class="card-grid card-grid--mobile">
+    <div class="card-grid rail">
       {
         eatPlaces.map((place, index) => (
           <PlaceCard
@@ -159,169 +134,162 @@ const specLabels = {
   </div>
 </section>
 
-<section class="section section--alt" id="section-services" aria-labelledby="services-title">
+<section class="section section--alt" id="section-tips" aria-labelledby="tips-title">
   <div class="container">
-    <div class="section__header reveal">
-      <h2 id="services-title" set:html={t['services.title']} />
-      <p class="section__lead">{t['services.lead']}</p>
+    <div class="section__header section__header--draw">
+      <Sketch name="sun" />
+      <h2 id="tips-title" set:html={t['tips.title']} />
     </div>
-    <div class="card-grid card-grid--mobile">
+    <div class="faq">
       {
-        servicePlaces.map((place, index) => (
-          <ServiceCard place={place} lang={lang} ctaLabel={t['services.cta']} revealIndex={index} />
+        faqs.map((item) => (
+          <article class="faq__item reveal">
+            <h3>{item.q}</h3>
+            <p>{item.a}</p>
+          </article>
         ))
       }
     </div>
+    <p class="byline">{t['byline']}</p>
   </div>
 </section>
 
-<TipsTeaser
-  titleHtml={t['tips.title']}
-  eyebrow={t['chips.tips']}
-  teaser={t['tips.teaser']}
-  teaserCard={t['tips.teaserCard']}
-  items={tipItems}
-/>
-
-<GuestHelp
-  title={t['help.title']}
-  sub={t['help.sub']}
-  cta={t['help.cta']}
-  message={t['wa.floating']}
-/>
-
-{
-  stayPlaces.length > 0 && (
-    <section class="section" id="section-stay" aria-labelledby="stay-places-title">
-      <div class="container">
-        <div class="section__header reveal">
-          <h2 id="stay-places-title" set:html={t['stay.places']} />
-          <p class="section__lead">{t['stay.lead']}</p>
-        </div>
-
-        <div class="stay-catalog reveal">
-          <p class="stay-catalog__hint">{t['stay.catalogHint']}</p>
-          <a
-            class="stay-catalog__cta"
-            href={WA_CATALOG_URL}
-            target="_blank"
-            rel="noopener noreferrer"
-            data-track-cta
-            data-place-id="stay-catalog"
-            data-cta-type="link"
-          >
-            {t['stay.catalog']}
-          </a>
-        </div>
-
-        <div class="card-grid card-grid--mobile">
-          {stayPlaces.map((place, index) => (
-            <PlaceCard
-              place={place}
-              lang={lang}
-              directionsLabel={t['place.openMaps']}
-              whatsappLabel={t['services.cta']}
-              revealIndex={index}
-            />
-          ))}
-        </div>
-      </div>
-    </section>
-  )
-}
-
-<StayRebook
-  titleHtml={t['stay.title']}
-  sub={t['stay.sub']}
-  catalogLabel={t['stay.catalog']}
-  rebookLabel={t['stay.rebookWa']}
-  websiteLabel={t['stay.website']}
-  instagramLabel={t['stay.instagram']}
-  ratingLabel={t['stay.stat.rating']}
-  occupancyLabel={t['stay.stat.occupancy']}
-  rebookMessage={t['stay.rebookMessage']}
-/>
-
-<script>
-  import { trackCtaClick } from '../utils/analytics';
-  document.addEventListener('click', (event) => {
-    const target = (event.target as HTMLElement).closest<HTMLElement>('[data-track-cta]');
-    if (!target) return;
-    const placeId = target.dataset.placeId;
-    const ctaType = target.dataset.ctaType;
-    if (placeId && ctaType) trackCtaClick(placeId, ctaType);
-  });
-</script>
+<script type="application/ld+json" set:html={JSON.stringify(faqLd)} />
 
 <style>
+  .section__header--draw {
+    display: grid;
+    gap: 0.35rem;
+    color: var(--navy);
+  }
+
+  .section__header--draw :global(.sketch) {
+    width: 3.4rem;
+  }
+
+  .rail {
+    display: grid;
+    grid-auto-flow: column;
+    grid-auto-columns: minmax(16.5rem, 78%);
+    gap: 0.9rem;
+    overflow-x: auto;
+    scroll-snap-type: x mandatory;
+    scroll-padding-inline: 0.2rem;
+    padding-bottom: 0.6rem;
+    scrollbar-width: none;
+  }
+
+  .rail::-webkit-scrollbar {
+    display: none;
+  }
+
+  .rail > :global(*) {
+    scroll-snap-align: start;
+  }
+
+  @media (min-width: 800px) {
+    .rail {
+      grid-auto-flow: row;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      grid-auto-columns: unset;
+      overflow: visible;
+    }
+  }
+
+  @media (min-width: 1100px) {
+    .rail {
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+    }
+  }
+
   .section__lead {
-    margin-top: 0.65rem;
-    max-width: 42rem;
+    margin-top: 0.55rem;
     color: var(--taupe);
     font-size: var(--text-small);
+    max-width: 38rem;
   }
 
   .section--alt {
-    background: rgba(231, 216, 192, 0.35);
+    background: rgba(231, 216, 192, 0.4);
   }
 
-  .spot-list {
+  .spot-list,
+  .faq {
     display: grid;
     gap: 1rem;
   }
 
-  .spots-cta {
-    margin-top: 1.25rem;
-    font-size: var(--text-small);
+  .ask__inner {
+    display: grid;
+    gap: 0.75rem;
+  }
+
+  .ask__inner p {
+    max-width: 40rem;
     color: var(--taupe);
   }
 
-  .spots-cta__link {
-    display: inline-flex;
-    align-items: center;
-    min-height: var(--touch-min);
-    margin-top: 0.5rem;
-    font-weight: 700;
-    color: var(--navy);
-    text-decoration: underline;
-    text-underline-offset: 0.15em;
-  }
-
-  .card-grid--mobile {
-    grid-template-columns: 1fr;
-  }
-
-  @media (min-width: 640px) {
-    .card-grid--mobile {
-      grid-template-columns: repeat(2, minmax(0, 1fr));
-    }
-  }
-
-  .stay-catalog {
+  .ask__actions {
     display: grid;
-    gap: 0.85rem;
-    margin-bottom: 1.25rem;
-    padding: 1.25rem;
-    border-radius: var(--radius);
-    background: var(--sand);
-    border: 1px solid rgba(148, 137, 121, 0.25);
+    gap: 0.65rem;
   }
 
-  .stay-catalog__hint {
-    color: var(--navy);
-    max-width: 36rem;
-  }
-
-  .stay-catalog__cta {
+  .ask__wa,
+  .ask__web {
     display: flex;
     align-items: center;
     justify-content: center;
     min-height: var(--touch-min);
-    padding: 0.9rem 1.2rem;
+    padding: 0.85rem 1rem;
     border-radius: var(--radius-chip);
+    font-weight: 700;
+  }
+
+  .ask__wa {
     background: var(--navy);
     color: var(--cream);
-    font-size: 1rem;
-    font-weight: 700;
+  }
+
+  .ask__web {
+    border: 1px solid var(--navy);
+    color: var(--navy);
+  }
+
+  .faq__item {
+    padding: 1.05rem 1.1rem;
+    border-radius: 20px;
+    background: #f7f4ee;
+    border: 1px solid rgba(21, 52, 72, 0.08);
+    box-shadow: var(--shadow-card);
+  }
+
+  .faq__item h3 {
+    font-family: var(--font-display);
+    font-size: 1.15rem;
+    margin-bottom: 0.35rem;
+  }
+
+  .faq__item p {
+    color: var(--navy);
+    max-width: 46rem;
+  }
+
+  .byline {
+    margin-top: 1.25rem;
+    font-size: var(--text-small);
+    color: var(--taupe);
+    max-width: 42rem;
+  }
+
+  @media (min-width: 640px) {
+    .ask__actions {
+      grid-template-columns: auto auto;
+      justify-content: start;
+    }
+
+    .ask__wa,
+    .ask__web {
+      padding-inline: 1.2rem;
+    }
   }
 </style>

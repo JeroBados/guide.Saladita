@@ -1,0 +1,38 @@
+---
+interface Props {
+  name: 'wave' | 'board' | 'sun' | 'plate';
+}
+
+const { name } = Astro.props;
+---
+
+<svg class="sketch" viewBox="0 0 96 56" fill="none" aria-hidden="true">
+  {
+    name === 'wave' && (
+      <path
+        class="sketch__line"
+        pathLength="1"
+        d="M4 34c10-10 16-10 24-2s14 8 24 0 14-8 24 0 12 8 16 2"
+      />
+    )
+  }
+  {
+    name === 'board' && (
+      <path class="sketch__line" pathLength="1" d="M38 6c10 8 16 22 16 36 0 6-2 8-6 8s-8-4-10-12C36 26 34 12 38 6z" />
+    )
+  }
+  {
+    name === 'sun' && (
+      <path
+        class="sketch__line"
+        pathLength="1"
+        d="M48 22a8 8 0 1 0 0.1 0M48 8v6M48 42v6M32 22h-6M70 22h-6M36 12l4 4M60 32l4 4M60 12l-4 4M36 32l-4 4"
+      />
+    )
+  }
+  {
+    name === 'plate' && (
+      <path class="sketch__line" pathLength="1" d="M28 28a20 12 0 1 0 40 0 20 12 0 1 0-40 0M48 16v-6" />
+    )
+  }
+</svg>

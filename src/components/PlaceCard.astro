@@ -2,6 +2,7 @@
 import type { Lang } from '../utils/i18n';
 import type { Place } from '../types/place';
 import { getCtaLabel, getCtaUrl } from '../utils/wa';
+import Sketch from './Sketch.astro';
 
 interface Props {
   place: Place;
@@ -24,6 +25,7 @@ const image = place.image ?? `/media/places/${place.id}.jpg`;
   style={`--i: ${revealIndex}`}
 >
   <div class="place-card__media">
+    <span class="place-card__draw"><Sketch name="plate" /></span>
     <img
       class="place-card__image"
       src={image}
@@ -81,8 +83,12 @@ const image = place.image ?? `/media/places/${place.id}.jpg`;
 
   .place-card:hover,
   .place-card:focus-within {
-    transform: translateY(-4px);
+    transform: translateY(-6px);
     box-shadow: var(--shadow-float);
+  }
+
+  .place-card:active {
+    transform: scale(0.985);
   }
 
   .place-card__media {
@@ -90,15 +96,29 @@ const image = place.image ?? `/media/places/${place.id}.jpg`;
     aspect-ratio: 4 / 3;
     overflow: hidden;
     background:
-      linear-gradient(135deg, rgba(21, 52, 72, 0.12), rgba(164, 178, 176, 0.35)),
+      linear-gradient(160deg, rgba(21, 52, 72, 0.08), rgba(231, 216, 192, 0.9)),
       var(--cream);
+    color: var(--navy);
+  }
+
+  .place-card__draw {
+    position: absolute;
+    inset: 0;
+    display: grid;
+    place-items: center;
+  }
+
+  .place-card__draw :global(.sketch) {
+    width: 7rem;
   }
 
   .place-card__image {
+    position: relative;
+    z-index: 1;
     width: 100%;
     height: 100%;
     object-fit: cover;
-    transition: transform var(--dur) var(--ease-out);
+    transition: transform 0.7s var(--ease-out);
   }
 
   .place-card:hover .place-card__image,

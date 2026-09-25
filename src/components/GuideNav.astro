@@ -84,22 +84,26 @@ const { label, items } = Astro.props;
 <style>
   .guide-nav {
     position: sticky;
-    top: 0;
+    top: 0.55rem;
     z-index: 20;
-    background: rgba(240, 237, 230, 0.96);
-    backdrop-filter: blur(10px);
-    border-bottom: 1px solid rgba(148, 137, 121, 0.2);
+    background: transparent;
   }
 
   .guide-nav__inner {
-    padding-block: 0.75rem;
+    padding-block: 0;
   }
 
   .guide-nav__list {
     display: flex;
-    gap: 0.5rem;
+    gap: 0.25rem;
+    width: max-content;
+    max-width: 100%;
     overflow-x: auto;
-    padding-bottom: 0.1rem;
+    padding: 0.28rem;
+    border-radius: 999px;
+    background: rgba(247, 244, 238, 0.92);
+    box-shadow: 0 10px 30px rgba(21, 52, 72, 0.12);
+    backdrop-filter: blur(16px);
     scrollbar-width: none;
   }
 

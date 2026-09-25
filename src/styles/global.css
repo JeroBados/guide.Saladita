@@ -21,7 +21,7 @@ body {
   font-size: var(--text-body);
   line-height: 1.6;
   color: var(--navy);
-  background: var(--cream);
+  background: #f3efe6;
   -webkit-font-smoothing: antialiased;
 }
 
