@@ -1,38 +1,83 @@
 ---
+/* Ink sketches drawn by hand for the surf notebook. Stroke-only, currentColor. */
+export type SketchName =
+  | 'wave'
+  | 'board'
+  | 'longboard'
+  | 'shortboard'
+  | 'sun'
+  | 'sunset'
+  | 'plate'
+  | 'coffee'
+  | 'fish'
+  | 'glass'
+  | 'moon'
+  | 'palm'
+  | 'arrow'
+  | 'swoosh'
+  | 'circle'
+  | 'plane'
+  | 'cash'
+  | 'signal'
+  | 'drop'
+  | 'shell'
+  | 'tide'
+  | 'wind'
+  | 'pin'
+  | 'star';
+
 interface Props {
-  name: 'wave' | 'board' | 'sun' | 'plate';
+  name: SketchName;
+  class?: string;
 }
 
-const { name } = Astro.props;
+const { name, class: className } = Astro.props;
+
+const paths: Record<SketchName, { vb: string; d: string[] }> = {
+  wave: { vb: '0 0 96 56', d: ['M4 36c9-11 16-12 24-3s14 9 23 0 15-10 24-1 13 8 17 3'] },
+  board: { vb: '0 0 96 56', d: ['M38 6c10 8 16 22 16 36 0 6-2 8-6 8s-8-4-10-12C36 26 34 12 38 6z'] },
+  longboard: {
+    vb: '0 0 120 40',
+    d: ['M6 21c14-11 44-15 72-13 18 1 32 6 36 12-4 6-18 11-36 12-28 2-58-2-72-11z', 'M14 21c30 1 64 0 96-1', 'M96 26l6 7'],
+  },
+  shortboard: {
+    vb: '0 0 120 40',
+    d: ['M22 20c10-9 30-12 48-11 14 1 26 5 32 11-6 6-18 10-32 11-18 1-38-2-48-11z', 'M26 20c24 0 50 0 72-1', 'M34 13l-6-7M34 27l-6 7M92 22l5 6'],
+  },
+  sun: {
+    vb: '0 0 96 56',
+    d: ['M48 20a8 8 0 1 0 .1 0', 'M48 6v7M48 36v7M30 28h-7M73 28h-7M35 14l5 5M56 37l5 5M61 14l-5 5M35 42l5-5'],
+  },
+  sunset: {
+    vb: '0 0 96 56',
+    d: ['M30 38a18 18 0 0 1 36 0', 'M10 38h76', 'M20 46h56M32 52h32', 'M48 12v6M26 20l4 4M70 20l-4 4M16 32h5M75 32h5'],
+  },
+  plate: { vb: '0 0 96 56', d: ['M28 30a20 12 0 1 0 40 0 20 12 0 1 0-40 0', 'M36 30a12 6 0 1 0 24 0', 'M18 14v28M14 14v8c0 3 8 3 8 0v-8M78 14c-5 6-5 14 0 16v12'] },
+  coffee: { vb: '0 0 96 56', d: ['M30 22h32l-4 26H34z', 'M62 28c8 0 8 12 0 12', 'M40 8c-3 4 3 6 0 10M50 6c-3 4 3 6 0 10'] },
+  fish: { vb: '0 0 96 56', d: ['M18 28c10-12 34-14 48 0-14 14-38 12-48 0z', 'M66 28l14-10v20z', 'M30 25a1.5 1.5 0 1 0 .1 0', 'M42 22c3 4 3 8 0 12'] },
+  glass: { vb: '0 0 96 56', d: ['M32 10h32L48 30z', 'M48 30v18M38 48h20', 'M56 14l10-8', 'M40 16h16'] },
+  moon: { vb: '0 0 96 56', d: ['M56 8a20 20 0 1 0 14 34A16 16 0 1 1 56 8z', 'M24 14l2 4 4 1-4 2-1 4-2-4-4-1 4-2zM22 38h4'] },
+  palm: {
+    vb: '0 0 96 72',
+    d: ['M50 70c-2-18-2-34 4-48', 'M54 22c-8-8-22-8-30 0', 'M54 22c-4-10-14-16-24-14', 'M54 22c6-10 18-12 28-6', 'M54 22c10-2 20 4 24 14', 'M54 22c-10 0-18 8-20 18'],
+  },
+  arrow: { vb: '0 0 96 56', d: ['M8 12c20 2 44 12 60 32', 'M56 44l12 0 0-12'] },
+  swoosh: { vb: '0 0 300 24', d: ['M4 16c60-8 140-12 212-8 30 2 56 4 80 2'] },
+  circle: { vb: '0 0 200 90', d: ['M150 14C120 2 50 4 24 22 2 38 10 70 60 80c50 10 110 4 126-22 12-20-10-40-50-46-24-4-60 0-78 8'] },
+  plane: { vb: '0 0 96 56', d: ['M12 34l70-20c6-2 10 4 4 8L22 42z', 'M40 26l-10-16h8l20 12', 'M34 38l-4 10h6l12-14', 'M12 34l-4-10h6l8 8'] },
+  cash: { vb: '0 0 96 56', d: ['M14 14h68v30H14z', 'M48 20a9 9 0 1 0 .1 0', 'M22 20v18M74 20v18'] },
+  signal: { vb: '0 0 96 56', d: ['M48 48v-4', 'M38 38a14 14 0 0 1 20 0', 'M30 30a26 26 0 0 1 36 0', 'M22 22a38 38 0 0 1 52 0'] },
+  drop: { vb: '0 0 96 56', d: ['M48 6c-8 12-16 20-16 30a16 16 0 0 0 32 0c0-10-8-18-16-30z', 'M40 36c0 5 3 8 8 9'] },
+  shell: { vb: '0 0 96 56', d: ['M48 48C30 48 20 36 22 24 24 12 36 6 48 8c12-2 24 4 26 16 2 12-8 24-26 24z', 'M48 48V10M48 48 34 12M48 48 62 12M48 48 26 22M48 48 70 22'] },
+  tide: { vb: '0 0 96 56', d: ['M4 30c10-16 22-16 30 0s20 16 30 0 20-16 28-4', 'M4 46h88'] },
+  wind: { vb: '0 0 96 56', d: ['M8 20h52c8 0 10-12 2-12-4 0-6 3-6 5', 'M8 32h64c9 0 11 12 3 12-4 0-6-3-6-5', 'M8 26h34'] },
+  pin: { vb: '0 0 96 56', d: ['M48 52C36 38 32 30 32 22a16 16 0 0 1 32 0c0 8-4 16-16 30z', 'M48 16a6 6 0 1 0 .1 0'] },
+  star: { vb: '0 0 96 56', d: ['M48 6l6 16 17 1-13 10 5 16-15-9-15 9 5-16-13-10 17-1z'] },
+};
+
+const sketch = paths[name];
 ---
 
-<svg class="sketch" viewBox="0 0 96 56" fill="none" aria-hidden="true">
-  {
-    name === 'wave' && (
-      <path
-        class="sketch__line"
-        pathLength="1"
-        d="M4 34c10-10 16-10 24-2s14 8 24 0 14-8 24 0 12 8 16 2"
-      />
-    )
-  }
-  {
-    name === 'board' && (
-      <path class="sketch__line" pathLength="1" d="M38 6c10 8 16 22 16 36 0 6-2 8-6 8s-8-4-10-12C36 26 34 12 38 6z" />
-    )
-  }
-  {
-    name === 'sun' && (
-      <path
-        class="sketch__line"
-        pathLength="1"
-        d="M48 22a8 8 0 1 0 0.1 0M48 8v6M48 42v6M32 22h-6M70 22h-6M36 12l4 4M60 32l4 4M60 12l-4 4M36 32l-4 4"
-      />
-    )
-  }
-  {
-    name === 'plate' && (
-      <path class="sketch__line" pathLength="1" d="M28 28a20 12 0 1 0 40 0 20 12 0 1 0-40 0M48 16v-6" />
-    )
-  }
+<svg class:list={['sketch', `sketch--${name}`, className]} viewBox={sketch.vb} fill="none" aria-hidden="true">
+  {sketch.d.map((d) => <path class="sketch__line" pathLength="1" d={d} />)}
 </svg>

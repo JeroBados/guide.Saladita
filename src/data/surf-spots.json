@@ -2,24 +2,54 @@
   {
     "id": "saladita-point",
     "forecastSlug": "La-Saladita",
-    "name": { "en": "La Saladita", "es": "La Saladita" },
-    "badge": { "en": "Longboard · beginners", "es": "Longboard · principiantes" },
+    "name": {
+      "en": "La Saladita",
+      "es": "La Saladita"
+    },
+    "badge": {
+      "en": "Longboard · beginners",
+      "es": "Longboard · principiantes"
+    },
     "summary": {
       "en": "The town wave: one of the longest lefts in Mexico. This is the spot to start, on a longboard.",
       "es": "La ola del pueblo: una de las izquierdas más largas de México. El spot para empezar, en longboard."
     },
-    "type": { "en": "Long left point", "es": "Point izquierdo largo" },
-    "bottom": { "en": "Sand and rock", "es": "Arena y roca" },
-    "level": { "en": "Beginners, longboard", "es": "Principiantes, longboard" },
-    "board": { "en": "Longboard", "es": "Longboard" },
-    "tide": { "en": "Mid to low. A very high tide can fatten and close it.", "es": "Media a baja. Marea muy alta la pone gorda y puede cerrarla." },
-    "wind": { "en": "North or northeast, offshore.", "es": "Norte o noreste, offshore." },
-    "swell": { "en": "South / southwest", "es": "Sur / suroeste" },
+    "type": {
+      "en": "Long left point",
+      "es": "Point izquierdo largo"
+    },
+    "bottom": {
+      "en": "Sand and rock",
+      "es": "Arena y roca"
+    },
+    "level": {
+      "en": "Beginners, longboard",
+      "es": "Principiantes, longboard"
+    },
+    "board": {
+      "en": "Longboard",
+      "es": "Longboard"
+    },
+    "tide": {
+      "en": "Mid to low. A very high tide can fatten and close it.",
+      "es": "Media a baja. Marea muy alta la pone gorda y puede cerrarla."
+    },
+    "wind": {
+      "en": "North or northeast, offshore.",
+      "es": "Norte o noreste, offshore."
+    },
+    "swell": {
+      "en": "South / southwest",
+      "es": "Sur / suroeste"
+    },
     "access": {
       "en": "The wave is the town. Walk down to the beach in front of the houses.",
-      "es": "La ola es el pueblo. Bajá a la playa frente a las casas."
+      "es": "La ola es el pueblo. Baja a la playa frente a las casas."
     },
-    "rideLength": { "en": "100+ meters on a good south swell", "es": "+100 metros con un swell del sur bueno" },
+    "rideLength": {
+      "en": "100+ meters on a good south swell",
+      "es": "+100 metros con un swell del sur bueno"
+    },
     "lat": 17.841,
     "lng": -101.771,
     "image": "/media/places/saladita-point.jpg"
@@ -27,22 +57,49 @@
   {
     "id": "rancho",
     "forecastSlug": "The-Ranch_1",
-    "name": { "en": "Rancho", "es": "Rancho" },
-    "badge": { "en": "Intermediate · long & short", "es": "Intermedio · long y short" },
+    "name": {
+      "en": "Rancho",
+      "es": "Rancho"
+    },
+    "badge": {
+      "en": "Intermediate · long & short",
+      "es": "Intermedio · long y short"
+    },
     "summary": {
       "en": "More size and more exposure than the point. Longboards and shortboards both work when you can handle the extra power.",
-      "es": "Más tamaño y más expuesto que el point. Longboard y shortboard funcionan cuando podés con el extra de potencia."
+      "es": "Más tamaño y más expuesto que el point. Funcionan longboard y shortboard, si puedes con la potencia extra."
     },
-    "type": { "en": "Exposed point / reef", "es": "Point / reef expuesto" },
-    "bottom": { "en": "Rock and sand", "es": "Roca y arena" },
-    "level": { "en": "Intermediate", "es": "Intermedio" },
-    "board": { "en": "Longboard and shortboard", "es": "Longboard y shortboard" },
-    "tide": { "en": "Mid tide is the reliable window.", "es": "La marea media es la ventana más confiable." },
-    "wind": { "en": "North or northeast, offshore.", "es": "Norte o noreste, offshore." },
-    "swell": { "en": "South / southwest", "es": "Sur / suroeste" },
+    "type": {
+      "en": "Exposed point / reef",
+      "es": "Point / reef expuesto"
+    },
+    "bottom": {
+      "en": "Rock and sand",
+      "es": "Roca y arena"
+    },
+    "level": {
+      "en": "Intermediate",
+      "es": "Intermedio"
+    },
+    "board": {
+      "en": "Longboard and shortboard",
+      "es": "Longboard y shortboard"
+    },
+    "tide": {
+      "en": "Mid tide is the reliable window.",
+      "es": "La marea media es la ventana más confiable."
+    },
+    "wind": {
+      "en": "North or northeast, offshore.",
+      "es": "Norte o noreste, offshore."
+    },
+    "swell": {
+      "en": "South / southwest",
+      "es": "Sur / suroeste"
+    },
     "access": {
       "en": "North of the main point, along the coast. It is a short ride from town — ask locally the morning you go.",
-      "es": "Al norte del point, sobre la costa. Es un trayecto corto desde el pueblo — preguntá en la mañana que vayas."
+      "es": "Al norte del point, sobre la costa. Es un trayecto corto desde el pueblo; pregunta a un local la mañana que vayas."
     },
     "lat": 17.852,
     "lng": -101.774,
@@ -51,22 +108,49 @@
   {
     "id": "la-boca",
     "forecastSlug": "La-Saladita",
-    "name": { "en": "Boca", "es": "Boca" },
-    "badge": { "en": "Beach break · shortboard", "es": "Beach break · shortboard" },
+    "name": {
+      "en": "Boca",
+      "es": "Boca"
+    },
+    "badge": {
+      "en": "Beach break · shortboard",
+      "es": "Beach break · shortboard"
+    },
     "summary": {
       "en": "A beach break, not the point. Faster sections, better on a shortboard.",
       "es": "Beach break, no el point. Secciones más rápidas, mejor en shortboard."
     },
-    "type": { "en": "Beach break", "es": "Beach break" },
-    "bottom": { "en": "Sand", "es": "Arena" },
-    "level": { "en": "Shortboarders", "es": "Shortboard" },
-    "board": { "en": "Shortboard", "es": "Shortboard" },
-    "tide": { "en": "Low to mid.", "es": "Baja a media." },
-    "wind": { "en": "North or northeast, offshore.", "es": "Norte o noreste, offshore." },
-    "swell": { "en": "South / southwest", "es": "Sur / suroeste" },
+    "type": {
+      "en": "Beach break",
+      "es": "Beach break"
+    },
+    "bottom": {
+      "en": "Sand",
+      "es": "Arena"
+    },
+    "level": {
+      "en": "Shortboarders",
+      "es": "Shortboard"
+    },
+    "board": {
+      "en": "Shortboard",
+      "es": "Shortboard"
+    },
+    "tide": {
+      "en": "Low to mid.",
+      "es": "Baja a media."
+    },
+    "wind": {
+      "en": "North or northeast, offshore.",
+      "es": "Norte o noreste, offshore."
+    },
+    "swell": {
+      "en": "South / southwest",
+      "es": "Sur / suroeste"
+    },
     "access": {
       "en": "South of town. In Google Maps search Playa Boca de las Iguanillas.",
-      "es": "Al sur del pueblo. En Google Maps buscá Playa Boca de las Iguanillas."
+      "es": "Al sur del pueblo. En Google Maps busca Playa Boca de las Iguanillas."
     },
     "lat": 17.8285,
     "lng": -101.756,

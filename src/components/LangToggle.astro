@@ -25,22 +25,19 @@ const { lang, altPath, label } = Astro.props;
     display: inline-flex;
     align-items: center;
     justify-content: center;
-    min-width: 2.75rem;
-    padding: 0.45rem 0.85rem;
-    border: 1px solid rgba(240, 237, 230, 0.35);
-    border-radius: var(--radius-chip);
+    min-width: 3rem;
+    min-height: 44px;
+    padding: 0.35rem 0.9rem;
+    border: 1.5px solid var(--ink);
+    border-radius: var(--radius-hand);
     font-size: var(--text-small);
-    font-weight: 600;
+    font-weight: 700;
     letter-spacing: 0.08em;
-    text-transform: uppercase;
-    color: var(--cream);
-    backdrop-filter: blur(8px);
-    transition: background-color var(--dur) var(--ease-out);
+    color: var(--ink);
+    transition: background-color 0.2s var(--ease-out);
   }
 
-  .lang-toggle:hover,
-  .lang-toggle:focus-visible {
-    background: rgba(240, 237, 230, 0.12);
-    outline: none;
+  .lang-toggle:hover {
+    background: var(--sand);
   }
 </style>

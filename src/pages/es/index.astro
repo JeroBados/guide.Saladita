@@ -17,18 +17,7 @@ const t = getTranslations(lang);
   floatingWaMessage={t['wa.floating']}
   floatingWaLabel="WhatsApp Saladita Rentals"
 >
-  <Hero
-    lang={lang}
-    altPath="/"
-    eyebrow={t['hero.eyebrow']}
-    titleLine1={t['hero.titleLine1']}
-    titleLine2={t['hero.titleLine2']}
-    sub={t['hero.sub']}
-    langLabel={t['nav.lang']}
-    helpCta={t['hero.helpCta']}
-    helpMessage={t['wa.floating']}
-    updated={t['hero.updated']}
-  />
+  <Hero lang={lang} altPath={'/'} t={t} />
   <GuideContent lang={lang} t={t} />
   <Footer lang={lang} shareLabel={t['footer.share']} tagline={t['footer.tagline']} />
 </Base>

@@ -84,26 +84,19 @@ const { label, items } = Astro.props;
 <style>
   .guide-nav {
     position: sticky;
-    top: 0.55rem;
+    top: 0;
     z-index: 20;
-    background: transparent;
-  }
-
-  .guide-nav__inner {
-    padding-block: 0;
+    padding-block: 0.5rem;
+    background: linear-gradient(var(--paper) 70%, rgba(243, 236, 221, 0));
   }
 
   .guide-nav__list {
     display: flex;
-    gap: 0.25rem;
+    gap: 0.3rem;
     width: max-content;
     max-width: 100%;
     overflow-x: auto;
-    padding: 0.28rem;
-    border-radius: 999px;
-    background: rgba(247, 244, 238, 0.92);
-    box-shadow: 0 10px 30px rgba(21, 52, 72, 0.12);
-    backdrop-filter: blur(16px);
+    padding: 0.25rem;
     scrollbar-width: none;
   }
 
@@ -113,27 +106,30 @@ const { label, items } = Astro.props;
 
   .guide-nav__link {
     flex: 0 0 auto;
-    padding: 0.6rem 0.95rem;
-    border-radius: var(--radius-chip);
-    border: 1px solid transparent;
-    background: transparent;
-    color: var(--navy);
+    display: inline-flex;
+    align-items: center;
+    min-height: 44px;
+    padding: 0.4rem 1rem;
+    border: 1.5px solid var(--ink);
+    border-radius: var(--radius-hand);
+    background: var(--paper-3);
+    color: var(--ink);
     font-size: var(--text-small);
-    font-weight: 600;
+    font-weight: 700;
     white-space: nowrap;
-    transition:
-      background-color var(--dur) var(--ease-out),
-      color var(--dur) var(--ease-out);
+    transition: background-color 0.2s var(--ease-out), transform 0.2s var(--ease-out);
+  }
+
+  .guide-nav__link:nth-child(odd) {
+    transform: rotate(-1deg);
+  }
+
+  .guide-nav__link:nth-child(even) {
+    transform: rotate(0.8deg);
   }
 
   .guide-nav__link.is-active,
   .guide-nav__link:hover {
-    background: var(--navy);
-    color: var(--cream);
-  }
-
-  .guide-nav__link:focus-visible {
-    outline: 2px solid var(--navy);
-    outline-offset: 2px;
+    background: var(--marker);
   }
 </style>

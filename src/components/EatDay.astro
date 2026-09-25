@@ -1,0 +1,162 @@
+---
+/* "A day of eating in La Saladita" — the places, in the order a day actually goes. */
+import Sketch from './Sketch.astro';
+import type { SketchName } from './Sketch.astro';
+import type { Lang } from '../utils/i18n';
+import { getEatPlaces } from '../utils/places';
+import { getCtaUrl } from '../utils/wa';
+
+interface Props {
+  lang: Lang;
+  t: Record<string, string>;
+}
+
+const { lang, t } = Astro.props;
+const places = getEatPlaces();
+const slots: { id: 'morning' | 'midday' | 'sunset' | 'night'; icon: SketchName }[] = [
+  { id: 'morning', icon: 'coffee' },
+  { id: 'midday', icon: 'fish' },
+  { id: 'sunset', icon: 'sunset' },
+  { id: 'night', icon: 'moon' },
+];
+---
+
+<ol class="eatday">
+  {
+    slots.map((slot) => {
+      const list = places.filter((p) => p.slot === slot.id);
+      if (!list.length) return null;
+      return (
+        <li class="eatday__slot">
+          <div class="eatday__time">
+            <Sketch name={slot.icon} />
+            <span class="hand">{t[`eat.slot.${slot.id}`]}</span>
+          </div>
+          <div class="eatday__places">
+            {list.map((place, i) => {
+              const url = getCtaUrl(place, lang);
+              return (
+                <article class="eatcard reveal" id={place.id} style={`--tilt: ${i % 2 ? 0.5 : -0.4}deg`}>
+                  <h3 class="eatcard__name">{place.name}</h3>
+                  <p class="eatcard__badge hand">{place.badge[lang]}</p>
+                  <p class="eatcard__desc">{place.desc[lang]}</p>
+                  {place.note && <p class="eatcard__note">{place.note[lang]}</p>}
+                  {url && (
+                    <a class="pen-link eatcard__maps" href={url} target="_blank" rel="noopener noreferrer" data-track-cta data-place-id={place.id} data-cta-type="maps">
+                      {t['place.openMaps']} →
+                    </a>
+                  )}
+                </article>
+              );
+            })}
+          </div>
+        </li>
+      );
+    })
+  }
+</ol>
+
+<style>
+  .eatday {
+    list-style: none;
+    padding: 0;
+    display: grid;
+    gap: 1.8rem;
+    position: relative;
+  }
+
+  /* the pen line connecting the day */
+  .eatday::before {
+    content: '';
+    position: absolute;
+    top: 1.5rem;
+    bottom: 1rem;
+    left: 1.45rem;
+    border-left: 2px dashed rgba(21, 52, 72, 0.3);
+  }
+
+  .eatday__slot {
+    display: grid;
+    gap: 0.7rem;
+    position: relative;
+  }
+
+  .eatday__time {
+    display: flex;
+    align-items: center;
+    gap: 0.4rem;
+  }
+
+  .eatday__time :global(.sketch) {
+    width: 3rem;
+    flex: none;
+    padding: 0.2rem;
+    background: var(--paper-2);
+    border-radius: 50%;
+    color: var(--ink);
+    position: relative;
+  }
+
+  .eatday__time .hand {
+    font-size: 1.7rem;
+    font-weight: 700;
+    color: var(--ink);
+  }
+
+  .eatday__places {
+    display: grid;
+    gap: 0.85rem;
+    padding-left: 3.4rem;
+  }
+
+  .eatcard {
+    display: grid;
+    align-content: start;
+    gap: 0.25rem;
+    padding: 1rem 1.1rem 0.6rem;
+    background: var(--paper-3);
+    border: 1px solid rgba(21, 52, 72, 0.1);
+    box-shadow: var(--shadow-paper);
+    transform: rotate(var(--tilt, 0deg));
+  }
+
+  .eatcard__name {
+    font-size: 1.35rem;
+  }
+
+  .eatcard__badge {
+    font-size: 1.25rem;
+    margin-bottom: 0.15rem;
+  }
+
+  .eatcard__desc {
+    font-size: 0.98rem;
+  }
+
+  .eatcard__note {
+    font-size: 0.9rem;
+    color: var(--pencil);
+    font-style: italic;
+  }
+
+  .eatcard__maps {
+    justify-self: start;
+    font-size: 0.9rem;
+  }
+
+  @media (min-width: 800px) {
+    .eatday__slot {
+      grid-template-columns: 12rem 1fr;
+      align-items: start;
+    }
+
+    .eatday__places {
+      padding-left: 0;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+
+    .eatday::before {
+      left: 1.45rem;
+    }
+  }
+</style>

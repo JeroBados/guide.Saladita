@@ -1,10 +1,22 @@
 # Saladita Guide — Resumen de sesión
 
-**Última actualización:** 25 ago 2026  
-**Repo:** https://github.com/JeroBados/guide.Saladita  
-**Dev local:** `npm run dev` → http://localhost:4321
+**Última actualización:** 25 sep 2026 — rediseño "cuaderno de surf" (rama `cuaderno-de-surf`)
+
+## Sesión 25 sep 2026 — Cuaderno de surf
+
+- **Diseño orgánico, de surfista a surfista:** papel con grano, tinta navy, notas manuscritas (Caveat), bocetos a mano (`Sketch.astro`), polaroid con cinta, post-it, highlighter.
+- **Solo recomendaciones:** sin formulario de fechas ni paquetes. WhatsApp: hero, post-it y botón flotante.
+- **La versión corta** (debajo del hero): 45 min de ZIH, izquierda larga, agua cálida, 1 cajero, Telcel/Starlink.
+- **La mejor mañana (`SurfLog.astro`):** pronóstico horario de Open-Meteo; puntúa ventanas de 3 h entre 5 y 11 am con tamaño y período del swell, dirección (S/SO), viento (offshore N/NE o glassy) y marea (media-baja). Circula el mejor día en rojo. ⚠️ La API gratis de Open-Meteo es solo para uso no comercial: contratar plan comercial antes de lanzar.
+- **Mes a mes:** franja estática de temporada (texto citable por Google/IAs aunque falle el pronóstico).
+- **Spots** como páginas de cuaderno; **Comer** como un día (mañana → noche); **FAQ** ampliada a 9 preguntas + FAQPage JSON-LD.
+- Español pasado a **tú** mexicano. hreflang corregido para `/get-there` ↔ `/es/como-llegar`.
+- GA4 no se carga mientras el ID sea `G-XXXXXXXXXX`.
+- Borrados componentes sin uso (SurfToday, Packages, BookStay, etc.) y `packages.json`.
 
 ---
+
+
 
 ## Qué es esto
 

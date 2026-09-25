@@ -19,6 +19,7 @@ export interface Place {
   desc: { en: string; es: string };
   note?: { en: string; es: string };
   hours?: string;
+  slot?: 'morning' | 'midday' | 'sunset' | 'night';
   featured?: boolean;
   image?: string;
   cta: PlaceCta;

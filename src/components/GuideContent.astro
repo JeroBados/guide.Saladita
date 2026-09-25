@@ -1,11 +1,11 @@
 ---
-import WeekBoard from './WeekBoard.astro';
+import SurfLog from './SurfLog.astro';
 import SurfSpotCard from './SurfSpotCard.astro';
-import PlaceCard from './PlaceCard.astro';
+import EatDay from './EatDay.astro';
 import GuideNav from './GuideNav.astro';
 import Sketch from './Sketch.astro';
+import type { SketchName } from './Sketch.astro';
 import type { Lang } from '../utils/i18n';
-import { getEatPlaces } from '../utils/places';
 import { getSurfSpots } from '../utils/surf';
 import { buildWhatsAppUrl } from '../utils/wa';
 
@@ -15,33 +15,34 @@ interface Props {
 }
 
 const { lang, t } = Astro.props;
-const eatPlaces = getEatPlaces();
 const surfSpots = getSurfSpots();
-const experiencesUrl =
-  lang === 'es'
-    ? 'https://lasaladitarentals.com/en/experiences-in-la-saladita?utm_source=guide&utm_medium=tips'
-    : 'https://lasaladitarentals.com/en/experiences-in-la-saladita?utm_source=guide&utm_medium=tips';
+const experiencesUrl = `https://lasaladitarentals.com/${lang === 'es' ? 'es' : 'en'}/experiences-in-la-saladita?utm_source=guide&utm_medium=tips`;
 const askUrl = buildWhatsAppUrl(t['ask.message']);
 
-const faqs = [
-  { q: t['faq.airport.q'], a: t['faq.airport.a'] },
-  { q: t['faq.cash.q'], a: t['faq.cash.a'] },
-  { q: t['faq.signal.q'], a: t['faq.signal.a'] },
-  { q: t['faq.water.q'], a: t['faq.water.a'] },
-  { q: t['faq.season.q'], a: t['faq.season.a'] },
-  { q: t['faq.safety.q'], a: t['faq.safety.a'] },
+const faqs: { key: string; icon: SketchName }[] = [
+  { key: 'airport', icon: 'plane' },
+  { key: 'cash', icon: 'cash' },
+  { key: 'signal', icon: 'signal' },
+  { key: 'water', icon: 'drop' },
+  { key: 'season', icon: 'sun' },
+  { key: 'beginner', icon: 'longboard' },
+  { key: 'lessons', icon: 'board' },
+  { key: 'firstday', icon: 'plate' },
+  { key: 'safety', icon: 'shell' },
 ];
+const faqItems = faqs.map((f) => ({ ...f, q: t[`faq.${f.key}.q`], a: t[`faq.${f.key}.a`] }));
 
 const faqLd = {
   '@context': 'https://schema.org',
   '@type': 'FAQPage',
-  dateModified: '2026-09-01',
+  inLanguage: lang,
+  dateModified: '2026-09-25',
   author: {
     '@type': 'Organization',
     name: 'Saladita Rentals',
     url: 'https://lasaladitarentals.com',
   },
-  mainEntity: faqs.map((item) => ({
+  mainEntity: faqItems.map((item) => ({
     '@type': 'Question',
     name: item.q,
     acceptedAnswer: { '@type': 'Answer', text: item.a },
@@ -56,7 +57,6 @@ const navItems = [
 ];
 
 const specLabels = {
-  type: t['surf.spec.type'],
   board: t['surf.spec.board'],
   level: t['surf.spec.level'],
   tide: t['surf.spec.tide'],
@@ -69,227 +69,203 @@ const specLabels = {
 
 <GuideNav label={t['nav.label']} items={navItems} />
 
-<WeekBoard
-  lang={lang}
-  title={t['week.title']}
-  note={t['week.note']}
-  source={t['week.source']}
-  unavailable={t['week.unavailable']}
-/>
+<main>
+  <SurfLog lang={lang} t={t} />
 
-<section class="section" id="section-spots" aria-labelledby="spots-title">
-  <div class="container">
-    <div class="section__header section__header--draw">
-      <Sketch name="wave" />
-      <h2 id="spots-title" set:html={t['surf.spots']} />
-      <p class="section__lead">{t['surf.spotsLead']}</p>
-    </div>
-    <div class="spot-list rail">
-      {
-        surfSpots.map((spot, index) => (
-          <SurfSpotCard
-            spot={spot}
-            lang={lang}
-            mapsLabel={t['place.openMaps']}
-            labels={specLabels}
-            revealIndex={index}
-          />
-        ))
-      }
-    </div>
-  </div>
-</section>
+  <section class="section section--alt" id="section-spots" aria-labelledby="spots-title">
+    <div class="container">
+      <div class="section__header">
+        <p class="section__kicker hand"><Sketch name="board" />{t['surf.kicker']}</p>
+        <h2 id="spots-title" set:html={t['surf.spots']} />
+        <p class="section__lead">{t['surf.spotsLead']}</p>
+      </div>
+      <div class="spots">
+        {surfSpots.map((spot, index) => <SurfSpotCard spot={spot} lang={lang} index={index} mapsLabel={t['place.openMaps']} labels={specLabels} />)}
+      </div>
 
-<section class="section section--alt ask" id="section-ask">
-  <div class="container ask__inner">
-    <h2>{t['ask.title']}</h2>
-    <p>{t['ask.body']}</p>
-    <div class="ask__actions">
-      <a class="ask__wa" href={askUrl} target="_blank" rel="noopener noreferrer">{t['ask.cta']}</a>
-      <a class="ask__web" href={experiencesUrl} target="_blank" rel="noopener noreferrer">{t['ask.web']}</a>
+      <aside class="sticky-note" id="section-ask" aria-labelledby="ask-title">
+        <span class="tape sticky-note__tape" aria-hidden="true"></span>
+        <h2 id="ask-title" class="sticky-note__title">{t['ask.title']}</h2>
+        <ul class="sticky-note__list">
+          <li><strong>{t['ask.lessons.label']}</strong> {t['ask.lessons']}</li>
+          <li><strong>{t['ask.transfer.label']}</strong> {t['ask.transfer']}</li>
+          <li><strong>{t['ask.more.label']}</strong> <a class="pen-link" href={experiencesUrl} target="_blank" rel="noopener noreferrer">{t['ask.web']}</a></li>
+        </ul>
+        <a class="btn btn--ink" href={askUrl} target="_blank" rel="noopener noreferrer" data-track-cta data-place-id="ask-whatsapp" data-cta-type="whatsapp">{t['ask.cta']}</a>
+      </aside>
     </div>
-  </div>
-</section>
+  </section>
 
-<section class="section" id="section-eat" aria-labelledby="eat-title">
-  <div class="container">
-    <div class="section__header section__header--draw">
-      <Sketch name="plate" />
-      <h2 id="eat-title" set:html={t['eat.title']} />
-      <p class="section__lead">{t['eat.lead']}</p>
+  <section class="section" id="section-eat" aria-labelledby="eat-title">
+    <div class="container">
+      <div class="section__header">
+        <p class="section__kicker hand"><Sketch name="plate" />{t['eat.kicker']}</p>
+        <h2 id="eat-title" set:html={t['eat.title']} />
+        <p class="section__lead">{t['eat.lead']}</p>
+      </div>
+      <EatDay lang={lang} t={t} />
     </div>
-    <div class="card-grid rail">
-      {
-        eatPlaces.map((place, index) => (
-          <PlaceCard
-            place={place}
-            lang={lang}
-            directionsLabel={t['place.openMaps']}
-            whatsappLabel={t['services.cta']}
-            revealIndex={index}
-          />
-        ))
-      }
-    </div>
-  </div>
-</section>
+  </section>
 
-<section class="section section--alt" id="section-tips" aria-labelledby="tips-title">
-  <div class="container">
-    <div class="section__header section__header--draw">
-      <Sketch name="sun" />
-      <h2 id="tips-title" set:html={t['tips.title']} />
+  <section class="section section--alt" id="section-tips" aria-labelledby="tips-title">
+    <div class="container">
+      <div class="section__header">
+        <p class="section__kicker hand"><Sketch name="sun" />{t['tips.kicker']}</p>
+        <h2 id="tips-title" set:html={t['tips.title']} />
+      </div>
+      <div class="faq">
+        {
+          faqItems.map((item) => (
+            <article class="faq__item" id={`faq-${item.key}`}>
+              <Sketch name={item.icon} class="faq__icon" />
+              <div>
+                <h3>{item.q}</h3>
+                <p>{item.a}</p>
+              </div>
+            </article>
+          ))
+        }
+      </div>
+
+      <div class="signoff">
+        <p class="signoff__text">{t['byline']}</p>
+        <p class="signoff__sign hand">{t['byline.sign']}</p>
+      </div>
     </div>
-    <div class="faq">
-      {
-        faqs.map((item) => (
-          <article class="faq__item reveal">
-            <h3>{item.q}</h3>
-            <p>{item.a}</p>
-          </article>
-        ))
-      }
-    </div>
-    <p class="byline">{t['byline']}</p>
-  </div>
-</section>
+  </section>
+</main>
 
 <script type="application/ld+json" set:html={JSON.stringify(faqLd)} />
 
 <style>
-  .section__header--draw {
+  .spots {
     display: grid;
-    gap: 0.35rem;
-    color: var(--navy);
+    gap: 1.6rem;
   }
 
-  .section__header--draw :global(.sketch) {
-    width: 3.4rem;
-  }
-
-  .rail {
-    display: grid;
-    grid-auto-flow: column;
-    grid-auto-columns: minmax(16.5rem, 78%);
-    gap: 0.9rem;
-    overflow-x: auto;
-    scroll-snap-type: x mandatory;
-    scroll-padding-inline: 0.2rem;
-    padding-bottom: 0.6rem;
-    scrollbar-width: none;
-  }
-
-  .rail::-webkit-scrollbar {
-    display: none;
-  }
-
-  .rail > :global(*) {
-    scroll-snap-align: start;
-  }
-
-  @media (min-width: 800px) {
-    .rail {
-      grid-auto-flow: row;
-      grid-template-columns: repeat(2, minmax(0, 1fr));
-      grid-auto-columns: unset;
-      overflow: visible;
-    }
-  }
-
-  @media (min-width: 1100px) {
-    .rail {
+  @media (min-width: 900px) {
+    .spots {
       grid-template-columns: repeat(3, minmax(0, 1fr));
+      align-items: start;
+      gap: 1.4rem;
     }
   }
 
-  .section__lead {
-    margin-top: 0.55rem;
-    color: var(--taupe);
-    font-size: var(--text-small);
-    max-width: 38rem;
+  /* Sticky note: lessons, boards, airport */
+  .sticky-note {
+    position: relative;
+    margin: 3rem auto 0;
+    max-width: 36rem;
+    padding: 1.8rem 1.4rem 1.5rem;
+    background: #f6dc8f;
+    background-image: linear-gradient(to bottom, rgba(255, 255, 255, 0.25), transparent 30%);
+    box-shadow: 0 16px 26px -16px rgba(21, 52, 72, 0.45), 0 2px 0 rgba(21, 52, 72, 0.06);
+    transform: rotate(-1.2deg);
   }
 
-  .section--alt {
-    background: rgba(231, 216, 192, 0.4);
+  .sticky-note__tape {
+    top: -0.8rem;
+    left: 50%;
+    transform: translateX(-50%) rotate(2deg);
   }
 
-  .spot-list,
+  .sticky-note__title {
+    font-family: var(--font-hand);
+    font-size: 2.2rem;
+    font-weight: 700;
+    margin-bottom: 0.7rem;
+  }
+
+  .sticky-note__list {
+    display: grid;
+    gap: 0.6rem;
+    padding: 0;
+    margin-bottom: 1.3rem;
+    list-style: none;
+  }
+
+  .sticky-note__list li {
+    padding-left: 1.3rem;
+    position: relative;
+    line-height: 1.5;
+  }
+
+  .sticky-note__list li::before {
+    content: '✓';
+    position: absolute;
+    left: 0;
+    font-family: var(--font-hand);
+    font-size: 1.3rem;
+    line-height: 1.1;
+    color: var(--ink);
+  }
+
+  .sticky-note .btn--ink {
+    box-shadow: 3px 4px 0 rgba(21, 52, 72, 0.25);
+  }
+
+  /* FAQ — notebook Q&A */
   .faq {
     display: grid;
-    gap: 1rem;
-  }
-
-  .ask__inner {
-    display: grid;
-    gap: 0.75rem;
-  }
-
-  .ask__inner p {
-    max-width: 40rem;
-    color: var(--taupe);
-  }
-
-  .ask__actions {
-    display: grid;
-    gap: 0.65rem;
-  }
-
-  .ask__wa,
-  .ask__web {
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    min-height: var(--touch-min);
-    padding: 0.85rem 1rem;
-    border-radius: var(--radius-chip);
-    font-weight: 700;
-  }
-
-  .ask__wa {
-    background: var(--navy);
-    color: var(--cream);
-  }
-
-  .ask__web {
-    border: 1px solid var(--navy);
-    color: var(--navy);
+    gap: 0;
+    max-width: 50rem;
   }
 
   .faq__item {
-    padding: 1.05rem 1.1rem;
-    border-radius: 20px;
-    background: #f7f4ee;
-    border: 1px solid rgba(21, 52, 72, 0.08);
-    box-shadow: var(--shadow-card);
+    display: grid;
+    grid-template-columns: 2.8rem 1fr;
+    gap: 0.9rem;
+    padding-block: 1.3rem;
+    border-top: 1.5px dashed rgba(21, 52, 72, 0.25);
+  }
+
+  .faq__item:last-child {
+    border-bottom: 1.5px dashed rgba(21, 52, 72, 0.25);
+  }
+
+  .faq__item :global(.faq__icon) {
+    width: 2.8rem;
+    color: var(--ink-2);
+    margin-top: 0.1rem;
   }
 
   .faq__item h3 {
-    font-family: var(--font-display);
-    font-size: 1.15rem;
+    font-size: 1.25rem;
     margin-bottom: 0.35rem;
   }
 
   .faq__item p {
-    color: var(--navy);
-    max-width: 46rem;
+    max-width: 44rem;
   }
 
-  .byline {
-    margin-top: 1.25rem;
-    font-size: var(--text-small);
-    color: var(--taupe);
-    max-width: 42rem;
+  .signoff {
+    margin-top: 2.4rem;
+    max-width: 40rem;
   }
 
-  @media (min-width: 640px) {
-    .ask__actions {
-      grid-template-columns: auto auto;
-      justify-content: start;
+  .signoff__text {
+    font-size: 0.95rem;
+    color: var(--pencil);
+  }
+
+  .signoff__sign {
+    margin-top: 0.4rem;
+    font-size: 2.1rem;
+    font-weight: 700;
+    color: var(--ink);
+    transform: rotate(-3deg);
+    transform-origin: left;
+  }
+
+  @media (min-width: 900px) {
+    .faq {
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      column-gap: 3rem;
+      max-width: none;
     }
 
-    .ask__wa,
-    .ask__web {
-      padding-inline: 1.2rem;
+    .faq__item:nth-last-child(2) {
+      border-bottom: 1.5px dashed rgba(21, 52, 72, 0.25);
     }
   }
 </style>

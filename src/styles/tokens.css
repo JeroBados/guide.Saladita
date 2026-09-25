@@ -1,30 +1,45 @@
 :root {
-  /* Paleta Saladita Rentals (oficial) */
-  --navy: #153448;
-  --navy-2: #3c5b6f;
-  --slate: #3c5b6f;
-  --cream: #e0e1dc;
+  /* Saladita Rentals — surf notebook ("cuaderno de surf")
+     Brand anchors kept: navy #153448, sand, sage, taupe. */
+  --ink: #153448; /* main text, pen ink */
+  --ink-2: #3c5b6f; /* secondary ink, sketches */
+  --pencil: #625a4d; /* muted text on paper (≥ 5:1 on --paper) */
+  --paper: #f3ecdd; /* page */
+  --paper-2: #ebe1cc; /* back pages, alt sections */
+  --paper-3: #fbf7ee; /* index cards */
   --sand: #e7d8c0;
-  --taupe: #948979;
   --sage: #a4b2b0;
+  --taupe: #948979; /* decoration only, not for text */
+  --marker: #f1d27a; /* highlighter swipe, sticky notes */
+  --tape: rgba(231, 216, 192, 0.78);
+  --rule: rgba(60, 91, 111, 0.14); /* notebook lines */
+  --wa: #25d366;
 
-  /* Tipografía */
+  /* legacy aliases used by subpages */
+  --navy: var(--ink);
+  --navy-2: var(--ink-2);
+  --cream: var(--paper);
+
+  /* Type */
   --font-display: 'Fraunces Variable', Georgia, serif;
   --font-body: 'DM Sans Variable', system-ui, sans-serif;
+  --font-hand: 'Caveat', 'Bradley Hand', 'Segoe Print', cursive;
 
-  /* Escala tipográfica (mobile-first, fluida) */
-  --text-hero: clamp(2.2rem, 8vw, 4.5rem);
-  --text-h2: clamp(1.6rem, 5vw, 2.6rem);
-  --text-h3: 1.25rem;
+  --text-hero: clamp(2.6rem, 11vw, 5.2rem);
+  --text-h2: clamp(1.9rem, 6.5vw, 3rem);
+  --text-h3: 1.3rem;
   --text-body: 1.0625rem;
-  --text-small: 0.9rem;
+  --text-small: 0.92rem;
+  --text-hand: 1.45rem;
   --touch-min: 48px;
 
-  /* Superficies */
-  --radius: 22px;
+  /* Shapes — hand-cut, never perfectly round */
+  --radius: 6px;
+  --radius-hand: 255px 18px 225px 18px / 18px 225px 18px 255px;
   --radius-chip: 999px;
-  --shadow-card: 0 8px 28px rgba(21, 52, 72, 0.1);
-  --shadow-float: 0 16px 40px rgba(21, 52, 72, 0.16);
+  --shadow-paper: 0 1px 0 rgba(21, 52, 72, 0.06), 0 10px 24px -12px rgba(21, 52, 72, 0.28);
+  --shadow-lift: 0 2px 0 rgba(21, 52, 72, 0.08), 0 18px 34px -14px rgba(21, 52, 72, 0.35);
+
   --ease-out: cubic-bezier(0.2, 0, 0, 1);
   --dur: 0.45s;
 }

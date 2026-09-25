@@ -1,5 +1,6 @@
 ---
 import type { Lang } from '../utils/i18n';
+import { getTranslations } from '../utils/i18n';
 
 interface Props {
   lang: Lang;
@@ -7,51 +8,31 @@ interface Props {
   tagline: string;
 }
 
-const { shareLabel, tagline } = Astro.props;
+const { lang, shareLabel, tagline } = Astro.props;
+const t = getTranslations(lang);
 const whatsapp = 'https://wa.me/525611073849';
 const instagram = 'https://instagram.com/saladitarentals';
 const email = 'mailto:hello@lasaladitarentals.com';
+const getThere = lang === 'es' ? '/es/como-llegar' : '/get-there';
 ---
 
-<footer class="footer section--dark">
+<footer class="footer">
   <div class="footer__inner container">
     <div class="footer__brand">
-      <img class="footer__logo-image" src="/logo.png" alt="Saladita Rentals" width="72" height="72" />
+      <img class="footer__logo" src="/logo.png" alt="Saladita Rentals" width="64" height="64" />
       <p class="footer__tagline">{tagline}</p>
+      <p class="footer__hand hand">{lang === 'es' ? 'nos vemos en el agua' : 'see you in the water'}</p>
     </div>
 
-    <nav class="footer__links" aria-label="Contact links">
-      <a
-        href={whatsapp}
-        target="_blank"
-        rel="noopener noreferrer"
-        data-track-cta
-        data-place-id="footer-whatsapp"
-        data-cta-type="whatsapp"
-      >
-        WhatsApp
-      </a>
-      <a
-        href={instagram}
-        target="_blank"
-        rel="noopener noreferrer"
-        data-track-cta
-        data-place-id="footer-instagram"
-        data-cta-type="link"
-      >
-        Instagram
-      </a>
-      <a
-        href={email}
-        data-track-cta
-        data-place-id="footer-email"
-        data-cta-type="link"
-      >
-        Email
-      </a>
+    <nav class="footer__links" aria-label={lang === 'es' ? 'Contacto' : 'Contact'}>
+      <a href={getThere}>{t['footer.getThere']}</a>
+      <a href={whatsapp} target="_blank" rel="noopener noreferrer" data-track-cta data-place-id="footer-whatsapp" data-cta-type="whatsapp">WhatsApp</a>
+      <a href={instagram} target="_blank" rel="noopener noreferrer" data-track-cta data-place-id="footer-instagram" data-cta-type="link">Instagram</a>
+      <a href={email} data-track-cta data-place-id="footer-email" data-cta-type="link">Email</a>
+      <a href="https://lasaladitarentals.com" target="_blank" rel="noopener noreferrer">lasaladitarentals.com</a>
     </nav>
 
-    <button class="footer__share" type="button" data-share>
+    <button class="footer__share" type="button" data-share data-copied={t['footer.copied']}>
       {shareLabel}
     </button>
   </div>
@@ -65,19 +46,17 @@ const email = 'mailto:hello@lasaladitarentals.com';
       text: document.querySelector('meta[name="description"]')?.getAttribute('content') ?? '',
       url: window.location.href,
     };
-
     if (navigator.share) {
       try {
         await navigator.share(shareData);
       } catch {
-        /* user cancelled */
+        /* cancelled */
       }
       return;
     }
-
     try {
       await navigator.clipboard.writeText(window.location.href);
-      button.textContent = 'Link copied';
+      button.textContent = button.dataset.copied ?? 'Link copied';
     } catch {
       /* clipboard unavailable */
     }
@@ -86,18 +65,20 @@ const email = 'mailto:hello@lasaladitarentals.com';
 
 <style>
   .footer {
-    background: var(--navy);
-    color: var(--cream);
-    padding-block: 3rem;
+    position: relative;
+    overflow: hidden;
+    background: var(--ink);
+    color: var(--paper);
+    padding-block: 3rem 6rem;
   }
 
   .footer__inner {
     display: grid;
-    gap: 1.5rem;
+    gap: 1.8rem;
   }
 
-  .footer__logo-image {
-    width: 72px;
+  .footer__logo {
+    width: 64px;
     height: auto;
     margin-bottom: 0.5rem;
   }
@@ -107,36 +88,45 @@ const email = 'mailto:hello@lasaladitarentals.com';
     font-size: var(--text-small);
   }
 
+  .footer__hand {
+    margin-top: 0.3rem;
+    font-size: 1.7rem;
+    color: var(--sand);
+    transform: rotate(-2deg);
+    transform-origin: left;
+  }
+
   .footer__links {
     display: flex;
     flex-wrap: wrap;
-    gap: 1rem 1.5rem;
+    gap: 0.4rem 1.4rem;
     font-size: var(--text-small);
   }
 
   .footer__links a {
+    display: inline-flex;
+    align-items: center;
+    min-height: 44px;
     color: var(--sand);
     text-decoration: underline;
-    text-underline-offset: 0.2em;
+    text-underline-offset: 0.25em;
+    text-decoration-color: rgba(231, 216, 192, 0.45);
   }
 
   .footer__share {
     justify-self: start;
-    padding: 0.75rem 1.25rem;
-    border-radius: var(--radius-chip);
-    background: var(--sand);
-    color: var(--navy);
-    font-weight: 600;
+    min-height: 44px;
+    padding: 0.6rem 1.2rem;
+    border: 1.5px solid var(--sand);
+    border-radius: var(--radius-hand);
+    color: var(--sand);
+    font-weight: 700;
   }
 
-  @media (min-width: 768px) {
+  @media (min-width: 800px) {
     .footer__inner {
-      grid-template-columns: 1fr auto auto;
-      align-items: center;
-    }
-
-    .footer__share {
-      justify-self: end;
+      grid-template-columns: 1fr 1.4fr auto;
+      align-items: start;
     }
   }
 </style>

@@ -7,164 +7,149 @@ import Sketch from './Sketch.astro';
 interface Props {
   spot: SurfSpot;
   lang: Lang;
+  index: number;
   mapsLabel: string;
-  revealIndex?: number;
-  labels: {
-    type: string;
-    board: string;
-    level: string;
-    tide: string;
-    wind: string;
-    swell: string;
-    access: string;
-    ride: string;
-  };
+  labels: Record<'board' | 'level' | 'tide' | 'wind' | 'swell' | 'access' | 'ride', string>;
 }
 
-const { spot, lang, mapsLabel, revealIndex = 0, labels } = Astro.props;
-const image = spot.image ?? `/media/places/${spot.id}.jpg`;
+const { spot, lang, index, mapsLabel, labels } = Astro.props;
 const mapsUrl = spot.mapsQuery
   ? `https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(spot.mapsQuery)}`
   : buildMapsDirectionsUrl(spot.lat, spot.lng);
+const isShort = spot.board.en.toLowerCase().startsWith('short');
+const tilt = [-0.6, 0.5, -0.3][index % 3];
 ---
 
-<article class="surf-spot-card reveal" style={`--i: ${revealIndex}`}>
-  <div class="surf-spot-card__media">
-    <span class="surf-spot-card__draw"><Sketch name="board" /></span>
-    <img class="surf-spot-card__image" src={image} alt="" loading="lazy" decoding="async" data-spot-image />
-  </div>
+<article class="spot reveal" id={spot.id} style={`--tilt: ${tilt}deg; --tilt-from: ${tilt * 3}deg`}>
+  <header class="spot__head">
+    <span class="spot__num" aria-hidden="true">{String(index + 1).padStart(2, '0')}</span>
+    <div>
+      <h3 class="spot__name">{spot.name[lang]}</h3>
+      <p class="spot__badge hand">{spot.badge[lang]}</p>
+    </div>
+    <Sketch name={isShort ? 'shortboard' : 'longboard'} class="spot__board" />
+  </header>
 
-  <div class="surf-spot-card__body">
-    <span class="surf-spot-card__badge">{spot.badge[lang]}</span>
-    <h3 class="surf-spot-card__name">{spot.name[lang]}</h3>
-    <p class="surf-spot-card__summary">{spot.summary[lang]}</p>
+  <p class="spot__summary">{spot.summary[lang]}</p>
 
-    <dl class="surf-spot-card__specs">
-      <div><dt>{labels.board}</dt><dd>{spot.board[lang]}</dd></div>
-      <div><dt>{labels.level}</dt><dd>{spot.level[lang]}</dd></div>
-      <div><dt>{labels.wind}</dt><dd>{spot.wind[lang]}</dd></div>
-      <div><dt>{labels.tide}</dt><dd>{spot.tide[lang]}</dd></div>
-      <div><dt>{labels.access}</dt><dd>{spot.access[lang]}</dd></div>
-      {
-        spot.rideLength && (
-          <div class="surf-spot-card__ride">
-            <dt>{labels.ride}</dt>
-            <dd>{spot.rideLength[lang]}</dd>
-          </div>
-        )
-      }
-    </dl>
+  <dl class="spot__specs">
+    <div><dt><Sketch name="wind" />{labels.wind}</dt><dd>{spot.wind[lang]}</dd></div>
+    <div><dt><Sketch name="tide" />{labels.tide}</dt><dd>{spot.tide[lang]}</dd></div>
+    <div><dt><Sketch name="wave" />{labels.swell}</dt><dd>{spot.swell[lang]}</dd></div>
+    <div><dt><Sketch name="pin" />{labels.access}</dt><dd>{spot.access[lang]}</dd></div>
+    {
+      spot.rideLength && (
+        <div>
+          <dt><Sketch name="arrow" />{labels.ride}</dt>
+          <dd><span class="hl">{spot.rideLength[lang]}</span></dd>
+        </div>
+      )
+    }
+  </dl>
 
-    <a class="surf-spot-card__cta" href={mapsUrl} target="_blank" rel="noopener noreferrer">
-      {mapsLabel}
-    </a>
-  </div>
+  <a class="pen-link spot__maps" href={mapsUrl} target="_blank" rel="noopener noreferrer" data-track-cta data-place-id={spot.id} data-cta-type="maps">
+    {mapsLabel} →
+  </a>
 </article>
 
-<script>
-  document.querySelectorAll<HTMLImageElement>('[data-spot-image]').forEach((img) => {
-    img.addEventListener('error', () => img.remove());
-  });
-</script>
-
 <style>
-  .surf-spot-card {
-    background: #f7f4ee;
-    border-radius: 24px;
-    overflow: hidden;
-    box-shadow: var(--shadow-card);
-    transition: transform var(--dur) var(--ease-out), box-shadow var(--dur) var(--ease-out);
-  }
-
-  .surf-spot-card:active {
-    transform: scale(0.985);
-  }
-
-  .surf-spot-card__media {
+  .spot {
     position: relative;
-    aspect-ratio: 16 / 10;
-    overflow: hidden;
-    background: linear-gradient(160deg, #153448, #3c5b6f);
-    color: var(--sand);
+    display: grid;
+    gap: 0.9rem;
+    padding: 1.35rem 1.2rem 1rem;
+    background: var(--paper-3);
+    border: 1px solid rgba(21, 52, 72, 0.1);
+    box-shadow: var(--shadow-paper);
+    transform: rotate(var(--tilt, 0deg));
   }
 
-  .surf-spot-card__draw {
+  /* left margin line, like a notebook page */
+  .spot::before {
+    content: '';
     position: absolute;
-    inset: 0;
+    top: 0;
+    bottom: 0;
+    left: 2.9rem;
+    width: 1.5px;
+    background: rgba(192, 57, 43, 0.28);
+  }
+
+  .spot__head {
     display: grid;
-    place-items: center;
+    grid-template-columns: 2.2rem 1fr auto;
+    gap: 0.9rem;
+    align-items: start;
   }
 
-  .surf-spot-card__draw :global(.sketch) {
-    width: 6.5rem;
-  }
-
-  .surf-spot-card__image {
-    position: relative;
-    z-index: 1;
-    width: 100%;
-    height: 100%;
-    object-fit: cover;
-  }
-
-  .surf-spot-card__body {
-    display: grid;
-    gap: 0.75rem;
-    padding: 1.15rem;
-  }
-
-  .surf-spot-card__badge {
-    justify-self: start;
-    padding: 0.35rem 0.75rem;
-    border-radius: var(--radius-chip);
-    background: var(--sage);
-    color: var(--navy);
-    font-size: var(--text-small);
-    font-weight: 600;
-  }
-
-  .surf-spot-card__name {
-    font-family: var(--font-display);
-    font-size: 1.2rem;
-    line-height: 1.2;
-  }
-
-  .surf-spot-card__summary {
-    font-size: var(--text-small);
-    color: var(--taupe);
-  }
-
-  .surf-spot-card__specs {
-    display: grid;
-    gap: 0.5rem;
-    font-size: var(--text-small);
-  }
-
-  .surf-spot-card__specs div {
-    display: grid;
-    gap: 0.15rem;
-  }
-
-  .surf-spot-card__specs dt {
-    color: var(--taupe);
-    font-weight: 600;
-  }
-
-  .surf-spot-card__ride dd {
+  .spot__num {
+    font-family: var(--font-hand);
+    font-size: 1.9rem;
     font-weight: 700;
-    color: var(--navy);
+    line-height: 1;
+    color: var(--ink-2);
   }
 
-  .surf-spot-card__cta {
+  .spot__name {
+    font-size: 1.65rem;
+  }
+
+  .spot__badge {
+    font-size: 1.3rem;
+    margin-top: 0.1rem;
+    transform: rotate(-1.5deg);
+    transform-origin: left;
+  }
+
+  .spot__head :global(.spot__board) {
+    width: 4.6rem;
+    color: var(--ink-2);
+    transform: rotate(-18deg);
+    margin-top: 0.3rem;
+  }
+
+  .spot__summary,
+  .spot__specs,
+  .spot__maps {
+    margin-left: 3.1rem;
+  }
+
+  .spot__specs {
+    display: grid;
+    gap: 0.65rem;
+  }
+
+  .spot__specs div {
+    display: grid;
+    gap: 0.05rem;
+    padding-bottom: 0.55rem;
+    border-bottom: 1px dashed rgba(21, 52, 72, 0.18);
+  }
+
+  .spot__specs dt {
     display: flex;
     align-items: center;
-    justify-content: center;
-    min-height: var(--touch-min);
-    padding: 0.85rem 1rem;
-    border-radius: var(--radius-chip);
-    background: var(--navy);
-    color: var(--cream);
-    font-weight: 600;
-    font-size: var(--text-small);
+    gap: 0.35rem;
+    font-size: 0.74rem;
+    font-weight: 700;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    color: var(--pencil);
+  }
+
+  .spot__specs dt :global(.sketch) {
+    width: 1.5rem;
+    flex: none;
+  }
+
+  .spot__specs dd {
+    margin: 0;
+    font-size: 0.98rem;
+    line-height: 1.45;
+  }
+
+  .spot__maps {
+    justify-self: start;
+    font-size: 0.95rem;
   }
 </style>

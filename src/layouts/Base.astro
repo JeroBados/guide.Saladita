@@ -1,6 +1,8 @@
 ---
 import '@fontsource-variable/fraunces';
 import '@fontsource-variable/dm-sans';
+import '@fontsource/caveat/500.css';
+import '@fontsource/caveat/700.css';
 import '../styles/global.css';
 import '../styles/animations.css';
 import { ClientRouter } from 'astro:transitions';
@@ -17,6 +19,9 @@ interface Props {
   noindex?: boolean;
   floatingWaMessage?: string;
   floatingWaLabel?: string;
+  /** explicit alternate-language paths when slugs differ (e.g. /get-there ↔ /es/como-llegar) */
+  enPath?: string;
+  esPath?: string;
 }
 
 const {
@@ -28,6 +33,8 @@ const {
   noindex = false,
   floatingWaMessage,
   floatingWaLabel,
+  enPath: enPathProp,
+  esPath: esPathProp,
 } = Astro.props;
 
 const site = Astro.site ?? 'https://guide.lasaladitarentals.com';
@@ -35,14 +42,16 @@ const canonical = new URL(canonicalPath, site).href;
 const ogUrl = canonical;
 const ogImageUrl = new URL(ogImage, site).href;
 
-const enPath = canonicalPath.startsWith('/es') ? canonicalPath.replace(/^\/es/, '') || '/' : canonicalPath;
-const esPath = canonicalPath.startsWith('/es') ? canonicalPath : `/es${canonicalPath === '/' ? '/' : canonicalPath}`;
+const enPath = enPathProp ?? (canonicalPath.startsWith('/es') ? canonicalPath.replace(/^\/es/, '') || '/' : canonicalPath);
+const esPath = esPathProp ?? (canonicalPath.startsWith('/es') ? canonicalPath : `/es${canonicalPath === '/' ? '/' : canonicalPath}`);
 
 const enUrl = new URL(enPath, site).href;
 const esUrl = new URL(esPath, site).href;
 
 const jsonLd = buildJsonLd(lang);
+// Set the real GA4 id here; the tag is skipped while it is a placeholder.
 const gaId = 'G-XXXXXXXXXX';
+const gaEnabled = !gaId.includes('XXXX');
 const showFloatingWa = floatingWaMessage && floatingWaLabel;
 ---
 
@@ -80,15 +89,22 @@ const showFloatingWa = floatingWaMessage && floatingWaLabel;
 
     <script type="application/ld+json" set:html={JSON.stringify(jsonLd)} />
 
-    <script is:inline define:vars={{ gaId }}>
-      window.dataLayer = window.dataLayer || [];
-      function gtag() {
-        dataLayer.push(arguments);
-      }
-      gtag('js', new Date());
-      gtag('config', gaId);
-    </script>
-    <script async src={`https://www.googletagmanager.com/gtag/js?id=${gaId}`}></script>
+    {
+      gaEnabled && (
+        <>
+          <script is:inline define:vars={{ gaId }}>
+            window.dataLayer = window.dataLayer || [];
+            function gtag() {
+              dataLayer.push(arguments);
+            }
+            gtag('js', new Date());
+            gtag('config', gaId);
+          </script>
+          <script async src={`https://www.googletagmanager.com/gtag/js?id=${gaId}`} />
+        </>
+      )
+    }
+    <meta name="theme-color" content="#f3ecdd" />
 
     <ClientRouter />
   </head>
@@ -100,34 +116,5 @@ const showFloatingWa = floatingWaMessage && floatingWaLabel;
       )
     }
 
-    <script>
-      function initRevealFallback() {
-        if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) return;
-        if (CSS.supports('animation-timeline', 'view()')) return;
-
-        const items = document.querySelectorAll<HTMLElement>('.reveal:not(.reveal-in)');
-        if (!items.length) return;
-
-        const observer = new IntersectionObserver(
-          (entries) => {
-            entries.forEach((entry) => {
-              if (entry.isIntersecting) {
-                entry.target.classList.add('reveal-in');
-                observer.unobserve(entry.target);
-              }
-            });
-          },
-          { threshold: 0.12, rootMargin: '0px 0px -5% 0px' },
-        );
-
-        items.forEach((item, index) => {
-          item.style.setProperty('--i', String(index % 6));
-          observer.observe(item);
-        });
-      }
-
-      initRevealFallback();
-      document.addEventListener('astro:page-load', initRevealFallback);
-    </script>
   </body>
 </html>

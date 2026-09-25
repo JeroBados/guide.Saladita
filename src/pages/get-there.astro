@@ -16,6 +16,9 @@ const stayUrl = 'https://lasaladitarentals.com/en?utm_source=guide&utm_medium=lo
   title={t['getThere.meta.title']}
   description={t['getThere.meta.description']}
   canonicalPath="/get-there"
+  esPath="/es/como-llegar"
+  floatingWaMessage={t['wa.floating']}
+  floatingWaLabel="WhatsApp Saladita Rentals"
 >
   <main class="get-there">
     <div class="container get-there__hero">
@@ -82,12 +85,12 @@ const stayUrl = 'https://lasaladitarentals.com/en?utm_source=guide&utm_medium=lo
   }
 
   .get-there__hero h1 {
-    font-size: clamp(1.6rem, 6vw, 2.2rem);
+    font-size: clamp(2rem, 8vw, 3rem);
     margin-bottom: 0.75rem;
   }
 
   .get-there__intro {
-    color: var(--taupe);
+    color: var(--pencil);
     margin-bottom: 1.5rem;
     max-width: 40rem;
   }
@@ -100,23 +103,23 @@ const stayUrl = 'https://lasaladitarentals.com/en?utm_source=guide&utm_medium=lo
 
   .route-card {
     padding: 1.25rem;
-    border-radius: var(--radius);
-    background: var(--sand);
-    border: 1px solid rgba(148, 137, 121, 0.25);
+    background: var(--paper-3);
+    border: 1px solid rgba(21, 52, 72, 0.1);
+    box-shadow: var(--shadow-paper);
   }
 
   .route-card--featured {
-    border-color: var(--navy);
-    background: var(--cream);
+    background: #f6dc8f;
+    transform: rotate(-0.8deg);
   }
 
   .route-card__tag {
     display: inline-block;
     margin-bottom: 0.5rem;
     padding: 0.3rem 0.65rem;
-    border-radius: var(--radius-chip);
-    background: var(--navy);
-    color: var(--cream);
+    border-radius: var(--radius-hand);
+    background: var(--ink);
+    color: var(--paper-3);
     font-size: 0.75rem;
     font-weight: 700;
     text-transform: uppercase;
@@ -133,7 +136,7 @@ const stayUrl = 'https://lasaladitarentals.com/en?utm_source=guide&utm_medium=lo
     margin-bottom: 1rem;
     padding-left: 1.1rem;
     font-size: var(--text-small);
-    color: var(--taupe);
+    color: var(--ink);
   }
 
   .route-card__cta {
@@ -142,15 +145,15 @@ const stayUrl = 'https://lasaladitarentals.com/en?utm_source=guide&utm_medium=lo
     justify-content: center;
     min-height: var(--touch-min);
     padding: 0.9rem 1rem;
-    border-radius: var(--radius-chip);
-    background: var(--navy);
-    color: var(--cream);
+    border-radius: var(--radius-hand);
+    background: var(--ink);
+    color: var(--paper-3);
     font-weight: 700;
   }
 
   .get-there__services {
     padding: 1.25rem;
-    border-radius: var(--radius);
+    border-radius: 4px;
     background: var(--navy);
     color: var(--cream);
   }
@@ -174,7 +177,7 @@ const stayUrl = 'https://lasaladitarentals.com/en?utm_source=guide&utm_medium=lo
     align-items: center;
     min-height: var(--touch-min);
     padding: 0.85rem 1rem;
-    border-radius: var(--radius-chip);
+    border-radius: var(--radius-hand);
     background: var(--sand);
     color: var(--navy);
     font-weight: 700;

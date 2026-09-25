@@ -6,12 +6,17 @@
     "name": "Saladita Rentals",
     "lat": 17.8424,
     "lng": -101.7686,
-    "badge": { "en": "Property Management", "es": "Administración" },
+    "badge": {
+      "en": "Property Management",
+      "es": "Administración"
+    },
     "desc": {
       "en": "Your local hosts and experts in La Saladita.",
       "es": "Tus anfitriones y expertos locales en La Saladita."
     },
-    "cta": { "type": "maps" }
+    "cta": {
+      "type": "maps"
+    }
   },
   {
     "id": "gato-surf-houses",
@@ -20,114 +25,17 @@
     "name": "Gato Surf Houses",
     "lat": 17.8423,
     "lng": -101.7688,
-    "badge": { "en": "Beachfront Houses", "es": "Casas frente al mar" },
+    "badge": {
+      "en": "Beachfront Houses",
+      "es": "Casas frente al mar"
+    },
     "desc": {
       "en": "Intimate, perfectly designed houses for couples or solo surfers, just 20m from the break.",
       "es": "Casas de diseño íntimo para parejas o surfistas solitarios, a solo 20m de la ola."
     },
-    "cta": { "type": "maps" }
-  },
-  {
-    "id": "bennys",
-    "category": "eat",
-    "chip": "eat",
-    "name": "Benny's",
-    "lat": 17.842,
-    "lng": -101.7683,
-    "badge": { "en": "Midday · fresh catch", "es": "Mediodía · pesca fresca" },
-    "desc": {
-      "en": "The midday table. Fresh catch, eaten by the beach.",
-      "es": "La mesa del mediodía. Pesca fresca, junto a la playa."
-    },
-    "cta": { "type": "maps" }
-  },
-  {
-    "id": "marea",
-    "category": "eat",
-    "chip": "eat",
-    "name": "Marea",
-    "lat": 17.8422,
-    "lng": -101.7685,
-    "badge": { "en": "Sunset bar", "es": "Bar del atardecer" },
-    "desc": {
-      "en": "The bar for sunset. Come for the view, stay for a drink.",
-      "es": "El bar para ver el atardecer. Vení por la vista, quedate por el trago."
-    },
-    "note": {
-      "en": "Arrive early at sunset, it fills up fast.",
-      "es": "Llega temprano al atardecer, se llena rápido."
-    },
-    "cta": { "type": "maps" }
-  },
-  {
-    "id": "queen-bar",
-    "category": "eat",
-    "chip": "eat",
-    "name": "Queen Bar",
-    "lat": 17.8419,
-    "lng": -101.768,
-    "badge": { "en": "Drinks & Vibe", "es": "Tragos y buen ambiente" },
-    "desc": {
-      "en": "A great spot for evening drinks and enjoying the local social scene.",
-      "es": "Un excelente lugar para tomar algo por la noche y disfrutar del ambiente social."
-    },
-    "cta": { "type": "maps" }
-  },
-  {
-    "id": "pacos",
-    "category": "eat",
-    "chip": "eat",
-    "name": "Paco's",
-    "lat": 17.8428,
-    "lng": -101.7692,
-    "badge": { "en": "All-day reliable", "es": "Rinde todo el día" },
-    "desc": {
-      "en": "Local dishes, consistent quality, any time of day. A safe bet, always.",
-      "es": "Platos locales, calidad constante, a cualquier hora. Apuesta segura, siempre."
-    },
-    "cta": { "type": "maps" }
-  },
-  {
-    "id": "ilianet",
-    "category": "eat",
-    "chip": "eat",
-    "name": "Ilianet",
-    "lat": 17.8425,
-    "lng": -101.7689,
-    "badge": { "en": "Dinner classic", "es": "Cena clásica" },
-    "desc": {
-      "en": "Traditional cuisine and a relaxed nighttime atmosphere. A memorable dinner spot.",
-      "es": "Cocina tradicional y ambiente nocturno relajado. Una cena para recordar."
-    },
-    "cta": { "type": "maps" }
-  },
-  {
-    "id": "acadia",
-    "category": "cafe",
-    "chip": "eat",
-    "name": "Acadia",
-    "lat": 17.8417,
-    "lng": -101.7677,
-    "badge": { "en": "Theme nights · bar", "es": "Noches temáticas · bar" },
-    "desc": {
-      "en": "A proper bar with theme nights. Coffee by day, the room fills after dark.",
-      "es": "Un buen bar con noches temáticas. Café de día, se llena cuando oscurece."
-    },
-    "cta": { "type": "maps" }
-  },
-  {
-    "id": "angelinas",
-    "category": "eat",
-    "chip": "eat",
-    "name": "Angelina's (Los Llanos)",
-    "lat": 17.8667,
-    "lng": -101.7333,
-    "badge": { "en": "Typical food · any night", "es": "Comida típica · cualquier noche" },
-    "desc": {
-      "en": "Any night of the week for a typical Mexican meal, in nearby Los Llanos.",
-      "es": "Cualquier noche para una comida típica, en Los Llanos."
-    },
-    "cta": { "type": "maps" }
+    "cta": {
+      "type": "maps"
+    }
   },
   {
     "id": "hacienda-cafe",
@@ -136,12 +44,158 @@
     "name": "Hacienda Café",
     "lat": 17.8432,
     "lng": -101.7696,
-    "badge": { "en": "The only market · ATM", "es": "El único súper · cajero" },
-    "desc": {
-      "en": "The only supermarket in La Saladita, plus the town's one ATM. Coffee and the most reliable WiFi if you are not on Starlink.",
-      "es": "El único supermercado de La Saladita, y el único cajero del pueblo. Café y el WiFi más confiable si no estás en Starlink."
+    "badge": {
+      "en": "The only market · ATM",
+      "es": "El único súper · cajero"
     },
-    "cta": { "type": "maps" }
+    "desc": {
+      "en": "The only supermarket in La Saladita, and the town's one ATM. Stock up here on your first morning.",
+      "es": "El único supermercado de La Saladita y el único cajero del pueblo. Aquí haces las compras la primera mañana."
+    },
+    "cta": {
+      "type": "maps"
+    },
+    "slot": "morning"
+  },
+  {
+    "id": "bennys",
+    "category": "eat",
+    "chip": "eat",
+    "name": "Benny's",
+    "lat": 17.842,
+    "lng": -101.7683,
+    "badge": {
+      "en": "Midday · fresh catch",
+      "es": "Mediodía · pesca fresca"
+    },
+    "desc": {
+      "en": "The midday table: fresh catch, by the beach.",
+      "es": "La mesa del mediodía: pesca fresca, junto a la playa."
+    },
+    "cta": {
+      "type": "maps"
+    },
+    "slot": "midday"
+  },
+  {
+    "id": "pacos",
+    "category": "eat",
+    "chip": "eat",
+    "name": "Paco's",
+    "lat": 17.8428,
+    "lng": -101.7692,
+    "badge": {
+      "en": "All-day reliable",
+      "es": "Rinde todo el día"
+    },
+    "desc": {
+      "en": "Local dishes, consistent quality, any time of day. A safe bet, always.",
+      "es": "Platos locales, calidad constante, a cualquier hora. Apuesta segura, siempre."
+    },
+    "cta": {
+      "type": "maps"
+    },
+    "slot": "midday"
+  },
+  {
+    "id": "marea",
+    "category": "eat",
+    "chip": "eat",
+    "name": "Marea",
+    "lat": 17.8422,
+    "lng": -101.7685,
+    "badge": {
+      "en": "Sunset bar",
+      "es": "Bar del atardecer"
+    },
+    "desc": {
+      "en": "The bar for sunset. Come for the view, stay for a drink.",
+      "es": "El bar para ver el atardecer. Ven por la vista, quédate por un trago."
+    },
+    "cta": {
+      "type": "maps"
+    },
+    "slot": "sunset"
+  },
+  {
+    "id": "acadia",
+    "category": "cafe",
+    "chip": "eat",
+    "name": "Acadia",
+    "lat": 17.8417,
+    "lng": -101.7677,
+    "badge": {
+      "en": "Theme nights · bar",
+      "es": "Noches temáticas · bar"
+    },
+    "desc": {
+      "en": "A proper bar with theme nights. Check what's on this week when you arrive.",
+      "es": "Un buen bar con noches temáticas. Pregunta qué toca esta semana cuando llegues."
+    },
+    "cta": {
+      "type": "maps"
+    },
+    "slot": "night"
+  },
+  {
+    "id": "angelinas",
+    "category": "eat",
+    "chip": "eat",
+    "name": "Angelina's (Los Llanos)",
+    "lat": 17.8667,
+    "lng": -101.7333,
+    "badge": {
+      "en": "Typical food · any night",
+      "es": "Comida típica · cualquier noche"
+    },
+    "desc": {
+      "en": "Any night of the week, for typical Mexican food. In nearby Los Llanos.",
+      "es": "Cualquier noche de la semana, para comida típica mexicana. En Los Llanos, muy cerca."
+    },
+    "cta": {
+      "type": "maps"
+    },
+    "slot": "night"
+  },
+  {
+    "id": "ilianet",
+    "category": "eat",
+    "chip": "eat",
+    "name": "Ilianet",
+    "lat": 17.8425,
+    "lng": -101.7689,
+    "badge": {
+      "en": "Dinner classic",
+      "es": "Cena clásica"
+    },
+    "desc": {
+      "en": "Traditional cuisine and a relaxed nighttime atmosphere. A memorable dinner spot.",
+      "es": "Cocina tradicional y ambiente nocturno relajado. Una cena para recordar."
+    },
+    "cta": {
+      "type": "maps"
+    },
+    "slot": "night"
+  },
+  {
+    "id": "queen-bar",
+    "category": "eat",
+    "chip": "eat",
+    "name": "Queen Bar",
+    "lat": 17.8419,
+    "lng": -101.768,
+    "badge": {
+      "en": "Drinks & Vibe",
+      "es": "Tragos y buen ambiente"
+    },
+    "desc": {
+      "en": "A great spot for evening drinks and enjoying the local social scene.",
+      "es": "Un excelente lugar para tomar algo por la noche y disfrutar del ambiente social."
+    },
+    "cta": {
+      "type": "maps"
+    },
+    "slot": "night"
   },
   {
     "id": "surf-lessons",
@@ -150,7 +204,10 @@
     "name": "Surf lessons",
     "lat": null,
     "lng": null,
-    "badge": { "en": "Book with us", "es": "Reserva con nosotros" },
+    "badge": {
+      "en": "Book with us",
+      "es": "Reserva con nosotros"
+    },
     "desc": {
       "en": "Local instructors at the main point — beginner to intermediate, equipment included.",
       "es": "Instructores locales en el point — principiante a intermedio, equipo incluido."
@@ -170,7 +227,10 @@
     "name": "Surfboard rental",
     "lat": null,
     "lng": null,
-    "badge": { "en": "Daily · weekly", "es": "Por día · semana" },
+    "badge": {
+      "en": "Daily · weekly",
+      "es": "Por día · semana"
+    },
     "desc": {
       "en": "Longboards, midboards and shortboards — pick up through Saladita Rentals.",
       "es": "Longboards, midboards y shortboards — retira con Saladita Rentals."
@@ -190,7 +250,10 @@
     "name": "Massage & wellness",
     "lat": null,
     "lng": null,
-    "badge": { "en": "At your house", "es": "En tu casa" },
+    "badge": {
+      "en": "At your house",
+      "es": "En tu casa"
+    },
     "desc": {
       "en": "Post-surf massage at your rental, ocean sounds included.",
       "es": "Masaje post-surf en tu casa, con sonido de mar incluido."
@@ -210,7 +273,10 @@
     "name": "Private chef",
     "lat": null,
     "lng": null,
-    "badge": { "en": "Dinner at home", "es": "Cena en casa" },
+    "badge": {
+      "en": "Dinner at home",
+      "es": "Cena en casa"
+    },
     "desc": {
       "en": "A local chef cooks fresh seafood at your place. Ideal for groups and special nights.",
       "es": "Un chef local cocina mariscos frescos en tu casa. Ideal para grupos y noches especiales."
@@ -231,7 +297,10 @@
     "lat": null,
     "lng": null,
     "featured": true,
-    "badge": { "en": "Best seller · ZIH ⇄ Saladita", "es": "Más vendido · ZIH ⇄ Saladita" },
+    "badge": {
+      "en": "Best seller · ZIH ⇄ Saladita",
+      "es": "Más vendido · ZIH ⇄ Saladita"
+    },
     "desc": {
       "en": "Private door-to-door from Zihuatanejo airport — round trip, AC, optional grocery stop.",
       "es": "Puerta a puerta desde el aeropuerto de Zihuatanejo — ida y vuelta, A/C, parada en súper opcional."
@@ -251,7 +320,10 @@
     "name": "Car rental",
     "lat": null,
     "lng": null,
-    "badge": { "en": "Explore the coast", "es": "Explora la costa" },
+    "badge": {
+      "en": "Explore the coast",
+      "es": "Explora la costa"
+    },
     "desc": {
       "en": "Reliable cars to explore Troncones, Zihuatanejo and the coast at your own pace.",
       "es": "Autos confiables para explorar Troncones, Zihuatanejo y la costa a tu ritmo."
@@ -271,7 +343,10 @@
     "name": "Motorcycle rental",
     "lat": null,
     "lng": null,
-    "badge": { "en": "Coast runs", "es": "Rutas costeras" },
+    "badge": {
+      "en": "Coast runs",
+      "es": "Rutas costeras"
+    },
     "desc": {
       "en": "Scooters and motorcycles for quick trips around town and nearby beaches.",
       "es": "Scooters y motos para moverte rápido por el pueblo y playas cercanas."
@@ -291,7 +366,10 @@
     "name": "ATV rental",
     "lat": null,
     "lng": null,
-    "badge": { "en": "Off-road fun", "es": "Aventura off-road" },
+    "badge": {
+      "en": "Off-road fun",
+      "es": "Aventura off-road"
+    },
     "desc": {
       "en": "ATVs for dirt roads, beach runs and exploring the hills around La Saladita.",
       "es": "Cuatrimotos para caminos de terracería, playa y cerros alrededor de La Saladita."

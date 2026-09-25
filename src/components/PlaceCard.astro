@@ -9,169 +9,76 @@ interface Props {
   lang: Lang;
   directionsLabel: string;
   whatsappLabel: string;
-  revealIndex?: number;
 }
 
-const { place, lang, directionsLabel, whatsappLabel, revealIndex = 0 } = Astro.props;
+const { place, lang, directionsLabel, whatsappLabel } = Astro.props;
 const ctaUrl = getCtaUrl(place, lang);
 const ctaLabel = getCtaLabel(place, lang, { directions: directionsLabel, whatsapp: whatsappLabel });
-const image = place.image ?? `/media/places/${place.id}.jpg`;
 ---
 
-<article
-  class="place-card reveal"
-  data-chip={place.chip}
-  data-place-id={place.id}
-  style={`--i: ${revealIndex}`}
->
-  <div class="place-card__media">
-    <span class="place-card__draw"><Sketch name="plate" /></span>
-    <img
-      class="place-card__image"
-      src={image}
-      alt=""
-      loading="lazy"
-      decoding="async"
-      data-place-image
-    />
-  </div>
-
-  <div class="place-card__body">
-    <span class="place-card__badge">{place.badge[lang]}</span>
-    <h3 class="place-card__name">{place.name}</h3>
-    <p class="place-card__desc">{place.desc[lang]}</p>
-    {place.note && <p class="place-card__note">{place.note[lang]}</p>}
-
-    {
-      ctaUrl && (
-        <a
-          class="place-card__cta"
-          href={ctaUrl}
-          target={place.cta.type === 'link' ? '_blank' : undefined}
-          rel={place.cta.type === 'link' ? 'noopener noreferrer' : undefined}
-          data-track-cta
-          data-place-id={place.id}
-          data-cta-type={place.cta.type}
-        >
-          {ctaLabel}
-        </a>
-      )
-    }
-  </div>
+<article class="place-card" data-chip={place.chip} data-place-id={place.id} id={place.id}>
+  <span class="tape place-card__tape" aria-hidden="true"></span>
+  <Sketch name="shell" class="place-card__draw" />
+  <h3 class="place-card__name">{place.name}</h3>
+  <p class="place-card__badge hand">{place.badge[lang]}</p>
+  <p class="place-card__desc">{place.desc[lang]}</p>
+  {place.note && <p class="place-card__note">{place.note[lang]}</p>}
+  {
+    ctaUrl && (
+      <a
+        class="pen-link place-card__cta"
+        href={ctaUrl}
+        target="_blank"
+        rel="noopener noreferrer"
+        data-track-cta
+        data-place-id={place.id}
+        data-cta-type={place.cta.type}
+      >
+        {ctaLabel} →
+      </a>
+    )
+  }
 </article>
-
-<script>
-  document.querySelectorAll<HTMLImageElement>('[data-place-image]').forEach((img) => {
-    img.addEventListener('error', () => {
-      img.remove();
-    });
-  });
-</script>
 
 <style>
   .place-card {
-    display: flex;
-    flex-direction: column;
-    background: var(--sand);
-    border-radius: var(--radius);
-    overflow: hidden;
-    box-shadow: var(--shadow-card);
-    transition:
-      transform var(--dur) var(--ease-out),
-      box-shadow var(--dur) var(--ease-out);
-  }
-
-  .place-card:hover,
-  .place-card:focus-within {
-    transform: translateY(-6px);
-    box-shadow: var(--shadow-float);
-  }
-
-  .place-card:active {
-    transform: scale(0.985);
-  }
-
-  .place-card__media {
     position: relative;
-    aspect-ratio: 4 / 3;
-    overflow: hidden;
-    background:
-      linear-gradient(160deg, rgba(21, 52, 72, 0.08), rgba(231, 216, 192, 0.9)),
-      var(--cream);
-    color: var(--navy);
-  }
-
-  .place-card__draw {
-    position: absolute;
-    inset: 0;
     display: grid;
-    place-items: center;
+    gap: 0.3rem;
+    padding: 1.5rem 1.2rem 0.8rem;
+    background: var(--paper-3);
+    border: 1px solid rgba(21, 52, 72, 0.1);
+    box-shadow: var(--shadow-paper);
+    transform: rotate(-0.5deg);
   }
 
-  .place-card__draw :global(.sketch) {
-    width: 7rem;
+  .place-card__tape {
+    top: -0.7rem;
+    left: 1rem;
+    transform: rotate(-5deg);
   }
 
-  .place-card__image {
-    position: relative;
-    z-index: 1;
-    width: 100%;
-    height: 100%;
-    object-fit: cover;
-    transition: transform 0.7s var(--ease-out);
-  }
-
-  .place-card:hover .place-card__image,
-  .place-card:active .place-card__image {
-    transform: scale(1.04);
-  }
-
-  .place-card__body {
-    display: flex;
-    flex-direction: column;
-    gap: 0.65rem;
-    padding: 1.25rem;
-    flex: 1;
-  }
-
-  .place-card__badge {
-    align-self: flex-start;
-    padding: 0.35rem 0.75rem;
-    border-radius: var(--radius-chip);
-    background: var(--sage);
-    color: var(--navy);
-    font-size: var(--text-small);
-    font-weight: 600;
+  .place-card :global(.place-card__draw) {
+    width: 2.8rem;
+    color: var(--ink-2);
   }
 
   .place-card__name {
-    font-family: var(--font-display);
-    font-size: var(--text-h3);
-    line-height: 1.2;
+    font-size: 1.4rem;
   }
 
-  .place-card__desc {
-    color: var(--navy);
-    flex: 1;
+  .place-card__badge {
+    font-size: 1.25rem;
   }
 
   .place-card__note {
+    font-size: 0.9rem;
+    color: var(--pencil);
     font-style: italic;
-    color: var(--taupe);
-    font-size: var(--text-small);
   }
 
   .place-card__cta {
-    display: inline-flex;
-    align-items: center;
-    justify-content: center;
-    margin-top: 0.35rem;
-    padding: 0.75rem 1rem;
-    border-radius: var(--radius-chip);
-    background: var(--navy);
-    color: var(--cream);
-    font-size: var(--text-small);
-    font-weight: 600;
-    text-align: center;
+    justify-self: start;
+    font-size: 0.92rem;
   }
 </style>
