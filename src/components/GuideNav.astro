@@ -68,7 +68,11 @@ const { label, items } = Astro.props;
         if (!visible) return;
 
         sections.forEach(({ link, el }) => {
-          link.classList.toggle('is-active', el === visible.target);
+          const active = el === visible.target;
+          link.classList.toggle('is-active', active);
+          if (active) {
+            link.scrollIntoView({ inline: 'center', block: 'nearest', behavior: 'smooth' });
+          }
         });
       },
       { rootMargin: '-30% 0px -55% 0px', threshold: [0, 0.25, 0.5] },
@@ -128,8 +132,12 @@ const { label, items } = Astro.props;
     transform: rotate(0.8deg);
   }
 
-  .guide-nav__link.is-active,
   .guide-nav__link:hover {
+    background: var(--sand);
+  }
+
+  .guide-nav__link.is-active {
     background: var(--marker);
+    transform: rotate(0deg) scale(1.04);
   }
 </style>
