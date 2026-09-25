@@ -123,6 +123,7 @@ p {
 .section {
   padding-block: 3.5rem;
   position: relative;
+  scroll-margin-top: 4.75rem;
 }
 
 .section--alt {

@@ -73,6 +73,25 @@ const slots: { id: 'morning' | 'midday' | 'sunset' | 'night'; icon: SketchName }
     bottom: 1rem;
     left: 1.45rem;
     border-left: 2px dashed rgba(21, 52, 72, 0.3);
+    transform-origin: top;
+  }
+
+  @supports (animation-timeline: view()) {
+    .eatday::before {
+      animation: dayline linear both;
+      animation-timeline: view();
+      animation-range: entry 5% cover 85%;
+    }
+  }
+
+  @keyframes dayline {
+    from {
+      transform: scaleY(0.08);
+    }
+
+    to {
+      transform: scaleY(1);
+    }
   }
 
   .eatday__slot {

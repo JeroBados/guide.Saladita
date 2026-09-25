@@ -30,18 +30,18 @@ const tilt = [-0.6, 0.5, -0.3][index % 3];
     <Sketch name={isShort ? 'shortboard' : 'longboard'} class="spot__board" />
   </header>
 
-  <p class="spot__summary">{spot.summary[lang]}</p>
+  <p class="spot__summary" data-type-copy>{spot.summary[lang]}</p>
 
   <dl class="spot__specs">
-    <div><dt><Sketch name="wind" />{labels.wind}</dt><dd>{spot.wind[lang]}</dd></div>
-    <div><dt><Sketch name="tide" />{labels.tide}</dt><dd>{spot.tide[lang]}</dd></div>
-    <div><dt><Sketch name="wave" />{labels.swell}</dt><dd>{spot.swell[lang]}</dd></div>
-    <div><dt><Sketch name="pin" />{labels.access}</dt><dd>{spot.access[lang]}</dd></div>
+    <div><dt><Sketch name="wind" />{labels.wind}</dt><dd data-type-copy>{spot.wind[lang]}</dd></div>
+    <div><dt><Sketch name="tide" />{labels.tide}</dt><dd data-type-copy>{spot.tide[lang]}</dd></div>
+    <div><dt><Sketch name="wave" />{labels.swell}</dt><dd data-type-copy>{spot.swell[lang]}</dd></div>
+    <div><dt><Sketch name="pin" />{labels.access}</dt><dd data-type-copy>{spot.access[lang]}</dd></div>
     {
       spot.rideLength && (
         <div>
           <dt><Sketch name="arrow" />{labels.ride}</dt>
-          <dd><span class="hl">{spot.rideLength[lang]}</span></dd>
+          <dd data-type-copy><span class="hl">{spot.rideLength[lang]}</span></dd>
         </div>
       )
     }
@@ -51,6 +51,63 @@ const tilt = [-0.6, 0.5, -0.3][index % 3];
     {mapsLabel} →
   </a>
 </article>
+
+<script>
+  function typeInto(el: HTMLElement, text: string, speed: number) {
+    return new Promise<void>((resolve) => {
+      el.textContent = '';
+      el.classList.add('is-typing');
+      let i = 0;
+      const timer = window.setInterval(() => {
+        i += 1;
+        el.textContent = text.slice(0, i);
+        if (i >= text.length) {
+          window.clearInterval(timer);
+          el.classList.remove('is-typing');
+          resolve();
+        }
+      }, speed);
+    });
+  }
+
+  function prepareSpotCopy() {
+    const spots = document.querySelector('.spots');
+    if (!spots || spots.dataset.copyReady === 'true') return;
+    spots.dataset.copyReady = 'true';
+
+    const reduce = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+    const lines = spots.querySelectorAll<HTMLElement>('[data-type-copy]');
+    lines.forEach((line) => {
+      line.dataset.full = line.textContent ?? '';
+      if (!reduce) line.textContent = '';
+    });
+    if (reduce || !('IntersectionObserver' in window)) return;
+
+    const cards = Array.from(spots.querySelectorAll<HTMLElement>('.spot'));
+    let started = false;
+
+    const observer = new IntersectionObserver(
+      (entries) => {
+        if (started || !entries.some((entry) => entry.isIntersecting)) return;
+        started = true;
+        observer.disconnect();
+        void cards.reduce(async (chain, card) => {
+          await chain;
+          const copies = Array.from(card.querySelectorAll<HTMLElement>('[data-type-copy]'));
+          for (const line of copies) {
+            await typeInto(line, line.dataset.full ?? '', 16);
+          }
+        }, Promise.resolve());
+      },
+      { threshold: 0.35 },
+    );
+
+    observer.observe(spots);
+  }
+
+  prepareSpotCopy();
+  document.addEventListener('astro:page-load', prepareSpotCopy);
+</script>
 
 <style>
   .spot {
@@ -92,6 +149,23 @@ const tilt = [-0.6, 0.5, -0.3][index % 3];
 
   .spot__name {
     font-size: 1.65rem;
+  }
+
+  .spot [data-type-copy].is-typing::after {
+    content: '';
+    display: inline-block;
+    width: 2px;
+    height: 0.9em;
+    margin-left: 2px;
+    background: currentColor;
+    vertical-align: -0.08em;
+    animation: caret 0.7s step-end infinite;
+  }
+
+  @keyframes caret {
+    50% {
+      opacity: 0;
+    }
   }
 
   .spot__badge {
