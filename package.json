@@ -6,7 +6,10 @@
     "node": ">=22.12.0"
   },
   "scripts": {
+    "forecast": "node scripts/fetch-week-forecast.mjs",
+    "predev": "npm run forecast",
     "dev": "astro dev",
+    "prebuild": "npm run forecast",
     "build": "astro build",
     "preview": "astro preview",
     "astro": "astro"

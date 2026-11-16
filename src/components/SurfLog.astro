@@ -1,6 +1,6 @@
 ---
-/* "This week's log": the best morning to surf the Saladita point in the next 8 days,
-   plus a static month-by-month season strip (the part search engines and AIs quote). */
+/* "This week's log": best morning at the Saladita point from Surfline + surf-forecast
+   (averaged), with Open-Meteo tide fill. Static month strip stays for SEO. */
 import Sketch from './Sketch.astro';
 import type { Lang } from '../utils/i18n';
 
@@ -122,47 +122,46 @@ const i18n = {
     tideRising: boolean;
   };
 
-  const LAT = 17.841;
-  const LNG = -101.771;
-  const TZ = 'America/Mexico_City';
-
-  const ang = (a: number, b: number) => {
-    const d = Math.abs(a - b) % 360;
-    return Math.min(d, 360 - d);
+  type WeekPayload = {
+    bestDate: string | null;
+    sourcesUsed?: string[];
+    days: Day[];
   };
+
   const clamp = (v: number, lo = 0, hi = 1) => Math.max(lo, Math.min(hi, v));
-  const compass = (deg: number) => ['N', 'NE', 'E', 'SE', 'S', 'SW', 'W', 'NW'][Math.round(deg / 45) % 8];
-
-  function windKind(dir: number, speed: number): Day['windKind'] {
-    if (speed < 7) return 'glassy';
-    const d = ang(dir, 30); // the point is offshore with N–NE wind
-    if (d <= 60) return 'offshore';
-    if (d <= 110) return 'cross';
-    return 'onshore';
-  }
-
-  function hourScore(swell: number, period: number, swellDir: number, windDir: number, windSpeed: number, tide: number) {
-    const size = swell < 0.3 ? 0 : swell < 1 ? (swell - 0.3) / 0.7 : swell <= 2 ? 1 : swell < 3.2 ? 1 - ((swell - 2) / 1.2) * 0.5 : 0.4;
-    const per = clamp((period - 6) / 8, 0.15, 1);
-    const dd = ang(swellDir, 210); // the long left wants S–SW swell
-    const dir = dd <= 35 ? 1 : dd <= 75 ? 1 - ((dd - 35) / 40) * 0.6 : 0.2;
-    const kind = windKind(windDir, windSpeed);
-    const wind =
-      kind === 'glassy' ? 0.95 : kind === 'offshore' ? (windSpeed < 25 ? 1 : 0.7) : kind === 'cross' ? (windSpeed < 15 ? 0.5 : 0.25) : windSpeed < 12 ? 0.35 : 0.1;
-    const tideS = tide <= 0.62 ? 1 : tide <= 0.82 ? 0.7 : 0.45; // mid to low
-    return 100 * (0.32 * size + 0.18 * per + 0.14 * dir + 0.26 * wind + 0.1 * tideS);
-  }
-
-  function nowParts() {
-    const f = new Intl.DateTimeFormat('en-CA', { timeZone: TZ, year: 'numeric', month: '2-digit', day: '2-digit', hour: '2-digit', hour12: false });
-    const p = Object.fromEntries(f.formatToParts(new Date()).map((x) => [x.type, x.value]));
-    return { date: `${p.year}-${p.month}-${p.day}`, hour: Number(p.hour) % 24 };
-  }
+  const compass = (deg: number) => ['N', 'NE', 'E', 'SE', 'S', 'SW', 'W', 'NW'][Math.round(((deg % 360) + 360) % 360 / 45) % 8];
 
   function wavePath(height: number) {
     const amp = 4 + clamp(height / 3) * 22;
     const base = 44;
     return `M2 ${base} C 10 ${base - amp * 0.4}, 16 ${base - amp}, 26 ${base - amp} C 36 ${base - amp}, 40 ${base - amp * 0.35}, 34 ${base - amp * 0.2} C 42 ${base - amp * 0.1}, 50 ${base}, 58 ${base}`;
+  }
+
+  function sourceLabel(sources: string[] = [], lang: string) {
+    const names =
+      lang === 'es'
+        ? { surfline: 'Surfline', 'surf-forecast': 'surf-forecast', windy: 'Windy', 'open-meteo': 'Open-Meteo' }
+        : { surfline: 'Surfline', 'surf-forecast': 'surf-forecast', windy: 'Windy', 'open-meteo': 'Open-Meteo' };
+    const list = sources.map((s) => names[s as keyof typeof names] || s);
+    if (!list.length) return lang === 'es' ? 'fuentes locales' : 'local sources';
+    if (list.length === 1) return list[0];
+    if (list.length === 2) return lang === 'es' ? `${list[0]} y ${list[1]}` : `${list[0]} and ${list[1]}`;
+    return lang === 'es' ? `${list.slice(0, -1).join(', ')} y ${list.at(-1)}` : `${list.slice(0, -1).join(', ')}, and ${list.at(-1)}`;
+  }
+
+  async function loadWeek(): Promise<WeekPayload> {
+    const urls = ['/api/week-forecast.php', '/data/week-forecast.json'];
+    for (const url of urls) {
+      try {
+        const res = await fetch(url, { cache: 'no-cache' });
+        if (!res.ok) continue;
+        const json = (await res.json()) as WeekPayload;
+        if (Array.isArray(json.days) && json.days.some((d) => d.score != null)) return json;
+      } catch {
+        /* try next */
+      }
+    }
+    throw new Error('forecast');
   }
 
   async function run() {
@@ -174,115 +173,28 @@ const i18n = {
     const t = JSON.parse(root.dataset.i18n || '{}');
     const $ = <T extends HTMLElement>(s: string) => root.querySelector<T>(s)!;
 
-    const models = ['ecmwf_wam', 'ncep_gfswave025', 'meteofrance_wave'];
-    const marineBase = `https://marine-api.open-meteo.com/v1/marine?latitude=${LAT}&longitude=${LNG}&hourly=wave_height,swell_wave_height,swell_wave_period,swell_wave_direction,sea_level_height_msl&timezone=${encodeURIComponent(TZ)}&forecast_days=8&models=`;
-    const windUrl = `https://api.open-meteo.com/v1/forecast?latitude=${LAT}&longitude=${LNG}&hourly=wind_speed_10m,wind_direction_10m&timezone=${encodeURIComponent(TZ)}&forecast_days=8`;
-
     try {
-      const fetched = await Promise.all([
-        ...models.map(async (model) => {
-          try {
-            const res = await fetch(marineBase + model);
-            if (!res.ok) return null;
-            return ((await res.json()).hourly as Record<string, (number | null)[] | string[]> | undefined) ?? null;
-          } catch {
-            return null;
-          }
-        }),
-        fetch(windUrl).then(async (res) => (res.ok ? ((await res.json()).hourly as Record<string, (number | null)[] | string[]>) : null)),
-      ]);
-      const windHours = fetched.pop() as Record<string, (number | null)[] | string[]> | null;
-      const sources = fetched.filter((src): src is Record<string, (number | null)[] | string[]> => src != null && Array.isArray(src.time));
-      if (!sources.length || !windHours) throw new Error('forecast');
-      const m = sources[0];
-      const w = windHours;
-      const now = nowParts();
-
-      const byDate = new Map<string, number[]>();
-      (m.time as string[]).forEach((iso, i) => {
-        const d = iso.slice(0, 10);
-        if (!byDate.has(d)) byDate.set(d, []);
-        byDate.get(d)!.push(i);
-      });
-
-      const days: Day[] = [];
-      byDate.forEach((idxs, date) => {
-        const levels = idxs.map((i) => m.sea_level_height_msl[i]).filter((v: number | null) => v != null);
-        const lo = Math.min(...levels);
-        const hi = Math.max(...levels);
-        const norm = (v: number) => (hi - lo > 0.05 ? (v - lo) / (hi - lo) : 0.5);
-        const hourIdx = (h: number) => idxs.find((i) => Number(m.time[i].slice(11, 13)) === h);
-        let best: Day | null = null;
-        for (let start = 5; start <= 8; start++) {
-          if (date === now.date && start < now.hour) continue;
-          const hs = [start, start + 1, start + 2].map(hourIdx).filter((i): i is number => i != null);
-          if (hs.length < 3) continue;
-          const val = (arr: (number | null)[], i: number, alt?: (number | null)[]) => (arr[i] ?? alt?.[i] ?? 0) as number;
-          const num = (src: Record<string, (number | null)[] | string[]>, key: string, i: number, alt?: string) => {
-            const primary = src[key];
-            const fallback = alt ? src[alt] : undefined;
-            const value = (Array.isArray(primary) ? primary[i] : null) ?? (Array.isArray(fallback) ? fallback[i] : null);
-            return typeof value === 'number' ? value : null;
-          };
-          const blend = (i: number) => {
-            const rows = sources
-              .map((src) => {
-                const swell = num(src, 'swell_wave_height', i, 'wave_height');
-                const period = num(src, 'swell_wave_period', i);
-                const dir = num(src, 'swell_wave_direction', i);
-                if (swell == null || period == null || dir == null) return null;
-                return {
-                  swell,
-                  period,
-                  dir,
-                  score: hourScore(swell, period, dir, val(w.wind_direction_10m, i), val(w.wind_speed_10m, i), norm(val(m.sea_level_height_msl, i))),
-                };
-              })
-              .filter((row): row is { swell: number; period: number; dir: number; score: number } => row != null);
-            if (!rows.length) return null;
-            const sin = rows.reduce((sum, row) => sum + Math.sin((row.dir * Math.PI) / 180), 0);
-            const cos = rows.reduce((sum, row) => sum + Math.cos((row.dir * Math.PI) / 180), 0);
-            return {
-              score: rows.reduce((sum, row) => sum + row.score, 0) / rows.length,
-              swell: rows.reduce((sum, row) => sum + row.swell, 0) / rows.length,
-              period: rows.reduce((sum, row) => sum + row.period, 0) / rows.length,
-              dir: (Math.atan2(sin, cos) * 180) / Math.PI,
-            };
-          };
-          const blends = hs.map(blend).filter((row): row is NonNullable<ReturnType<typeof blend>> => row != null);
-          if (blends.length < 3) continue;
-          const score = blends.reduce((sum, row) => sum + row.score, 0) / blends.length;
-          if (!best || score > (best.score ?? -1)) {
-            const i = hs[1];
-            const mid = blends[1] ?? blends[0];
-            const ws = val(w.wind_speed_10m, i);
-            const wd = val(w.wind_direction_10m, i);
-            best = {
-              date,
-              score,
-              start,
-              swell: mid.swell,
-              period: mid.period,
-              swellDir: (mid.dir + 360) % 360,
-              windSpeed: ws,
-              windDir: wd,
-              windKind: windKind(wd, ws),
-              tideLevel: norm(val(m.sea_level_height_msl, i)),
-              tideRising: val(m.sea_level_height_msl, hs[2]) > val(m.sea_level_height_msl, hs[0]),
-            };
-          }
-        }
-        days.push(best ?? { date, score: null, start: 6, swell: 0, period: 0, swellDir: 0, windSpeed: 0, windDir: 0, windKind: 'glassy', tideLevel: 0.5, tideRising: true });
-      });
-
+      const week = await loadWeek();
+      const days = week.days.map((d) => ({
+        ...d,
+        windKind: (d.windKind || 'glassy') as Day['windKind'],
+        swellDir: d.swellDir || 210,
+        tideLevel: d.tideLevel ?? 0.5,
+        tideRising: d.tideRising ?? true,
+      }));
       const scored = days.filter((d) => d.score != null);
       if (!scored.length) throw new Error('empty');
-      const top = scored.reduce((a, b) => ((b.score ?? 0) > (a.score ?? 0) ? b : a));
+      const top =
+        days.find((d) => d.date === week.bestDate && d.score != null) ||
+        scored.reduce((a, b) => ((b.score ?? 0) > (a.score ?? 0) ? b : a));
 
       const sourceEl = root.querySelector('.log__source');
-      if (sourceEl && t.source) sourceEl.textContent = String(t.source).replace('{n}', String(sources.length));
+      if (sourceEl && t.source) {
+        sourceEl.textContent = String(t.source).replace('{sources}', sourceLabel(week.sourcesUsed || [], lang));
+      }
 
-      const dFmt = (iso: string, o: Intl.DateTimeFormatOptions) => new Intl.DateTimeFormat(locale, { ...o, timeZone: 'UTC' }).format(new Date(`${iso}T12:00:00Z`));
+      const dFmt = (iso: string, o: Intl.DateTimeFormatOptions) =>
+        new Intl.DateTimeFormat(locale, { ...o, timeZone: 'UTC' }).format(new Date(`${iso}T12:00:00Z`));
       const windowLabel = (d: Day) => (d.start + 3 < 12 ? `${d.start}–${d.start + 3} am` : `${d.start} am–12 pm`);
       const ft = (mtr: number) => Math.round(mtr * 3.28);
       const rating = (s: number) => (s >= 85 ? 3 : s >= 72 ? 2 : s >= 58 ? 1 : 0);
@@ -296,7 +208,7 @@ const i18n = {
       function show(d: Day, fromClick = false) {
         detail.hidden = false;
         $('[data-detail-title]').textContent = `${dFmt(d.date, { weekday: 'long', month: 'short', day: 'numeric' })} · ${t.window} ${windowLabel(d)}`;
-        $('[data-d-swell]').textContent = `${d.swell.toFixed(1)} m (${ft(d.swell)} ft) · ${Math.round(d.period)} s · ${compass(d.swellDir)}`;
+        $('[data-d-swell]').textContent = `${Number(d.swell).toFixed(1)} m (${ft(d.swell)} ft) · ${Math.round(d.period)} s · ${compass(d.swellDir)}`;
         $('[data-d-wind]').textContent = `${Math.round(d.windSpeed)} km/h ${compass(d.windDir)} · ${t[d.windKind]}`;
         const lvl = d.tideLevel < 0.34 ? t.low : d.tideLevel < 0.67 ? t.mid : t.high;
         $('[data-d-tide]').textContent = `${lvl}, ${d.tideRising ? t.rising : t.falling}`;
@@ -322,7 +234,7 @@ const i18n = {
           <span class="day__dow">${dFmt(d.date, { weekday: 'short' })}</span>
           <span class="day__num">${dFmt(d.date, { day: 'numeric' })}</span>
           <svg class="day__wave" viewBox="0 0 60 48" aria-hidden="true"><path d="${d.score == null ? 'M2 44 H58' : wavePath(d.swell)}"/><path class="day__sea" d="M2 46 H58"/></svg>
-          <span class="day__h">${d.score == null ? '—' : `${d.swell.toFixed(1)}<small>m</small>`}</span>
+          <span class="day__h">${d.score == null ? '—' : `${Number(d.swell).toFixed(1)}<small>m</small>`}</span>
           <span class="day__wind" title="${compass(d.windDir)}">${d.score == null ? '' : `<svg viewBox="0 0 20 20" style="transform:rotate(${(d.windDir + 180) % 360}deg)" aria-hidden="true"><path d="M10 17V3M5 8l5-5 5 5"/></svg>${compass(d.windDir)}`}</span>
           <span class="day__dots" aria-hidden="true">${dots}</span>
           <span class="day__rate hand">${d.score == null ? t.gone : t.ratings[r]}</span>`;

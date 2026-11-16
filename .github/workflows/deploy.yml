@@ -2,6 +2,10 @@ name: Deploy to Hostinger
 on:
   push:
     branches: [main]
+  schedule:
+    # Refresh week-forecast.json (Surfline + surf-forecast blend) a few times a day.
+    - cron: '15 6,12,18 * * *'
+  workflow_dispatch:
 jobs:
   deploy:
     runs-on: ubuntu-latest
