@@ -22,8 +22,11 @@ Model Hs is scaled by `FACE_HEIGHT` (1.28) toward face height as seen from the w
 |------|------|
 | `scripts/lib/week-forecast.mjs` | Fetch + parse + blend |
 | `scripts/fetch-week-forecast.mjs` | Writes `public/data/week-forecast.json` |
+| `scripts/lib/season-heights.mjs` | Open-Meteo marine monthly means (12m + 5y) |
+| `scripts/fetch-season-heights.mjs` | Writes `public/data/season-heights.json` |
 | `public/api/week-forecast.php` | Live Hostinger endpoint (same blend) |
 | `src/components/SurfLog.astro` | Loads `/api/week-forecast.php` then `/data/week-forecast.json` |
+| `src/components/SeasonChart.astro` | Month chart from `season-heights.json` |
 
 Commands: `npm run forecast` · hooked as `predev` / `prebuild`. Deploy workflow also runs on a cron so the static JSON refreshes.
 

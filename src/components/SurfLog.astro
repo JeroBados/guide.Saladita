@@ -1,7 +1,8 @@
 ---
 /* "This week's log": best morning at the Saladita point from Surfline + surf-forecast
-   (averaged), with Open-Meteo tide fill. Static month strip stays for SEO. */
+   (averaged), with Open-Meteo tide fill. Season chart is interactive (SEO copy stays). */
 import Sketch from './Sketch.astro';
+import SeasonChart from './SeasonChart.astro';
 import type { Lang } from '../utils/i18n';
 
 interface Props {
@@ -11,15 +12,6 @@ interface Props {
 
 const { lang, t } = Astro.props;
 const locale = lang === 'es' ? 'es-MX' : 'en-US';
-const monthFmt = new Intl.DateTimeFormat(locale, { month: 'short', timeZone: 'UTC' });
-// 1 = small, 2 = medium, 3 = best (from local experience, not a model)
-const waves = [1, 1, 1, 2, 3, 3, 3, 3, 3, 2, 1, 1];
-const crowd = [3, 3, 3, 2, 1, 1, 1, 1, 1, 1, 3, 3];
-const months = waves.map((w, i) => ({
-  name: monthFmt.format(new Date(Date.UTC(2026, i, 15))).replace('.', ''),
-  waves: w,
-  crowd: crowd[i],
-}));
 
 const i18n = {
   best: t['week.best'],
@@ -73,37 +65,7 @@ const i18n = {
       <p class="log__source">{t['week.source']}</p>
     </div>
 
-    <div class="season">
-      <h3 class="season__title">{t['season.title']}</h3>
-      <p class="season__summary">{t['season.summary']}</p>
-      <div class="season__chart" role="table" aria-label={t['season.title']}>
-        <div class="season__labels" aria-hidden="true">
-          <span></span>
-          <span class="season__label hand">{t['season.waves']}</span>
-          <span class="season__label hand">{t['season.crowd']}</span>
-        </div>
-        <div class="season__months">
-          {
-            months.map((m) => (
-              <div class="season__month" tabindex="0">
-                <span class="season__mname">{m.name}</span>
-                <span class={`season__wave season__wave--${m.waves}`}>
-                  <span class="sr-only">{m.name}: {t[`season.level${m.waves}`]}</span>
-                  <svg viewBox="0 0 24 30" aria-hidden="true">
-                    <path d={m.waves === 3 ? 'M2 28C4 10 12 2 22 4c-6 4-8 10-6 16' : m.waves === 2 ? 'M2 28c3-10 9-15 18-14-4 3-5 7-4 10' : 'M2 28c3-5 8-8 16-7-3 2-4 4-3 6'} />
-                  </svg>
-                </span>
-                <span class="season__crowd">
-                  <span class="sr-only">{m.name}: {t[`season.crowd${m.crowd}`]}</span>
-                  {Array.from({ length: m.crowd }).map(() => <i aria-hidden="true" />)}
-                </span>
-              </div>
-            ))
-          }
-        </div>
-      </div>
-      <p class="season__foot hand">{t['season.foot']}</p>
-    </div>
+    <SeasonChart lang={lang} t={t} />
   </div>
 </section>
 
@@ -554,114 +516,6 @@ const i18n = {
     margin-top: 0.4rem;
     font-size: 0.78rem;
     color: var(--pencil);
-  }
-
-  /* Season strip */
-  .season {
-    margin-top: 3rem;
-  }
-
-  .season__title {
-    font-size: 1.5rem;
-    margin-bottom: 0.4rem;
-  }
-
-  .season__summary {
-    max-width: 44rem;
-    margin-bottom: 1.2rem;
-  }
-
-  .season__chart {
-    display: grid;
-    grid-template-columns: 4.3rem minmax(0, 1fr);
-    gap: 0.35rem;
-    overflow-x: auto;
-    padding-bottom: 0.6rem;
-  }
-
-  .season__labels {
-    display: grid;
-    grid-template-rows: 1.1rem 2.4rem auto;
-    align-items: end;
-    gap: 0.2rem;
-  }
-
-  .season__months {
-    display: grid;
-    grid-template-columns: repeat(12, minmax(2.1rem, 1fr));
-    gap: 2px;
-  }
-
-  .season__month {
-    display: grid;
-    grid-template-rows: 1.1rem 2.4rem auto;
-    align-items: end;
-    gap: 0.2rem;
-    border-radius: 10px 10px 4px 4px;
-    transition: transform 0.35s var(--ease-out);
-  }
-
-  .season__month:hover,
-  .season__month:focus-visible {
-    transform: translateY(-10px);
-    z-index: 1;
-    outline: none;
-  }
-
-  .season__mname {
-    font-size: clamp(0.56rem, 2.2vw, 0.72rem);
-    font-weight: 700;
-    letter-spacing: 0.04em;
-    text-transform: uppercase;
-    color: var(--pencil);
-    text-align: center;
-  }
-
-  .season__label {
-    font-size: 1.1rem;
-    align-self: center;
-  }
-
-  .season__wave {
-    display: grid;
-    place-items: end center;
-    height: 2.4rem;
-    border-bottom: 1.5px solid var(--taupe);
-  }
-
-  .season__wave svg {
-    width: min(1.3rem, 80%);
-    fill: none;
-    stroke: var(--ink);
-    stroke-width: 2;
-    stroke-linecap: round;
-  }
-
-  .season__wave--1 svg {
-    stroke: var(--taupe);
-  }
-
-  .season__wave--3 {
-    background: linear-gradient(to top, rgba(241, 210, 122, 0.45), transparent 75%);
-  }
-
-  .season__crowd {
-    display: flex;
-    justify-content: center;
-    gap: 1px;
-    padding-top: 0.4rem;
-  }
-
-  .season__crowd i {
-    width: 5px;
-    height: 10px;
-    border-radius: 3px 3px 1px 1px;
-    background: var(--ink-2);
-  }
-
-  .season__foot {
-    margin-top: 0.6rem;
-    font-size: 1.3rem;
   }
 
   @media (min-width: 800px) {

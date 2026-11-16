@@ -1,0 +1,547 @@
+---
+/* Interactive swell curve from Open-Meteo marine climatology
+   (last 12 months + 5-year mean), refreshed by npm run forecast / deploy cron. */
+import Sketch from './Sketch.astro';
+import type { Lang } from '../utils/i18n';
+import seasonData from '../../public/data/season-heights.json';
+
+interface Props {
+  lang: Lang;
+  t: Record<string, string>;
+}
+
+const { lang, t } = Astro.props;
+const locale = lang === 'es' ? 'es-MX' : 'en-US';
+
+const heights = (seasonData.heights as number[]) ?? [];
+const climate = (seasonData.climate as number[]) ?? heights;
+const crowd = [3, 3, 3, 2, 1, 1, 1, 1, 1, 1, 3, 3] as const;
+
+const climateMean = climate.reduce((a, b) => a + b, 0) / Math.max(climate.length, 1);
+function waveLevel(h: number): 1 | 2 | 3 {
+  if (h >= climateMean * 1.05) return 3;
+  if (h >= climateMean * 0.88) return 2;
+  return 1;
+}
+
+const monthFmt = new Intl.DateTimeFormat(locale, { month: 'long', timeZone: 'UTC' });
+const shortFmt = new Intl.DateTimeFormat(locale, { month: 'short', timeZone: 'UTC' });
+
+const months = heights.map((h, i) => ({
+  i,
+  letter: shortFmt.format(new Date(Date.UTC(2026, i, 15))).replace('.', ''),
+  name: monthFmt.format(new Date(Date.UTC(2026, i, 15))),
+  height: h,
+  climate: climate[i],
+  crowd: crowd[i],
+  waves: waveLevel(h),
+}));
+
+const biggest = months.reduce((a, b) => (b.height > a.height ? b : a));
+
+const W = 960;
+const H = 168;
+const pad = { t: 24, r: 8, b: 8, l: 8 };
+const plotW = W - pad.l - pad.r;
+const plotH = H - pad.t - pad.b;
+const maxY = Math.max(2.2, ...heights, ...climate) * 1.12;
+const xAt = (i: number) => pad.l + (plotW * i) / 11;
+const yAt = (m: number) => pad.t + plotH * (1 - m / maxY);
+
+function linePath(vals: number[]) {
+  return vals.map((v, i) => `${i === 0 ? 'M' : 'L'} ${xAt(i).toFixed(1)} ${yAt(v).toFixed(1)}`).join(' ');
+}
+function areaPath(vals: number[]) {
+  return `${linePath(vals)} L ${xAt(11).toFixed(1)} ${(pad.t + plotH).toFixed(1)} L ${xAt(0).toFixed(1)} ${(pad.t + plotH).toFixed(1)} Z`;
+}
+
+const labelIdx = [0, 5, 9];
+
+const payload = {
+  months,
+  labels: {
+    now: t['season.now'],
+    level: [t['season.level1'], t['season.level2'], t['season.level3']],
+    crowd: [t['season.crowd1'], t['season.crowd2'], t['season.crowd3']],
+  },
+  geom: { W, padL: pad.l, padT: pad.t, plotW, plotH, maxY },
+};
+---
+
+<div class="season" aria-labelledby="season-title" data-season-chart data-payload={JSON.stringify(payload)}>
+  <h3 id="season-title" class="season__title">
+    {t['season.headline']} <em>{t['season.headlineEm']}</em>
+  </h3>
+  <p class="season__summary">{t['season.summary']}</p>
+
+  <p class="season__bands hand" aria-hidden="true">
+    <span>{t['season.zoneHighSmall']}</span>
+    <span class="season__bands-mid">{t['season.zoneSwell']}</span>
+    <span>{t['season.zoneHigh']}</span>
+  </p>
+
+  <div class="season__plot" role="img" aria-label={t['season.chartLabel']}>
+    <svg class="season__svg" viewBox={`0 0 ${W} ${H}`} preserveAspectRatio="xMidYMid meet">
+      <rect
+        class="season__band season__band--swell"
+        x={xAt(3.2)}
+        y={pad.t}
+        width={xAt(8.8) - xAt(3.2)}
+        height={plotH}
+        rx="4"
+      />
+
+      <path class="season__area" data-area d={areaPath(heights)} />
+      <path class="season__climate" data-climate d={linePath(climate)} />
+      <path class="season__line" data-line d={linePath(heights)} />
+
+      {
+        labelIdx.map((i) => (
+          <text
+            class="season__val"
+            data-val={i}
+            x={xAt(i)}
+            y={yAt(heights[i]) - 10}
+            text-anchor="middle"
+          >
+            {heights[i].toFixed(1)}
+          </text>
+        ))
+      }
+
+      <g data-now-mark>
+        <circle class="season__ring" cx={xAt(0)} cy={yAt(heights[0])} r="9" />
+        <circle class="season__dot" cx={xAt(0)} cy={yAt(heights[0])} r="5" />
+      </g>
+    </svg>
+  </div>
+
+  <div class="season__axis" role="list">
+    {
+      months.map((m) => (
+        <button
+          type="button"
+          class="season__tick"
+          role="listitem"
+          data-month={m.i}
+          aria-pressed="false"
+          aria-label={`${m.name}: ${m.height.toFixed(1)} m`}
+        >
+          {m.letter}
+        </button>
+      ))
+    }
+  </div>
+
+  <div class="season__legend">
+    <span><i class="season__swatch season__swatch--fill" aria-hidden="true" />{t['season.measured']}</span>
+    <span><i class="season__swatch season__swatch--dash" aria-hidden="true" />{t['season.average']}</span>
+  </div>
+
+  <div class="season__read" data-read aria-live="polite">
+    <p class="season__read-title" data-read-title></p>
+    <dl>
+      <div>
+        <dt><Sketch name="wave" />{t['season.waves']}</dt>
+        <dd data-read-waves></dd>
+      </div>
+      <div>
+        <dt>{t['season.crowd']}</dt>
+        <dd data-read-crowd></dd>
+      </div>
+    </dl>
+    <p class="season__peak hand" data-peak>
+      {t['season.biggestMonth']}: {biggest.name} · {biggest.height.toFixed(1)} m
+    </p>
+  </div>
+
+  <p class="season__foot hand">{t['season.foot']}</p>
+</div>
+
+<script>
+  type SeasonPayload = {
+    months: { i: number; name: string; height: number; waves: number; crowd: number }[];
+    labels: { now: string; level: string[]; crowd: string[] };
+    geom: { W: number; padL: number; padT: number; plotW: number; plotH: number; maxY: number };
+  };
+
+  function paths(vals: number[], geom: SeasonPayload['geom']) {
+    const { padL, padT, plotW, plotH, maxY } = geom;
+    const xAt = (i: number) => padL + (plotW * i) / 11;
+    const yAt = (m: number) => padT + plotH * (1 - m / maxY);
+    const line = vals.map((v, i) => `${i === 0 ? 'M' : 'L'} ${xAt(i).toFixed(1)} ${yAt(v).toFixed(1)}`).join(' ');
+    const area = `${line} L ${xAt(11).toFixed(1)} ${(padT + plotH).toFixed(1)} L ${xAt(0).toFixed(1)} ${(padT + plotH).toFixed(1)} Z`;
+    return { line, area, xAt, yAt };
+  }
+
+  function applySeries(
+    root: HTMLElement,
+    payload: SeasonPayload,
+    heights: number[],
+    climate: number[],
+  ) {
+    const mean = climate.reduce((a, b) => a + b, 0) / Math.max(climate.length, 1);
+    payload.geom.maxY = Math.max(2.2, ...heights, ...climate) * 1.12;
+    payload.months = payload.months.map((m, i) => {
+      const h = heights[i] ?? m.height;
+      const waves = (h >= mean * 1.05 ? 3 : h >= mean * 0.88 ? 2 : 1) as 1 | 2 | 3;
+      return { ...m, height: h, waves };
+    });
+
+    const { line, area, xAt, yAt } = paths(heights, payload.geom);
+    const climateLine = paths(climate, payload.geom).line;
+    root.querySelector('[data-area]')?.setAttribute('d', area);
+    root.querySelector('[data-line]')?.setAttribute('d', line);
+    root.querySelector('[data-climate]')?.setAttribute('d', climateLine);
+    root.querySelectorAll<SVGTextElement>('[data-val]').forEach((el) => {
+      const i = Number(el.dataset.val);
+      el.textContent = heights[i].toFixed(1);
+      el.setAttribute('x', String(xAt(i)));
+      el.setAttribute('y', String(yAt(heights[i]) - 10));
+    });
+
+    const biggest = payload.months.reduce((a, b) => (b.height > a.height ? b : a));
+    const peak = root.querySelector<HTMLElement>('[data-peak]');
+    if (peak) {
+      const label = peak.textContent?.split(':')[0] || '';
+      peak.textContent = `${label}: ${biggest.name} · ${biggest.height.toFixed(1)} m`;
+    }
+  }
+
+  async function boot() {
+    const root = document.querySelector<HTMLElement>('[data-season-chart]');
+    if (!root || root.dataset.ready) return;
+    root.dataset.ready = '1';
+
+    const payload = JSON.parse(root.dataset.payload || '{}') as SeasonPayload;
+
+    try {
+      const res = await fetch('/data/season-heights.json', { cache: 'no-cache' });
+      if (res.ok) {
+        const live = (await res.json()) as { heights?: number[]; climate?: number[] };
+        if (live.heights?.length === 12 && live.climate?.length === 12) {
+          applySeries(root, payload, live.heights, live.climate);
+          root.dataset.payload = JSON.stringify(payload);
+        }
+      }
+    } catch {
+      /* keep build-time series */
+    }
+
+    const ticks = [...root.querySelectorAll<HTMLButtonElement>('[data-month]')];
+    const title = root.querySelector<HTMLElement>('[data-read-title]');
+    const wavesEl = root.querySelector<HTMLElement>('[data-read-waves]');
+    const crowdEl = root.querySelector<HTMLElement>('[data-read-crowd]');
+    const mark = root.querySelector<SVGGElement>('[data-now-mark]');
+
+    const nowMonth =
+      Number(
+        new Intl.DateTimeFormat('en-CA', {
+          timeZone: 'America/Mexico_City',
+          month: 'numeric',
+        }).format(new Date()),
+      ) - 1;
+
+    function select(i: number) {
+      const m = payload.months[i];
+      if (!m) return;
+      const isNow = i === nowMonth;
+      const { padL, padT, plotW, plotH, maxY } = payload.geom;
+      ticks.forEach((btn) => {
+        const idx = Number(btn.dataset.month);
+        const on = idx === i;
+        const row = payload.months[idx];
+        btn.classList.toggle('is-selected', on);
+        btn.classList.toggle('is-now', idx === nowMonth);
+        btn.setAttribute('aria-pressed', String(on));
+        if (row) btn.setAttribute('aria-label', `${row.name}: ${row.height.toFixed(1)} m`);
+      });
+      if (title) {
+        title.innerHTML = isNow
+          ? `<span class="hl">${payload.labels.now}</span> · ${m.name}`
+          : m.name;
+      }
+      if (wavesEl) wavesEl.textContent = `${m.height.toFixed(1)} m · ${payload.labels.level[m.waves - 1]}`;
+      if (crowdEl) crowdEl.textContent = payload.labels.crowd[m.crowd - 1];
+      if (mark) {
+        const x = padL + (plotW * i) / 11;
+        const y = padT + plotH * (1 - m.height / maxY);
+        mark.querySelectorAll('circle').forEach((c) => {
+          c.setAttribute('cx', String(x));
+          c.setAttribute('cy', String(y));
+        });
+      }
+    }
+
+    ticks.forEach((btn) => {
+      btn.addEventListener('click', () => select(Number(btn.dataset.month)));
+      btn.addEventListener('mouseenter', () => {
+        if (window.matchMedia('(hover: hover)').matches) select(Number(btn.dataset.month));
+      });
+    });
+
+    select(nowMonth);
+  }
+
+  boot();
+  document.addEventListener('astro:page-load', boot);
+</script>
+
+<style>
+  .season {
+    margin-top: 2.75rem;
+    scroll-margin-top: 5.5rem;
+  }
+
+  .season__title {
+    font-family: var(--font-display);
+    font-size: clamp(1.55rem, 5vw, 2.15rem);
+    font-weight: 600;
+    line-height: 1.15;
+    margin: 0 0 0.45rem;
+    color: var(--ink);
+    text-wrap: balance;
+  }
+
+  .season__title em {
+    font-family: var(--font-hand);
+    font-style: normal;
+    font-weight: 600;
+    color: var(--ink-2);
+  }
+
+  .season__summary {
+    max-width: 44rem;
+    margin: 0 0 1.1rem;
+    color: var(--ink);
+  }
+
+  .season__bands {
+    display: grid;
+    grid-template-columns: 1.15fr 1.5fr 0.85fr;
+    gap: 0.35rem;
+    margin: 0 0 0.2rem;
+    font-size: clamp(0.95rem, 2.6vw, 1.2rem);
+    line-height: 1.15;
+    color: var(--pencil);
+  }
+
+  .season__bands-mid {
+    text-align: center;
+    color: var(--ink);
+  }
+
+  .season__bands span:last-child {
+    text-align: right;
+  }
+
+  .season__plot {
+    width: 100%;
+    margin: 0;
+  }
+
+  .season__svg {
+    display: block;
+    width: 100%;
+    height: auto;
+    min-height: 9.5rem;
+  }
+
+  .season__band--swell {
+    fill: rgba(241, 210, 122, 0.22);
+  }
+
+  .season__area {
+    fill: rgba(60, 91, 111, 0.12);
+  }
+
+  .season__line {
+    fill: none;
+    stroke: var(--ink);
+    stroke-width: 2.4;
+    stroke-linecap: round;
+    stroke-linejoin: round;
+  }
+
+  .season__climate {
+    fill: none;
+    stroke: var(--taupe);
+    stroke-width: 1.5;
+    stroke-dasharray: 4 5;
+    stroke-linecap: round;
+  }
+
+  .season__val {
+    fill: var(--ink-2);
+    font-size: 12px;
+    font-family: var(--font-display);
+    font-weight: 600;
+  }
+
+  .season__dot {
+    fill: #c0392b;
+  }
+
+  .season__ring {
+    fill: none;
+    stroke: #c0392b;
+    stroke-width: 1.6;
+    opacity: 0.55;
+  }
+
+  .season__axis {
+    display: grid;
+    grid-template-columns: repeat(12, minmax(0, 1fr));
+    gap: 0.15rem;
+    margin-top: 0.15rem;
+  }
+
+  .season__tick {
+    min-height: 2.35rem;
+    border: 1.5px solid transparent;
+    border-radius: var(--radius-hand);
+    background: transparent;
+    color: var(--pencil);
+    font-family: var(--font-body);
+    font-size: clamp(0.62rem, 2.2vw, 0.78rem);
+    font-weight: 700;
+    letter-spacing: 0.02em;
+    text-transform: uppercase;
+    cursor: pointer;
+    transition:
+      background-color 0.2s var(--ease-out),
+      border-color 0.2s var(--ease-out),
+      color 0.2s var(--ease-out);
+  }
+
+  .season__tick:hover,
+  .season__tick:focus-visible {
+    background: rgba(231, 216, 192, 0.55);
+    outline: none;
+  }
+
+  .season__tick.is-selected {
+    background: rgba(241, 210, 122, 0.35);
+    border-color: rgba(21, 52, 72, 0.35);
+    color: var(--ink);
+  }
+
+  .season__tick.is-now {
+    color: #b0342a;
+  }
+
+  .season__legend {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.75rem 1.25rem;
+    margin-top: 0.45rem;
+    font-size: 0.78rem;
+    color: var(--pencil);
+  }
+
+  .season__legend span {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.4rem;
+  }
+
+  .season__swatch {
+    width: 1.15rem;
+    height: 0.35rem;
+    border-radius: 99px;
+  }
+
+  .season__swatch--fill {
+    background: rgba(60, 91, 111, 0.55);
+  }
+
+  .season__swatch--dash {
+    background: repeating-linear-gradient(90deg, var(--taupe) 0 4px, transparent 4px 7px);
+  }
+
+  .season__read {
+    margin-top: 0.85rem;
+    padding: 0.85rem 1rem;
+    max-width: 34rem;
+    background: var(--paper-3);
+    border: 1.5px dashed rgba(21, 52, 72, 0.4);
+    border-radius: 4px;
+  }
+
+  .season__read-title {
+    font-weight: 700;
+    margin: 0 0 0.45rem;
+    color: var(--ink);
+  }
+
+  .season__read :global(.hl) {
+    background-image: linear-gradient(var(--marker), var(--marker));
+    background-repeat: no-repeat;
+    background-position: 0 88%;
+    background-size: 100% 0.62em;
+  }
+
+  .season__read dl {
+    display: grid;
+    gap: 0.4rem;
+    margin: 0;
+  }
+
+  .season__read dl div {
+    display: grid;
+    grid-template-columns: 6.2rem 1fr;
+    gap: 0.5rem;
+    align-items: center;
+  }
+
+  .season__read dt {
+    display: flex;
+    align-items: center;
+    gap: 0.35rem;
+    font-size: 0.78rem;
+    font-weight: 700;
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+    color: var(--pencil);
+  }
+
+  .season__read dt :global(.sketch) {
+    width: 1.5rem;
+    flex: none;
+  }
+
+  .season__read dd {
+    margin: 0;
+    font-size: 0.98rem;
+    color: var(--ink);
+  }
+
+  .season__peak {
+    margin: 0.65rem 0 0;
+    font-size: 1.25rem;
+    color: var(--ink-2);
+    transform: rotate(-0.8deg);
+  }
+
+  .season__foot {
+    margin-top: 0.75rem;
+    font-size: 1.3rem;
+    color: var(--ink-2);
+  }
+
+  @media (min-width: 800px) {
+    .season__bands {
+      font-size: 1.2rem;
+    }
+
+    .season__svg {
+      min-height: 11rem;
+    }
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .season__tick {
+      transition: none;
+    }
+  }
+</style>

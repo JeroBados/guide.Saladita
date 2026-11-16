@@ -1,5 +1,5 @@
 {
-  "generatedAt": "2026-11-16T20:56:21.266Z",
+  "generatedAt": "2026-11-16T21:57:33.924Z",
   "spot": {
     "surflineId": "584204204e65fad6a770921e",
     "surflineUrl": "https://www.surfline.com/surf-report/la-saladita/584204204e65fad6a770921e",
@@ -14,154 +14,147 @@
   "faceHeight": 1.28,
   "sourcesUsed": [
     "surf-forecast",
-    "windy",
     "open-meteo"
   ],
   "bestDate": "2026-11-21",
   "days": [
     {
       "date": "2026-11-16",
-      "score": 78.85333333333332,
-      "start": 7,
-      "swell": 1.5530666666666668,
-      "period": 14.2,
-      "swellDir": 259,
-      "windSpeed": 5.4,
-      "windDir": 16,
+      "score": 66,
+      "start": 6,
+      "swell": 1.1776,
+      "period": 13,
+      "swellDir": 222,
+      "windSpeed": 5,
+      "windDir": 48,
       "windKind": "glassy",
-      "tideLevel": 0.94,
+      "tideLevel": 1,
       "tideRising": false,
       "sources": [
-        "surf-forecast",
-        "windy"
+        "surf-forecast"
       ],
       "parts": {
         "surfline": null,
         "surfForecast": 66,
-        "windy": 91.70666666666666,
+        "windy": null,
         "openMeteo": 89.73083333333334
       },
-      "primary": "windy"
+      "primary": "surf-forecast"
     },
     {
       "date": "2026-11-17",
-      "score": 77.495,
-      "start": 7,
-      "swell": 1.6042666666666667,
-      "period": 14,
-      "swellDir": 270,
-      "windSpeed": 7.2,
-      "windDir": 35,
+      "score": 66,
+      "start": 6,
+      "swell": 1.1904,
+      "period": 13,
+      "swellDir": 188,
+      "windSpeed": 10,
+      "windDir": 48,
       "windKind": "offshore",
-      "tideLevel": 0.9534883720930232,
+      "tideLevel": 1,
       "tideRising": false,
       "sources": [
-        "surf-forecast",
-        "windy"
+        "surf-forecast"
       ],
       "parts": {
         "surfline": null,
         "surfForecast": 66,
-        "windy": 88.99000000000001,
+        "windy": null,
         "openMeteo": 92.08749999999999
       },
-      "primary": "windy"
+      "primary": "surf-forecast"
     },
     {
       "date": "2026-11-18",
-      "score": 73.53999999999999,
-      "start": 5,
-      "swell": 1.4165333333333334,
-      "period": 13.8,
-      "swellDir": 268,
-      "windSpeed": 11.879999999999999,
-      "windDir": 306,
-      "windKind": "cross",
-      "tideLevel": 0.9729729729729729,
-      "tideRising": true,
+      "score": 66,
+      "start": 6,
+      "swell": 1.1008,
+      "period": 13,
+      "swellDir": 243,
+      "windSpeed": 5,
+      "windDir": 38,
+      "windKind": "glassy",
+      "tideLevel": 1,
+      "tideRising": false,
       "sources": [
-        "surf-forecast",
-        "windy"
+        "surf-forecast"
       ],
       "parts": {
         "surfline": null,
         "surfForecast": 66,
-        "windy": 81.08,
+        "windy": null,
         "openMeteo": 91.41083333333331
       },
-      "primary": "windy"
+      "primary": "surf-forecast"
     },
     {
       "date": "2026-11-19",
-      "score": 73.1575,
-      "start": 5,
-      "swell": 1.3055999999999999,
-      "period": 12.9,
-      "swellDir": 262,
-      "windSpeed": 12.96,
-      "windDir": 298,
-      "windKind": "cross",
+      "score": 66,
+      "start": 6,
+      "swell": 0.9344,
+      "period": 14,
+      "swellDir": 193,
+      "windSpeed": 5,
+      "windDir": 42,
+      "windKind": "glassy",
       "tideLevel": 1,
-      "tideRising": true,
+      "tideRising": false,
       "sources": [
-        "surf-forecast",
-        "windy"
+        "surf-forecast"
       ],
       "parts": {
         "surfline": null,
         "surfForecast": 66,
-        "windy": 80.315,
+        "windy": null,
         "openMeteo": 92.39999999999999
       },
-      "primary": "windy"
+      "primary": "surf-forecast"
     },
     {
       "date": "2026-11-20",
-      "score": 80.55,
-      "start": 7,
-      "swell": 1.2288,
-      "period": 12.4,
-      "swellDir": 245,
-      "windSpeed": 2.52,
-      "windDir": 72,
-      "windKind": "glassy",
-      "tideLevel": 0.840909090909091,
+      "score": 66,
+      "start": 6,
+      "swell": 0.9472,
+      "period": 15,
+      "swellDir": 196,
+      "windSpeed": 10,
+      "windDir": 270,
+      "windKind": "onshore",
+      "tideLevel": 0.9318181818181818,
       "tideRising": false,
       "sources": [
-        "surf-forecast",
-        "windy"
+        "surf-forecast"
       ],
       "parts": {
         "surfline": null,
         "surfForecast": 66,
-        "windy": 95.1,
+        "windy": null,
         "openMeteo": 92.28749999999998
       },
-      "primary": "windy"
+      "primary": "surf-forecast"
     },
     {
       "date": "2026-11-21",
-      "score": 87.325,
-      "start": 7,
-      "swell": 1.28,
-      "period": 12.2,
-      "swellDir": 230,
-      "windSpeed": 2.16,
-      "windDir": 115,
+      "score": 80,
+      "start": 6,
+      "swell": 1.088,
+      "period": 16,
+      "swellDir": 200,
+      "windSpeed": 5,
+      "windDir": 54,
       "windKind": "glassy",
-      "tideLevel": 0.8653846153846154,
+      "tideLevel": 0.9615384615384615,
       "tideRising": false,
       "sources": [
-        "surf-forecast",
-        "windy"
+        "surf-forecast"
       ],
       "parts": {
         "surfline": null,
         "surfForecast": 80,
-        "windy": 94.65,
+        "windy": null,
         "openMeteo": 93.9375
       },
-      "primary": "windy"
+      "primary": "surf-forecast"
     },
     {
       "date": "2026-11-22",
