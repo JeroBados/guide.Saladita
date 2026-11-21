@@ -16,4 +16,4 @@ console.log(`Wrote ${out}`);
 console.log(`Sources: ${week.sourcesUsed.join(', ') || '(none)'}`);
 if (week.errors?.length) console.log(`Warnings:\n- ${week.errors.join('\n- ')}`);
 console.log(`Best morning: ${week.bestDate || 'n/a'}${best ? ` (${best.score?.toFixed(1)}, ${best.start}:00)` : ''}`);
-if (!week.bestDate) process.exitCode = 1;
+// Do not fail the build when live sources are down — SurfLog falls back to the JSON/PHP later.

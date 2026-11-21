@@ -17,5 +17,5 @@ console.log(`Heights (12m): ${season.heights.join(', ')}`);
 console.log(`Climate (long): ${season.climate.join(', ')}`);
 if (season.errors?.length) {
   console.log(`Warnings:\n- ${season.errors.join('\n- ')}`);
-  if (season.source === 'fallback') process.exitCode = 1;
+  // Keep exit 0 so CI/deploy still publishes when Open-Meteo is briefly down.
 }
