@@ -15,12 +15,66 @@ jobs:
         with:
           node-version: 22
       - run: npm ci && npm run build
-      # Sync only — never wipe the remote first. dangerous-clean-slate left the
-      # subdomain empty (Hostinger 403) when a scheduled build/FTP step failed.
-      - uses: SamKirkland/FTP-Deploy-Action@v4.3.5
+
+      # Sync only — never wipe the remote first. dangerous-clean-slate emptied the
+      # subdomain (Hostinger 403) when a later FTP step failed mid-upload.
+      #
+      # If uploads succeed but guide.lasaladitarentals.com stays 403/404, the FTP
+      # account is not pointing at the subdomain public_html. Fix in hPanel → FTP,
+      # or add secret FTP_SERVER_DIR (e.g. /domains/guide.lasaladitarentals.com/public_html/)
+      # and set server-dir below to ${{ secrets.FTP_SERVER_DIR }}.
+      - name: FTP deploy (ftps)
+        uses: SamKirkland/FTP-Deploy-Action@v4.3.5
         with:
           server: ${{ secrets.FTP_HOST }}
           username: ${{ secrets.FTP_USER }}
           password: ${{ secrets.FTP_PASS }}
           local-dir: ./dist/
           dangerous-clean-slate: false
+          timeout: 600000
+          protocol: ftps
+        continue-on-error: true
+        id: ftp1
+
+      - name: FTP deploy retry (ftp)
+        if: steps.ftp1.outcome == 'failure'
+        uses: SamKirkland/FTP-Deploy-Action@v4.3.5
+        with:
+          server: ${{ secrets.FTP_HOST }}
+          username: ${{ secrets.FTP_USER }}
+          password: ${{ secrets.FTP_PASS }}
+          local-dir: ./dist/
+          dangerous-clean-slate: false
+          timeout: 600000
+          protocol: ftp
+        continue-on-error: true
+        id: ftp2
+
+      - name: FTP deploy retry 3 (ftps)
+        if: steps.ftp1.outcome == 'failure' && steps.ftp2.outcome == 'failure'
+        uses: SamKirkland/FTP-Deploy-Action@v4.3.5
+        with:
+          server: ${{ secrets.FTP_HOST }}
+          username: ${{ secrets.FTP_USER }}
+          password: ${{ secrets.FTP_PASS }}
+          local-dir: ./dist/
+          dangerous-clean-slate: false
+          timeout: 600000
+          protocol: ftps
+
+      - name: Verify live guide
+        run: |
+          set -e
+          sleep 8
+          code=$(curl -sS -A 'Mozilla/5.0' -o /tmp/live.html -w '%{http_code}' 'https://guide.lasaladitarentals.com/index.html')
+          echo "index.html → HTTP $code"
+          if [ "$code" != "200" ]; then
+            echo "::error::Hostinger still not serving the guide (HTTP $code)."
+            echo "FTP may be writing to a folder that is not the subdomain document root."
+            echo "In hPanel → Websites → guide.lasaladitarentals.com → confirm document root,"
+            echo "then hPanel → FTP: point the deploy account at that same folder and re-run."
+            head -c 240 /tmp/live.html || true
+            exit 1
+          fi
+          grep -E 'Best morning|data-season-chart|Saladita Rentals' /tmp/live.html >/dev/null
+          echo "Live guide OK"
