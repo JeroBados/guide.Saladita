@@ -52,7 +52,7 @@ button {
 }
 
 :focus-visible {
-  outline: 2px dashed var(--ink);
+  outline: 3px solid var(--sr-teal);
   outline-offset: 3px;
 }
 
@@ -60,9 +60,9 @@ h1,
 h2,
 h3 {
   font-family: var(--font-display);
-  line-height: 1.08;
   font-weight: 600;
-  font-variation-settings: 'SOFT' 100, 'WONK' 1;
+  font-variation-settings: 'SOFT' 100, 'WONK' 0; /* antes WONK 1: letras torcidas fuera */
+  line-height: 1.08;
   text-wrap: balance;
 }
 
@@ -71,10 +71,30 @@ h2 {
   letter-spacing: -0.01em;
 }
 
-h2 em,
-h1 em {
+h1 em,
+h2 em {
   font-style: italic;
   font-weight: 400;
+  color: var(--ink-2); /* itálica en teal, igual que en el sitio */
+}
+
+/* Dato: el puente visual con el sitio */
+.data {
+  font-family: var(--font-data);
+  font-weight: 400;
+  text-transform: uppercase;
+  letter-spacing: 0.01em;
+  line-height: 0.95;
+}
+
+/* Eyebrow de interfaz, igual al sitio */
+.eyebrow {
+  font-family: var(--font-body);
+  font-size: 0.75rem;
+  font-weight: 800;
+  letter-spacing: 0.15em;
+  text-transform: uppercase;
+  color: var(--pencil);
 }
 
 p {
@@ -114,7 +134,7 @@ p {
   width: 5.5rem;
   height: 1.6rem;
   background: var(--tape);
-  box-shadow: 0 1px 2px rgba(21, 52, 72, 0.12);
+  box-shadow: 0 1px 2px rgba(43, 34, 29, 0.12);
   clip-path: polygon(3% 8%, 97% 0, 100% 88%, 2% 100%);
   z-index: 2;
 }
@@ -155,33 +175,49 @@ p {
   max-width: 38rem;
 }
 
-/* ink button — hand-cut edges */
+/* Primary CTA — cleaner radius like the official site, ink fill for the guide */
 .btn {
   display: inline-flex;
   align-items: center;
   justify-content: center;
   gap: 0.55rem;
   min-height: var(--touch-min);
-  padding: 0.8rem 1.35rem;
+  padding: 0.85rem 1.5rem;
   border: 2px solid var(--ink);
-  border-radius: var(--radius-hand);
+  border-radius: 999px;
+  font-family: var(--font-body);
   font-weight: 700;
+  letter-spacing: 0.01em;
   line-height: 1.2;
-  transition: transform 0.2s var(--ease-out), box-shadow 0.2s var(--ease-out);
+  transition: transform 0.2s var(--ease-out), box-shadow 0.2s var(--ease-out), background-color 0.2s var(--ease-out);
 }
 
 .btn:hover {
-  transform: translate(-1px, -2px) rotate(-0.4deg);
+  transform: translateY(-2px);
+}
+
+.btn:active {
+  transform: translateY(1px);
 }
 
 .btn--ink {
   background: var(--ink);
-  color: var(--paper-3);
+  border-color: var(--ink);
+  color: var(--sr-sol);
+  border-radius: var(--radius-hand);
   box-shadow: 3px 4px 0 var(--marker);
+}
+
+.btn--sand {
+  background: var(--sr-arena-2);
+  color: var(--sr-espresso);
+  border-color: var(--sr-card-line);
+  box-shadow: 0 8px 18px -12px rgba(43, 34, 29, 0.3);
 }
 
 .btn--line {
   background: transparent;
+  border: 2px solid var(--ink);
   color: var(--ink);
 }
 
@@ -201,7 +237,7 @@ p {
   text-decoration: underline;
   text-decoration-thickness: 1.5px;
   text-underline-offset: 0.3em;
-  text-decoration-color: var(--taupe);
+  text-decoration-color: var(--accent);
 }
 
 .pen-link:hover {

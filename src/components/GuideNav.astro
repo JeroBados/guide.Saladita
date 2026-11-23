@@ -91,7 +91,7 @@ const { label, items } = Astro.props;
     top: 0;
     z-index: 20;
     padding-block: 0.5rem;
-    background: linear-gradient(var(--paper) 70%, rgba(243, 236, 221, 0));
+    background: linear-gradient(var(--paper) 70%, rgba(242, 228, 202, 0));
   }
 
   .guide-nav__list {
@@ -115,29 +115,22 @@ const { label, items } = Astro.props;
     min-height: 44px;
     padding: 0.4rem 1rem;
     border: 1.5px solid var(--ink);
-    border-radius: var(--radius-hand);
-    background: var(--paper-3);
+    border-radius: var(--radius-chip);
+    background: transparent;
     color: var(--ink);
+    font-family: var(--font-body);
     font-size: var(--text-small);
     font-weight: 700;
     white-space: nowrap;
-    transition: background-color 0.2s var(--ease-out), transform 0.2s var(--ease-out);
-  }
-
-  .guide-nav__link:nth-child(odd) {
-    transform: rotate(-1deg);
-  }
-
-  .guide-nav__link:nth-child(even) {
-    transform: rotate(0.8deg);
+    transition: background-color 0.2s var(--ease-out), color 0.2s var(--ease-out);
   }
 
   .guide-nav__link:hover {
-    background: var(--sand);
+    background: var(--paper-2);
   }
 
   .guide-nav__link.is-active {
-    background: var(--marker);
-    transform: rotate(0deg) scale(1.04);
+    background: var(--ink);
+    color: var(--paper);
   }
 </style>

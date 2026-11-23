@@ -98,11 +98,12 @@
       "es": "Sur / suroeste"
     },
     "access": {
-      "en": "North of the main point, along the coast. It is a short ride from town — ask locally the morning you go.",
-      "es": "Al norte del point, sobre la costa. Es un trayecto corto desde el pueblo; pregunta a un local la mañana que vayas."
+      "en": "North of the main point, along the coast. Ask a local the morning you go.",
+      "es": "Al norte del point, sobre la costa. Pregúntale a un local la mañana que vayas."
     },
     "lat": 17.852,
     "lng": -101.774,
+    "showMap": false,
     "image": "/media/places/rancho.jpg"
   },
   {
@@ -149,12 +150,12 @@
       "es": "Sur / suroeste"
     },
     "access": {
-      "en": "South of town. In Google Maps search Playa Boca de las Iguanillas.",
-      "es": "Al sur del pueblo. En Google Maps busca Playa Boca de las Iguanillas."
+      "en": "South of town. Ask a local how to get there.",
+      "es": "Al sur del pueblo. Pregúntale a un local cómo llegar."
     },
     "lat": 17.8285,
     "lng": -101.756,
-    "mapsQuery": "Playa boca de las iguanillas La Saladita Guerrero Mexico",
+    "showMap": false,
     "image": "/media/places/la-boca.jpg"
   }
 ]

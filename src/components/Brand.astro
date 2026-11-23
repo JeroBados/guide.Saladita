@@ -1,0 +1,27 @@
+---
+interface Props {
+  tone?: 'dark' | 'light';
+  height?: number;
+}
+const { tone = 'dark', height = 26 } = Astro.props;
+const words = tone === 'dark' ? '/brand/words_espresso.svg' : '/brand/words_crema.svg';
+const snail = tone === 'dark' ? '/brand/car_terra.svg' : '/brand/car_sol.svg';
+const width = Math.round((height * 360.6) / 52);
+---
+<span class="brand" style={`width:${width}px;height:${height}px`}>
+  <img src={words} alt="Saladita Rentals" width={width} height={height} />
+  <img src={snail} alt="" aria-hidden="true" width={width} height={height} />
+</span>
+<style>
+  .brand {
+    position: relative;
+    display: inline-block;
+    flex: none;
+  }
+  .brand img {
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+  }
+</style>

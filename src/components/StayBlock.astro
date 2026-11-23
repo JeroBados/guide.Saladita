@@ -1,0 +1,105 @@
+---
+import Sketch from './Sketch.astro';
+import type { Lang } from '../utils/i18n';
+
+interface Props {
+  lang: Lang;
+  t: Record<string, string>;
+}
+
+const { lang, t } = Astro.props;
+const stayUrl =
+  lang === 'es'
+    ? 'https://lasaladitarentals.com/es?utm_source=guide&utm_medium=stay_block#open-weekend'
+    : 'https://lasaladitarentals.com/?utm_source=guide&utm_medium=stay_block#open-weekend';
+---
+
+<section class="stay" id="section-stay" aria-labelledby="stay-title">
+  <div class="stay__inner">
+    <div class="stay__copy">
+      <p class="section__kicker hand"><Sketch name="wave" />{t['stay.kicker']}</p>
+      <h2 id="stay-title" set:html={t['stay.title']} />
+      <p class="stay__lead">{t['stay.lead']}</p>
+    </div>
+    <a class="stay__cta" href={stayUrl} target="_blank" rel="noopener noreferrer">
+      <span class="stay__cta-label">{t['stay.cta']}</span>
+      <span class="stay__cta-arrow" aria-hidden="true">→</span>
+    </a>
+  </div>
+</section>
+
+<style>
+  .stay {
+    background: var(--paper);
+    padding-block: 2rem 1.5rem;
+  }
+
+  .stay__inner {
+    width: min(40rem, calc(100% - 2rem));
+    margin-inline: auto;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 1.25rem 1.75rem;
+  }
+
+  .stay__copy {
+    min-width: 0;
+    flex: 1;
+  }
+
+  .stay__copy :global(h2) {
+    margin-top: 0.15rem;
+  }
+
+  .stay__lead {
+    margin: 0.7rem 0 0;
+    color: var(--pencil);
+    max-width: 32rem;
+  }
+
+  .stay__cta {
+    flex: none;
+    display: inline-flex;
+    align-items: center;
+    gap: 0.45rem;
+    min-height: 44px;
+    padding: 0.4rem 1rem;
+    border: 1.5px solid var(--ink);
+    border-radius: var(--radius-chip);
+    background: var(--ink);
+    color: var(--paper);
+    font-family: var(--font-body);
+    font-size: var(--text-small);
+    font-weight: 700;
+    text-decoration: none;
+    white-space: nowrap;
+    align-self: center;
+    transition: background-color 0.2s var(--ease-out), color 0.2s var(--ease-out), transform 0.2s var(--ease-out);
+  }
+
+  .stay__cta:hover {
+    transform: translateX(3px);
+  }
+
+  .stay__cta-label {
+    line-height: 1.2;
+  }
+
+  .stay__cta-arrow {
+    font-size: 1.05em;
+    line-height: 1;
+  }
+
+  @media (max-width: 560px) {
+    .stay__inner {
+      align-items: flex-start;
+    }
+
+    .stay__cta {
+      white-space: normal;
+      max-width: 10.5rem;
+      text-align: left;
+    }
+  }
+</style>

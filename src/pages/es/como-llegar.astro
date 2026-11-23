@@ -35,7 +35,7 @@ const stayUrl = 'https://lasaladitarentals.com/es?utm_source=guide&utm_medium=lo
           <li>{t['getThere.optionA.time']}</li>
           <li>{t['getThere.optionA.pro']}</li>
         </ul>
-        <a class="route-card__cta" href={waTransfer} target="_blank" rel="noopener noreferrer">{t['getThere.bookTransfer']}</a>
+        <a class="btn btn--ink route-card__cta" href={waTransfer} target="_blank" rel="noopener noreferrer">{t['getThere.bookTransfer']}</a>
       </article>
 
       <article class="route-card">
@@ -63,7 +63,7 @@ const stayUrl = 'https://lasaladitarentals.com/es?utm_source=guide&utm_medium=lo
         <li>{t['getThere.services.signal']}</li>
         <li>{t['getThere.services.water']}</li>
       </ul>
-      <a class="get-there__stay" href={stayUrl} target="_blank" rel="noopener noreferrer">{t['getThere.stayCta']}</a>
+      <a class="btn btn--sand get-there__stay" href={stayUrl} target="_blank" rel="noopener noreferrer">{t['getThere.stayCta']}</a>
     </div>
   </main>
   <Footer lang={lang} shareLabel={t['footer.share']} tagline={t['footer.tagline']} />
@@ -103,12 +103,12 @@ const stayUrl = 'https://lasaladitarentals.com/es?utm_source=guide&utm_medium=lo
   .route-card {
     padding: 1.25rem;
     background: var(--paper-3);
-    border: 1px solid rgba(21, 52, 72, 0.1);
+    border: 1px solid rgba(43, 34, 29, 0.1);
     box-shadow: var(--shadow-paper);
   }
 
   .route-card--featured {
-    background: #f6dc8f;
+    background: var(--sr-sol);
     transform: rotate(-0.8deg);
   }
 
@@ -139,15 +139,7 @@ const stayUrl = 'https://lasaladitarentals.com/es?utm_source=guide&utm_medium=lo
   }
 
   .route-card__cta {
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    min-height: var(--touch-min);
-    padding: 0.9rem 1rem;
-    border-radius: var(--radius-hand);
-    background: var(--ink);
-    color: var(--paper-3);
-    font-weight: 700;
+    width: 100%;
   }
 
   .get-there__services {
@@ -168,18 +160,10 @@ const stayUrl = 'https://lasaladitarentals.com/es?utm_source=guide&utm_medium=lo
     margin-bottom: 1rem;
     padding-left: 1.1rem;
     font-size: var(--text-small);
-    color: rgba(224, 225, 220, 0.9);
+    color: rgba(242, 228, 202, 0.9);
   }
 
   .get-there__stay {
-    display: inline-flex;
-    align-items: center;
-    min-height: var(--touch-min);
-    padding: 0.85rem 1rem;
-    border-radius: var(--radius-hand);
-    background: var(--sand);
-    color: var(--navy);
-    font-weight: 700;
     font-size: var(--text-small);
   }
 </style>

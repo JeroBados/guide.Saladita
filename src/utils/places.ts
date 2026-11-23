@@ -7,8 +7,33 @@ export const allPlaces = places as Place[];
 
 export const SURF_SPOT_IDS = ['saladita-point', 'rancho', 'la-boca'] as const;
 
+export type EatSlot = 'morning' | 'midday' | 'sunset' | 'night';
+
+export function getPlaceSlots(place: Place): EatSlot[] {
+  if (place.slots?.length) return place.slots;
+  if (place.slot) return [place.slot];
+  return [];
+}
+
 export function getEatPlaces(): Place[] {
-  return allPlaces.filter((place) => place.chip === 'eat');
+  return allPlaces.filter((place) => place.chip === 'eat' || getPlaceSlots(place).length > 0);
+}
+
+const EAT_SLOT_ORDER: Record<EatSlot, string[]> = {
+  morning: ['acadia', 'hacienda-cafe', 'bennys'],
+  midday: ['acadia', 'bennys'],
+  sunset: ['marea', 'pacos'],
+  night: ['acadia', 'charco-de-camila', 'queen-bar', 'angelinas', 'ilianet'],
+};
+
+export function getEatPlacesForSlot(slot: EatSlot): Place[] {
+  const list = getEatPlaces().filter((place) => getPlaceSlots(place).includes(slot));
+  const order = EAT_SLOT_ORDER[slot];
+  return list.sort((a, b) => {
+    const ai = order.indexOf(a.id);
+    const bi = order.indexOf(b.id);
+    return (ai === -1 ? 99 : ai) - (bi === -1 ? 99 : bi);
+  });
 }
 
 export function getSurfPlaces(): Place[] {

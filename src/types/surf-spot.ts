@@ -16,5 +16,6 @@ export interface SurfSpot {
   lat: number;
   lng: number;
   mapsQuery?: string;
+  showMap?: boolean;
   image?: string;
 }

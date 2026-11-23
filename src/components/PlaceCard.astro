@@ -20,7 +20,7 @@ const ctaLabel = getCtaLabel(place, lang, { directions: directionsLabel, whatsap
   <span class="tape place-card__tape" aria-hidden="true"></span>
   <Sketch name="shell" class="place-card__draw" />
   <h3 class="place-card__name">{place.name}</h3>
-  <p class="place-card__badge hand">{place.badge[lang]}</p>
+  <p class="place-card__badge eyebrow">{place.badge[lang]}</p>
   <p class="place-card__desc">{place.desc[lang]}</p>
   {place.note && <p class="place-card__note">{place.note[lang]}</p>}
   {
@@ -47,7 +47,7 @@ const ctaLabel = getCtaLabel(place, lang, { directions: directionsLabel, whatsap
     gap: 0.3rem;
     padding: 1.5rem 1.2rem 0.8rem;
     background: var(--paper-3);
-    border: 1px solid rgba(21, 52, 72, 0.1);
+    border: 1px solid rgba(43, 34, 29, 0.1);
     box-shadow: var(--shadow-paper);
     transform: rotate(-0.5deg);
   }

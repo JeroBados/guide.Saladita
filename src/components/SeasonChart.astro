@@ -84,9 +84,9 @@ const payload = {
     <svg class="season__svg" viewBox={`0 0 ${W} ${H}`} preserveAspectRatio="xMidYMid meet">
       <rect
         class="season__band season__band--swell"
-        x={xAt(3.2)}
+        x={xAt(3.6)}
         y={pad.t}
-        width={xAt(8.8) - xAt(3.2)}
+        width={xAt(9.4) - xAt(3.6)}
         height={plotH}
         rx="4"
       />
@@ -104,7 +104,7 @@ const payload = {
             y={yAt(heights[i]) - 10}
             text-anchor="middle"
           >
-            {heights[i].toFixed(1)}
+            {heights[i].toFixed(1)} m
           </text>
         ))
       }
@@ -150,12 +150,12 @@ const payload = {
         <dd data-read-crowd></dd>
       </div>
     </dl>
-    <p class="season__peak hand" data-peak>
-      {t['season.biggestMonth']}: {biggest.name} · {biggest.height.toFixed(1)} m
+    <p class="season__peak" data-peak>
+      {t['season.biggestMonth']}: {biggest.name} · <span class="data">{biggest.height.toFixed(1)} m</span>
     </p>
   </div>
 
-  <p class="season__foot hand">{t['season.foot']}</p>
+  <p class="season__foot eyebrow">{t['season.foot']}</p>
 </div>
 
 <script>
@@ -195,7 +195,7 @@ const payload = {
     root.querySelector('[data-climate]')?.setAttribute('d', climateLine);
     root.querySelectorAll<SVGTextElement>('[data-val]').forEach((el) => {
       const i = Number(el.dataset.val);
-      el.textContent = heights[i].toFixed(1);
+      el.textContent = `${heights[i].toFixed(1)} m`;
       el.setAttribute('x', String(xAt(i)));
       el.setAttribute('y', String(yAt(heights[i]) - 10));
     });
@@ -204,7 +204,7 @@ const payload = {
     const peak = root.querySelector<HTMLElement>('[data-peak]');
     if (peak) {
       const label = peak.textContent?.split(':')[0] || '';
-      peak.textContent = `${label}: ${biggest.name} · ${biggest.height.toFixed(1)} m`;
+      peak.innerHTML = `${label}: ${biggest.name} · <span class="data">${biggest.height.toFixed(1)} m</span>`;
     }
   }
 
@@ -304,9 +304,8 @@ const payload = {
   }
 
   .season__title em {
-    font-family: var(--font-hand);
-    font-style: normal;
-    font-weight: 600;
+    font-style: italic;
+    font-weight: 400;
     color: var(--ink-2);
   }
 
@@ -318,7 +317,7 @@ const payload = {
 
   .season__bands {
     display: grid;
-    grid-template-columns: 1.15fr 1.5fr 0.85fr;
+    grid-template-columns: 4fr 6fr 2fr;
     gap: 0.35rem;
     margin: 0 0 0.2rem;
     font-size: clamp(0.95rem, 2.6vw, 1.2rem);
@@ -348,27 +347,28 @@ const payload = {
   }
 
   .season__band--swell {
-    fill: rgba(241, 210, 122, 0.22);
+    fill: rgba(146, 182, 168, 0.28);
   }
 
   .season__area {
-    fill: rgba(60, 91, 111, 0.12);
+    fill: rgba(23, 84, 83, 0.1);
   }
 
   .season__line {
     fill: none;
     stroke: var(--ink);
-    stroke-width: 2.4;
+    stroke-width: 2;
     stroke-linecap: round;
     stroke-linejoin: round;
   }
 
   .season__climate {
     fill: none;
-    stroke: var(--taupe);
+    stroke: var(--sr-teal);
     stroke-width: 1.5;
     stroke-dasharray: 4 5;
     stroke-linecap: round;
+    opacity: 0.55;
   }
 
   .season__val {
@@ -379,12 +379,12 @@ const payload = {
   }
 
   .season__dot {
-    fill: #c0392b;
+    fill: var(--accent);
   }
 
   .season__ring {
     fill: none;
-    stroke: #c0392b;
+    stroke: var(--accent);
     stroke-width: 1.6;
     opacity: 0.55;
   }
@@ -416,18 +416,18 @@ const payload = {
 
   .season__tick:hover,
   .season__tick:focus-visible {
-    background: rgba(231, 216, 192, 0.55);
+    background: rgba(231, 213, 180, 0.55);
     outline: none;
   }
 
   .season__tick.is-selected {
-    background: rgba(241, 210, 122, 0.35);
-    border-color: rgba(21, 52, 72, 0.35);
+    background: rgba(248, 206, 101, 0.35);
+    border-color: rgba(43, 34, 29, 0.35);
     color: var(--ink);
   }
 
   .season__tick.is-now {
-    color: #b0342a;
+    color: var(--accent);
   }
 
   .season__legend {
@@ -452,11 +452,12 @@ const payload = {
   }
 
   .season__swatch--fill {
-    background: rgba(60, 91, 111, 0.55);
+    background: rgba(23, 84, 83, 0.55);
   }
 
   .season__swatch--dash {
-    background: repeating-linear-gradient(90deg, var(--taupe) 0 4px, transparent 4px 7px);
+    background: repeating-linear-gradient(90deg, var(--sr-teal) 0 4px, transparent 4px 7px);
+    opacity: 0.55;
   }
 
   .season__read {
@@ -464,7 +465,7 @@ const payload = {
     padding: 0.85rem 1rem;
     max-width: 34rem;
     background: var(--paper-3);
-    border: 1.5px dashed rgba(21, 52, 72, 0.4);
+    border: 1.5px dashed rgba(43, 34, 29, 0.4);
     border-radius: 4px;
   }
 
@@ -518,15 +519,17 @@ const payload = {
 
   .season__peak {
     margin: 0.65rem 0 0;
-    font-size: 1.25rem;
-    color: var(--ink-2);
-    transform: rotate(-0.8deg);
+    font-size: 1rem;
+    color: var(--ink);
+  }
+
+  .season__peak :global(.data) {
+    font-size: 1.15rem;
+    color: var(--accent);
   }
 
   .season__foot {
     margin-top: 0.75rem;
-    font-size: 1.3rem;
-    color: var(--ink-2);
   }
 
   @media (min-width: 800px) {

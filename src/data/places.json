@@ -55,7 +55,7 @@
     "cta": {
       "type": "maps"
     },
-    "slot": "morning"
+    "slots": ["morning"]
   },
   {
     "id": "bennys",
@@ -65,17 +65,17 @@
     "lat": 17.842,
     "lng": -101.7683,
     "badge": {
-      "en": "Midday · fresh catch",
-      "es": "Mediodía · pesca fresca"
+      "en": "Fresh catch by the beach",
+      "es": "Pesca fresca junto a la playa"
     },
     "desc": {
-      "en": "The midday table: fresh catch, by the beach.",
-      "es": "La mesa del mediodía: pesca fresca, junto a la playa."
+      "en": "Our go-to for a solid breakfast or early lunch: fresh fish, steps from the sand.",
+      "es": "Nuestro fijo para desayuno o comida temprana: pesca fresca, a pasos de la arena."
     },
     "cta": {
       "type": "maps"
     },
-    "slot": "midday"
+    "slots": ["morning", "midday"]
   },
   {
     "id": "pacos",
@@ -85,17 +85,17 @@
     "lat": 17.8428,
     "lng": -101.7692,
     "badge": {
-      "en": "All-day reliable",
-      "es": "Rinde todo el día"
+      "en": "Sunset table",
+      "es": "Mesa del atardecer"
     },
     "desc": {
-      "en": "Local dishes, consistent quality, any time of day. A safe bet, always.",
-      "es": "Platos locales, calidad constante, a cualquier hora. Apuesta segura, siempre."
+      "en": "Local dishes, consistent quality. Easy pick when the sun drops.",
+      "es": "Platos locales, calidad constante. Apuesta fácil cuando baja el sol."
     },
     "cta": {
       "type": "maps"
     },
-    "slot": "midday"
+    "slots": ["sunset"]
   },
   {
     "id": "marea",
@@ -115,7 +115,7 @@
     "cta": {
       "type": "maps"
     },
-    "slot": "sunset"
+    "slots": ["sunset"]
   },
   {
     "id": "acadia",
@@ -125,17 +125,37 @@
     "lat": 17.8417,
     "lng": -101.7677,
     "badge": {
-      "en": "Theme nights · bar",
-      "es": "Noches temáticas · bar"
+      "en": "From 11 AM · nights · bar",
+      "es": "Desde las 11 AM · noches · bar"
     },
     "desc": {
-      "en": "A proper bar with theme nights. Check what's on this week when you arrive.",
-      "es": "Un buen bar con noches temáticas. Pregunta qué toca esta semana cuando llegues."
+      "en": "Opens from 11 AM for breakfast and lunch, then turns into a proper bar with theme nights.",
+      "es": "Abre desde las 11 AM para desayuno y comida, y de noche es un buen bar con noches temáticas."
     },
     "cta": {
       "type": "maps"
     },
-    "slot": "night"
+    "slots": ["morning", "midday", "night"]
+  },
+  {
+    "id": "queen-bar",
+    "category": "eat",
+    "chip": "eat",
+    "name": "Queen Bar",
+    "lat": 17.8419,
+    "lng": -101.768,
+    "badge": {
+      "en": "Weekends · music & party",
+      "es": "Findes · música y fiesta"
+    },
+    "desc": {
+      "en": "Club-style bar with music and a proper party vibe — weekends are the move.",
+      "es": "Bar estilo antro con música y fiesta. Los fines de semana es el plan."
+    },
+    "cta": {
+      "type": "maps"
+    },
+    "slots": ["night"]
   },
   {
     "id": "angelinas",
@@ -155,7 +175,7 @@
     "cta": {
       "type": "maps"
     },
-    "slot": "night"
+    "slots": ["night"]
   },
   {
     "id": "ilianet",
@@ -175,27 +195,28 @@
     "cta": {
       "type": "maps"
     },
-    "slot": "night"
+    "slots": ["night"]
   },
   {
-    "id": "queen-bar",
+    "id": "charco-de-camila",
     "category": "eat",
     "chip": "eat",
-    "name": "Queen Bar",
-    "lat": 17.8419,
-    "lng": -101.768,
+    "name": "El Charco de Camila",
+    "lat": 17.846249,
+    "lng": -101.765068,
+    "mapsQuery": "El Charco de Camila, Calle Moreno, La Saladita",
     "badge": {
-      "en": "Drinks & Vibe",
-      "es": "Tragos y buen ambiente"
+      "en": "Local taquería · wood fire",
+      "es": "Taquería local · cocina de leña"
     },
     "desc": {
-      "en": "A great spot for evening drinks and enjoying the local social scene.",
-      "es": "Un excelente lugar para tomar algo por la noche y disfrutar del ambiente social."
+      "en": "Neighborhood taquería on Calle Moreno. Tacos, sopes and quesadillas; the menu changes with the day. Cash only.",
+      "es": "Taquería del pueblo en Calle Moreno. Tacos, sopes y quesadillas; el menú cambia según el día. Solo efectivo."
     },
     "cta": {
       "type": "maps"
     },
-    "slot": "night"
+    "slots": ["night"]
   },
   {
     "id": "surf-lessons",

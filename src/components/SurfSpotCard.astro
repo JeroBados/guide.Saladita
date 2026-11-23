@@ -13,16 +13,19 @@ interface Props {
 }
 
 const { spot, lang, index, mapsLabel, labels } = Astro.props;
-const mapsUrl = spot.mapsQuery
-  ? `https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(spot.mapsQuery)}`
-  : buildMapsDirectionsUrl(spot.lat, spot.lng);
+const showMap = spot.showMap !== false;
+const mapsUrl = showMap
+  ? spot.mapsQuery
+    ? `https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(spot.mapsQuery)}`
+    : buildMapsDirectionsUrl(spot.lat, spot.lng)
+  : null;
 const isShort = spot.board.en.toLowerCase().startsWith('short');
 const tilt = [-0.6, 0.5, -0.3][index % 3];
 ---
 
-<article class="spot reveal" id={spot.id} style={`--tilt: ${tilt}deg; --tilt-from: ${tilt * 3}deg`}>
+<article class="spot" id={spot.id} style={`--tilt: ${tilt}deg; --delay: ${index * 80}ms`}>
   <header class="spot__head">
-    <span class="spot__num" aria-hidden="true">{String(index + 1).padStart(2, '0')}</span>
+    <span class="spot__num data" aria-hidden="true">{String(index + 1).padStart(2, '0')}</span>
     <div>
       <h3 class="spot__name">{spot.name[lang]}</h3>
       <p class="spot__badge hand">{spot.badge[lang]}</p>
@@ -30,84 +33,31 @@ const tilt = [-0.6, 0.5, -0.3][index % 3];
     <Sketch name={isShort ? 'shortboard' : 'longboard'} class="spot__board" />
   </header>
 
-  <p class="spot__summary" data-type-copy>{spot.summary[lang]}</p>
+  <p class="spot__summary">{spot.summary[lang]}</p>
 
   <dl class="spot__specs">
-    <div><dt><Sketch name="wind" />{labels.wind}</dt><dd data-type-copy>{spot.wind[lang]}</dd></div>
-    <div><dt><Sketch name="tide" />{labels.tide}</dt><dd data-type-copy>{spot.tide[lang]}</dd></div>
-    <div><dt><Sketch name="wave" />{labels.swell}</dt><dd data-type-copy>{spot.swell[lang]}</dd></div>
-    <div><dt><Sketch name="pin" />{labels.access}</dt><dd data-type-copy>{spot.access[lang]}</dd></div>
+    <div><dt class="eyebrow"><Sketch name="wind" />{labels.wind}</dt><dd>{spot.wind[lang]}</dd></div>
+    <div><dt class="eyebrow"><Sketch name="tide" />{labels.tide}</dt><dd>{spot.tide[lang]}</dd></div>
+    <div><dt class="eyebrow"><Sketch name="wave" />{labels.swell}</dt><dd>{spot.swell[lang]}</dd></div>
+    <div><dt class="eyebrow"><Sketch name="pin" />{labels.access}</dt><dd>{spot.access[lang]}</dd></div>
     {
       spot.rideLength && (
         <div>
-          <dt><Sketch name="arrow" />{labels.ride}</dt>
-          <dd data-type-copy><span class="hl">{spot.rideLength[lang]}</span></dd>
+          <dt class="eyebrow"><Sketch name="arrow" />{labels.ride}</dt>
+          <dd><span class="hl">{spot.rideLength[lang]}</span></dd>
         </div>
       )
     }
   </dl>
 
-  <a class="pen-link spot__maps" href={mapsUrl} target="_blank" rel="noopener noreferrer" data-track-cta data-place-id={spot.id} data-cta-type="maps">
-    {mapsLabel} →
-  </a>
+  {
+    mapsUrl && (
+      <a class="pen-link spot__maps" href={mapsUrl} target="_blank" rel="noopener noreferrer" data-track-cta data-place-id={spot.id} data-cta-type="maps">
+        {mapsLabel} →
+      </a>
+    )
+  }
 </article>
-
-<script>
-  function typeInto(el: HTMLElement, text: string, speed: number) {
-    return new Promise<void>((resolve) => {
-      el.textContent = '';
-      el.classList.add('is-typing');
-      let i = 0;
-      const timer = window.setInterval(() => {
-        i += 1;
-        el.textContent = text.slice(0, i);
-        if (i >= text.length) {
-          window.clearInterval(timer);
-          el.classList.remove('is-typing');
-          resolve();
-        }
-      }, speed);
-    });
-  }
-
-  function prepareSpotCopy() {
-    const spots = document.querySelector('.spots');
-    if (!spots || spots.dataset.copyReady === 'true') return;
-    spots.dataset.copyReady = 'true';
-
-    const reduce = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
-    const lines = spots.querySelectorAll<HTMLElement>('[data-type-copy]');
-    lines.forEach((line) => {
-      line.dataset.full = line.textContent ?? '';
-      if (!reduce) line.textContent = '';
-    });
-    if (reduce || !('IntersectionObserver' in window)) return;
-
-    const cards = Array.from(spots.querySelectorAll<HTMLElement>('.spot'));
-    let started = false;
-
-    const observer = new IntersectionObserver(
-      (entries) => {
-        if (started || !entries.some((entry) => entry.isIntersecting)) return;
-        started = true;
-        observer.disconnect();
-        void cards.reduce(async (chain, card) => {
-          await chain;
-          const copies = Array.from(card.querySelectorAll<HTMLElement>('[data-type-copy]'));
-          for (const line of copies) {
-            await typeInto(line, line.dataset.full ?? '', 16);
-          }
-        }, Promise.resolve());
-      },
-      { threshold: 0.35 },
-    );
-
-    observer.observe(spots);
-  }
-
-  prepareSpotCopy();
-  document.addEventListener('astro:page-load', prepareSpotCopy);
-</script>
 
 <style>
   .spot {
@@ -116,9 +66,30 @@ const tilt = [-0.6, 0.5, -0.3][index % 3];
     gap: 0.9rem;
     padding: 1.35rem 1.2rem 1rem;
     background: var(--paper-3);
-    border: 1px solid rgba(21, 52, 72, 0.1);
+    border: 1.5px solid var(--sr-card-line);
+    border-radius: var(--radius);
     box-shadow: var(--shadow-paper);
     transform: rotate(var(--tilt, 0deg));
+    animation: spotIn 500ms var(--ease-out) both;
+    animation-delay: var(--delay, 0ms);
+  }
+
+  @keyframes spotIn {
+    from {
+      opacity: 0;
+      transform: translateY(12px) rotate(var(--tilt, 0deg));
+    }
+
+    to {
+      opacity: 1;
+      transform: translateY(0) rotate(var(--tilt, 0deg));
+    }
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .spot {
+      animation: none;
+    }
   }
 
   /* left margin line, like a notebook page */
@@ -129,7 +100,7 @@ const tilt = [-0.6, 0.5, -0.3][index % 3];
     bottom: 0;
     left: 2.9rem;
     width: 1.5px;
-    background: rgba(192, 57, 43, 0.28);
+    background: rgba(154, 74, 43, 0.28);
   }
 
   .spot__head {
@@ -140,32 +111,14 @@ const tilt = [-0.6, 0.5, -0.3][index % 3];
   }
 
   .spot__num {
-    font-family: var(--font-hand);
-    font-size: 1.9rem;
-    font-weight: 700;
-    line-height: 1;
-    color: var(--ink-2);
+    font-size: 1.6rem;
+    color: var(--accent);
   }
 
   .spot__name {
+    font-family: var(--font-display);
+    font-weight: 600;
     font-size: 1.65rem;
-  }
-
-  .spot [data-type-copy].is-typing::after {
-    content: '';
-    display: inline-block;
-    width: 2px;
-    height: 0.9em;
-    margin-left: 2px;
-    background: currentColor;
-    vertical-align: -0.08em;
-    animation: caret 0.7s step-end infinite;
-  }
-
-  @keyframes caret {
-    50% {
-      opacity: 0;
-    }
   }
 
   .spot__badge {
@@ -197,18 +150,13 @@ const tilt = [-0.6, 0.5, -0.3][index % 3];
     display: grid;
     gap: 0.05rem;
     padding-bottom: 0.55rem;
-    border-bottom: 1px dashed rgba(21, 52, 72, 0.18);
+    border-bottom: 1px dashed rgba(43, 34, 29, 0.18);
   }
 
   .spot__specs dt {
     display: flex;
     align-items: center;
     gap: 0.35rem;
-    font-size: 0.74rem;
-    font-weight: 700;
-    letter-spacing: 0.08em;
-    text-transform: uppercase;
-    color: var(--pencil);
   }
 
   .spot__specs dt :global(.sketch) {
@@ -218,8 +166,11 @@ const tilt = [-0.6, 0.5, -0.3][index % 3];
 
   .spot__specs dd {
     margin: 0;
+    font-family: var(--font-body);
+    font-weight: 400;
     font-size: 0.98rem;
     line-height: 1.45;
+    color: var(--ink);
   }
 
   .spot__maps {

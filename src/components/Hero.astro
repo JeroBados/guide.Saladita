@@ -1,4 +1,5 @@
 ---
+import Brand from './Brand.astro';
 import LangToggle from './LangToggle.astro';
 import Sketch from './Sketch.astro';
 import { buildWhatsAppUrl } from '../utils/wa';
@@ -24,8 +25,9 @@ const facts = [
 
 <header class="topbar container">
   <a class="topbar__brand" href={lang === 'en' ? '/' : '/es/'} aria-label="Saladita Rentals — guide home">
-    <img src="/logo.png" alt="" width="44" height="44" />
-    <span>Saladita Rentals<small>{t['topbar.guide']}</small></span>
+    <Brand tone="dark" height={26} />
+    <span class="topbar__sep" aria-hidden="true"></span>
+    <span class="eyebrow">{t['topbar.guide']}</span>
   </a>
   <LangToggle lang={lang} altPath={altPath} label={t['nav.lang']} />
 </header>
@@ -43,6 +45,7 @@ const facts = [
         <Sketch name="swoosh" class="hero__swoosh" />
       </span>
     </h1>
+    <p class="hero__tagline eyebrow hero-fade-in" style="--delay: 2">{t['hero.tagline']}</p>
     <p class="hero__sub hero-fade-in" style="--delay: 2">{t['hero.sub']}</p>
     <div class="hero__actions hero-fade-in" style="--delay: 3">
       <a class="btn btn--ink" href={helpUrl} target="_blank" rel="noopener noreferrer" data-track-cta data-place-id="hero-whatsapp" data-cta-type="whatsapp">
@@ -51,7 +54,7 @@ const facts = [
       </a>
       <span class="hand hero__help-note">{t['hero.helpNote']}</span>
     </div>
-    <p class="hero__updated hero-fade-in" style="--delay: 4">{t['hero.updated']}</p>
+    <p class="hero__updated eyebrow hero-fade-in" style="--delay: 4">{t['hero.updated']}</p>
   </div>
 
   <figure class="polaroid hero-fade-in" style="--delay: 2">
@@ -91,25 +94,14 @@ const facts = [
   .topbar__brand {
     display: flex;
     align-items: center;
-    gap: 0.55rem;
-    font-family: var(--font-display);
-    font-weight: 600;
-    font-size: 1.05rem;
-    line-height: 1.1;
+    gap: 0.75rem;
   }
 
-  .topbar__brand img {
-    width: 44px;
-    height: 44px;
-    filter: brightness(0.62) saturate(1.1);
-  }
-
-  .topbar__brand small {
-    display: block;
-    font-family: var(--font-hand);
-    font-size: 1.1rem;
-    font-weight: 500;
-    color: var(--pencil);
+  .topbar__sep {
+    width: 1px;
+    height: 22px;
+    background: var(--sr-line);
+    flex: none;
   }
 
   .hero {
@@ -134,6 +126,8 @@ const facts = [
   }
 
   .hero__title {
+    font-family: var(--font-display);
+    font-weight: 600;
     font-size: var(--text-hero);
     line-height: 0.98;
     letter-spacing: -0.02em;
@@ -159,7 +153,7 @@ const facts = [
     left: -2%;
     bottom: -0.12em;
     width: 104%;
-    color: var(--taupe);
+    color: var(--marker);
   }
 
   .hero__place :global(.hero__swoosh .sketch__line) {
@@ -167,9 +161,17 @@ const facts = [
     animation-delay: 0.9s;
   }
 
+  .hero__tagline {
+    font-size: 1.55rem;
+    color: var(--ink-2);
+    margin: 0 0 0.55rem;
+    transform: rotate(-1.5deg);
+    transform-origin: left;
+  }
+
   .hero__sub {
     font-size: 1.125rem;
-    max-width: 34ch;
+    max-width: 36ch;
     margin-bottom: 1.5rem;
   }
 
@@ -187,27 +189,26 @@ const facts = [
 
   .hero__updated {
     margin-top: 1.25rem;
-    font-size: 0.85rem;
-    color: var(--pencil);
   }
 
   .polaroid {
     position: relative;
-    justify-self: center;
-    width: min(100%, 30rem);
-    padding: 0.7rem 0.7rem 0;
+    justify-self: stretch;
+    width: min(100%, 36rem);
+    margin-inline: auto;
+    padding: 0.55rem 0.55rem 0;
     background: var(--paper-3);
     box-shadow: var(--shadow-lift);
-    transform: rotate(2.2deg);
+    transform: rotate(1.2deg);
   }
 
   .polaroid img {
     width: 100%;
     height: auto;
-    aspect-ratio: 4 / 3.4;
+    aspect-ratio: 16 / 10;
     object-fit: cover;
-    object-position: center 30%;
-    filter: saturate(0.88) contrast(1.02) sepia(0.08);
+    object-position: center 40%;
+    filter: saturate(0.96) contrast(1.04);
   }
 
   .polaroid figcaption {
@@ -251,9 +252,8 @@ const facts = [
     position: relative;
     padding: 1.25rem 1.25rem 1.1rem;
     background: var(--paper-3);
-    border: 1.5px solid var(--ink);
+    border: 1.5px solid var(--sr-card-line);
     border-radius: var(--radius-hand);
-    box-shadow: 4px 5px 0 var(--sand);
   }
 
   .facts__title {
@@ -284,8 +284,13 @@ const facts = [
     color: var(--ink-2);
   }
 
-  .facts li :global(strong) {
-    font-weight: 700;
+  .facts :global(strong) {
+    font-family: var(--font-data);
+    font-weight: 400;
+    text-transform: uppercase;
+    font-size: 1.2em;
+    letter-spacing: 0.01em;
+    color: var(--ink);
   }
 
   @media (min-width: 820px) {

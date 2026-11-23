@@ -19,7 +19,9 @@ export interface Place {
   desc: { en: string; es: string };
   note?: { en: string; es: string };
   hours?: string;
+  /** @deprecated prefer `slots` when a place fits more than one time of day */
   slot?: 'morning' | 'midday' | 'sunset' | 'night';
+  slots?: Array<'morning' | 'midday' | 'sunset' | 'night'>;
   featured?: boolean;
   image?: string;
   cta: PlaceCta;

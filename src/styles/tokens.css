@@ -1,29 +1,49 @@
 :root {
-  /* Saladita Rentals — surf notebook ("cuaderno de surf")
-     Brand anchors kept: navy #153448, sand, sage, taupe. */
-  --ink: #153448; /* main text, pen ink */
-  --ink-2: #3c5b6f; /* secondary ink, sketches */
-  --pencil: #625a4d; /* muted text on paper (≥ 5:1 on --paper) */
-  --paper: #f3ecdd; /* page */
-  --paper-2: #ebe1cc; /* back pages, alt sections */
-  --paper-3: #fbf7ee; /* index cards */
-  --sand: #e7d8c0;
-  --sage: #a4b2b0;
-  --taupe: #948979; /* decoration only, not for text */
-  --marker: #f1d27a; /* highlighter swipe, sticky notes */
-  --tape: rgba(231, 216, 192, 0.78);
-  --rule: rgba(60, 91, 111, 0.14); /* notebook lines */
-  --wa: #25d366;
+  /* Saladita Rentals — Guía "cuaderno v3".
+     ADN del sitio (Design System v3.1) + distintivo de cuaderno.
+     Regla 70/20/10: 70 % arena + espresso · 20 % teal/terracota/salvia · 10 % sol. */
 
-  /* legacy aliases used by subpages */
+  /* —— Paleta v3.1 (idéntica al sitio) —— */
+  --sr-arena: #F2E4CA;
+  --sr-arena-2: #E7D5B4;
+  --sr-line: #D9C7A6;
+  --sr-card-line: #CDB894;
+  --sr-espresso: #2B221D;
+  --sr-cacao: #462D22;
+  --sr-muted: #5E4B3F;
+  --sr-piedra: #BAAC98;
+  --sr-salvia: #92B6A8;
+  --sr-teal: #175453;
+  --sr-terracota: #9A4A2B;
+  --sr-sol: #FFB700;
+  --sr-sol-50: #F8CE65;   /* resaltador */
+  --sr-sol-25: #F5D998;   /* post-it */
+
+  /* —— Cuaderno (los nombres viejos, con valores nuevos) —— */
+  --ink: var(--sr-espresso);       /* tinta principal (antes navy) */
+  --ink-2: var(--sr-teal);         /* segunda tinta: anotaciones, bocetos, itálicas */
+  --pencil: var(--sr-muted);       /* texto secundario (5.7–7:1) */
+  --paper: var(--sr-arena);        /* página */
+  --paper-2: var(--sr-arena-2);    /* secciones alternas */
+  --paper-3: #F7ECD8;              /* fichas y tarjetas (arena aclarada; solo fondo) */
+  --sand: var(--sr-arena-2);
+  --sage: var(--sr-salvia);
+  --taupe: var(--sr-piedra);       /* decorativo, nunca texto */
+  --marker: var(--sr-sol-50);      /* resaltador */
+  --accent: var(--sr-terracota);   /* color de la guía: círculo, números, márgenes */
+  --tape: rgba(231, 213, 180, 0.8);
+  --rule: rgba(43, 34, 29, 0.09);  /* líneas del cuaderno */
+
+  /* alias heredados que usan las subpáginas */
   --navy: var(--ink);
   --navy-2: var(--ink-2);
   --cream: var(--paper);
 
-  /* Type */
-  --font-display: 'Fraunces Variable', Georgia, serif;
-  --font-body: 'DM Sans Variable', system-ui, sans-serif;
-  --font-hand: 'Caveat', 'Bradley Hand', 'Segoe Print', cursive;
+  /* —— Tipografía —— */
+  --font-display: 'Fraunces Variable', Georgia, serif;     /* títulos */
+  --font-data: 'Anton', Impact, sans-serif;                /* SOLO números y datos */
+  --font-body: 'DM Sans Variable', system-ui, sans-serif;  /* texto e interfaz */
+  --font-hand: 'Caveat', 'Bradley Hand', cursive;          /* SOLO anotaciones, ver §3 */
 
   --text-hero: clamp(2.6rem, 11vw, 5.2rem);
   --text-h2: clamp(1.9rem, 6.5vw, 3rem);
@@ -33,12 +53,12 @@
   --text-hand: 1.45rem;
   --touch-min: 48px;
 
-  /* Shapes — hand-cut, never perfectly round */
+  /* —— Formas: cortadas a mano (distintivo) —— */
   --radius: 6px;
   --radius-hand: 255px 18px 225px 18px / 18px 225px 18px 255px;
   --radius-chip: 999px;
-  --shadow-paper: 0 1px 0 rgba(21, 52, 72, 0.06), 0 10px 24px -12px rgba(21, 52, 72, 0.28);
-  --shadow-lift: 0 2px 0 rgba(21, 52, 72, 0.08), 0 18px 34px -14px rgba(21, 52, 72, 0.35);
+  --shadow-paper: 0 1px 0 rgba(43, 34, 29, 0.06), 0 10px 24px -12px rgba(43, 34, 29, 0.28);
+  --shadow-lift: 0 2px 0 rgba(43, 34, 29, 0.08), 0 18px 34px -14px rgba(43, 34, 29, 0.35);
 
   --ease-out: cubic-bezier(0.2, 0, 0, 1);
   --dur: 0.45s;

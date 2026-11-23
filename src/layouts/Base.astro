@@ -3,6 +3,7 @@ import '@fontsource-variable/fraunces';
 import '@fontsource-variable/dm-sans';
 import '@fontsource/caveat/500.css';
 import '@fontsource/caveat/700.css';
+import '@fontsource/anton/400.css';
 import '../styles/global.css';
 import '../styles/animations.css';
 import { ClientRouter } from 'astro:transitions';
@@ -65,7 +66,7 @@ const showFloatingWa = floatingWaMessage && floatingWaLabel;
     <meta name="description" content={description} />
     {noindex && <meta name="robots" content="noindex,nofollow" />}
     <link rel="canonical" href={canonical} />
-    <link rel="icon" type="image/png" href="/logo.png" />
+    <link rel="icon" href="/favicon.svg" type="image/svg+xml" />
 
     <link rel="alternate" hreflang="en" href={enUrl} />
     <link rel="alternate" hreflang="es" href={esUrl} />
@@ -104,7 +105,7 @@ const showFloatingWa = floatingWaMessage && floatingWaLabel;
         </>
       )
     }
-    <meta name="theme-color" content="#f3ecdd" />
+    <meta name="theme-color" content="#F2E4CA" />
 
     <ClientRouter />
   </head>

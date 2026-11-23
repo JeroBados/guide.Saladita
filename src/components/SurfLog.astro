@@ -1,9 +1,12 @@
 ---
 /* "This week's log": best morning at the Saladita point from Surfline + surf-forecast
    (averaged), with Open-Meteo tide fill. Season chart is interactive (SEO copy stays). */
+import fs from 'node:fs';
+import path from 'node:path';
 import Sketch from './Sketch.astro';
 import SeasonChart from './SeasonChart.astro';
 import type { Lang } from '../utils/i18n';
+import { prepareWeek, type WeekLogI18n, type WeekPayload } from '../utils/week-forecast';
 
 interface Props {
   lang: Lang;
@@ -13,7 +16,7 @@ interface Props {
 const { lang, t } = Astro.props;
 const locale = lang === 'es' ? 'es-MX' : 'en-US';
 
-const i18n = {
+const i18n: WeekLogI18n = {
   best: t['week.best'],
   window: t['week.window'],
   answer: t['week.answer'],
@@ -33,6 +36,19 @@ const i18n = {
   gone: t['week.gone'],
   source: t['week.source'],
 };
+
+function loadWeekForecastFile(): WeekPayload | null {
+  try {
+    const file = path.join(process.cwd(), 'public/data/week-forecast.json');
+    return JSON.parse(fs.readFileSync(file, 'utf8')) as WeekPayload;
+  } catch {
+    return null;
+  }
+}
+
+const prepared = prepareWeek(loadWeekForecastFile(), lang, locale, i18n);
+const live = prepared != null;
+const surflineUrl = 'https://www.surfline.com/surf-report/la-saladita/584204204e65fad6a770921e';
 ---
 
 <section class="section log" id="section-surf" aria-labelledby="log-title">
@@ -43,26 +59,99 @@ const i18n = {
       <p class="section__lead">{t['week.lead']}</p>
     </div>
 
-    <div class="log__page" data-surf-log data-lang={lang} data-locale={locale} data-i18n={JSON.stringify(i18n)}>
+    <div
+      class:list={['log__page', live && 'is-live']}
+      data-surf-log
+      data-lang={lang}
+      data-locale={locale}
+      data-i18n={JSON.stringify(i18n)}
+    >
       <span class="tape log__tape" aria-hidden="true"></span>
-      <p class="log__range hand" data-range></p>
-      <p class="log__answer" data-answer aria-live="polite">{t['week.unavailable']}</p>
+      <p class="log__range eyebrow" data-range>{prepared?.range ?? ''}</p>
+      <p class="log__answer" data-answer aria-live="polite" set:html={prepared?.answerHtml ?? t['week.unavailable']} />
+      {
+        !live && (
+          <p class="log__fallback" data-surfline-fallback>
+            <a class="pen-link" href={surflineUrl} target="_blank" rel="noopener noreferrer">
+              {t['week.surflineCta']} →
+            </a>
+          </p>
+        )
+      }
 
       <div class="log__days-wrap">
-        <div class="log__days" data-days role="list" aria-label={t['week.daysLabel']}></div>
+        <div class="log__days" data-days role="list" aria-label={t['week.daysLabel']}>
+          {
+            prepared?.days.map((d) => {
+              const dots =
+                d.rating < 0
+                  ? null
+                  : [0, 1, 2, 3].map((k) => <i class={k <= d.rating ? 'on' : undefined} />);
+              return (
+                <button
+                  type="button"
+                  class:list={['day', d.isBest && 'day--best is-selected', d.gone && 'day--gone']}
+                  role="listitem"
+                  aria-pressed={d.isBest ? 'true' : 'false'}
+                  disabled={d.gone || undefined}
+                  data-date={d.date}
+                >
+                  {d.isBest && (
+                    <>
+                      <svg class="day__circle" viewBox="0 0 100 140" preserveAspectRatio="none" aria-hidden="true">
+                        <path d="M70 6C40-2 8 14 6 60s14 76 46 74 46-30 42-72S74 4 44 10" />
+                      </svg>
+                      <span class="day__best hand">{t['week.best']}</span>
+                    </>
+                  )}
+                  <span class="day__dow">{d.dow}</span>
+                  <span class="day__num">{d.dayNum}</span>
+                  <svg class="day__wave" viewBox="0 0 60 48" aria-hidden="true">
+                    <path d={d.waveD} />
+                    <path class="day__sea" d="M2 46 H58" />
+                  </svg>
+                  <span class="day__h data" set:html={d.heightHtml} />
+                  <span class="day__wind" title={d.windLabel || undefined}>
+                    {d.gone ? (
+                      ''
+                    ) : (
+                      <>
+                        <svg viewBox="0 0 20 20" style={`transform:rotate(${(d.windDir + 180) % 360}deg)`} aria-hidden="true">
+                          <path d="M10 17V3M5 8l5-5 5 5" />
+                        </svg>
+                        {d.windLabel}
+                      </>
+                    )}
+                  </span>
+                  <span class="day__dots" aria-hidden="true">{dots}</span>
+                  <span class="day__rate">{d.rateLabel}</span>
+                </button>
+              );
+            })
+          }
+        </div>
       </div>
 
-      <div class="log__detail" data-detail hidden>
-        <p class="log__detail-title" data-detail-title></p>
+      <div class="log__detail" data-detail hidden={!prepared}>
+        <p class="log__detail-title" data-detail-title>{prepared?.detail.title ?? ''}</p>
         <dl>
-          <div><dt><Sketch name="wave" />{t['week.swell']}</dt><dd data-d-swell></dd></div>
-          <div><dt><Sketch name="wind" />{t['week.wind']}</dt><dd data-d-wind></dd></div>
-          <div><dt><Sketch name="tide" />{t['week.tide']}</dt><dd data-d-tide></dd></div>
+          <div>
+            <dt class="eyebrow"><Sketch name="wave" />{t['week.swell']}</dt>
+            <dd data-d-swell>{prepared?.detail.swell ?? ''}</dd>
+          </div>
+          <div>
+            <dt class="eyebrow"><Sketch name="wind" />{t['week.wind']}</dt>
+            <dd data-d-wind>{prepared?.detail.wind ?? ''}</dd>
+          </div>
+          <div>
+            <dt class="eyebrow"><Sketch name="tide" />{t['week.tide']}</dt>
+            <dd data-d-tide>{prepared?.detail.tide ?? ''}</dd>
+          </div>
         </dl>
       </div>
 
       <p class="log__note hand">{t['week.note']}</p>
-      <p class="log__source">{t['week.source']}</p>
+      {prepared?.source ? <p class="log__source">{prepared.source}</p> : <p class="log__source" data-source-empty hidden></p>}
     </div>
 
     <SeasonChart lang={lang} t={t} />
@@ -70,46 +159,14 @@ const i18n = {
 </section>
 
 <script>
-  type Day = {
-    date: string;
-    score: number | null;
-    start: number;
-    swell: number;
-    period: number;
-    swellDir: number;
-    windSpeed: number;
-    windDir: number;
-    windKind: 'offshore' | 'cross' | 'onshore' | 'glassy';
-    tideLevel: number;
-    tideRising: boolean;
-  };
-
-  type WeekPayload = {
-    bestDate: string | null;
-    sourcesUsed?: string[];
-    days: Day[];
-  };
-
-  const clamp = (v: number, lo = 0, hi = 1) => Math.max(lo, Math.min(hi, v));
-  const compass = (deg: number) => ['N', 'NE', 'E', 'SE', 'S', 'SW', 'W', 'NW'][Math.round(((deg % 360) + 360) % 360 / 45) % 8];
-
-  function wavePath(height: number) {
-    const amp = 4 + clamp(height / 3) * 22;
-    const base = 44;
-    return `M2 ${base} C 10 ${base - amp * 0.4}, 16 ${base - amp}, 26 ${base - amp} C 36 ${base - amp}, 40 ${base - amp * 0.35}, 34 ${base - amp * 0.2} C 42 ${base - amp * 0.1}, 50 ${base}, 58 ${base}`;
-  }
-
-  function sourceLabel(sources: string[] = [], lang: string) {
-    const names =
-      lang === 'es'
-        ? { surfline: 'Surfline', 'surf-forecast': 'surf-forecast', windy: 'Windy', 'open-meteo': 'Open-Meteo' }
-        : { surfline: 'Surfline', 'surf-forecast': 'surf-forecast', windy: 'Windy', 'open-meteo': 'Open-Meteo' };
-    const list = sources.map((s) => names[s as keyof typeof names] || s);
-    if (!list.length) return lang === 'es' ? 'fuentes locales' : 'local sources';
-    if (list.length === 1) return list[0];
-    if (list.length === 2) return lang === 'es' ? `${list[0]} y ${list[1]}` : `${list[0]} and ${list[1]}`;
-    return lang === 'es' ? `${list.slice(0, -1).join(', ')} y ${list.at(-1)}` : `${list.slice(0, -1).join(', ')}, and ${list.at(-1)}`;
-  }
+  import {
+    compass,
+    detailForDay,
+    prepareWeek,
+    type ForecastDay,
+    type WeekLogI18n,
+    type WeekPayload,
+  } from '../utils/week-forecast';
 
   async function loadWeek(): Promise<WeekPayload> {
     const urls = ['/api/week-forecast.php', '/data/week-forecast.json'];
@@ -132,48 +189,33 @@ const i18n = {
     root.dataset.ready = '1';
     const lang = root.dataset.lang === 'es' ? 'es' : 'en';
     const locale = root.dataset.locale || 'en-US';
-    const t = JSON.parse(root.dataset.i18n || '{}');
+    const t = JSON.parse(root.dataset.i18n || '{}') as WeekLogI18n;
     const $ = <T extends HTMLElement>(s: string) => root.querySelector<T>(s)!;
 
     try {
       const week = await loadWeek();
-      const days = week.days.map((d) => ({
-        ...d,
-        windKind: (d.windKind || 'glassy') as Day['windKind'],
-        swellDir: d.swellDir || 210,
-        tideLevel: d.tideLevel ?? 0.5,
-        tideRising: d.tideRising ?? true,
-      }));
-      const scored = days.filter((d) => d.score != null);
-      if (!scored.length) throw new Error('empty');
-      const top =
-        days.find((d) => d.date === week.bestDate && d.score != null) ||
-        scored.reduce((a, b) => ((b.score ?? 0) > (a.score ?? 0) ? b : a));
+      // Freshness is for SSR only; the live fetch always wins when it has scored days.
+      const prepared = prepareWeek({ ...week, generatedAt: new Date().toISOString() }, lang, locale, t);
+      if (!prepared) throw new Error('empty');
 
-      const sourceEl = root.querySelector('.log__source');
-      if (sourceEl && t.source) {
-        sourceEl.textContent = String(t.source).replace('{sources}', sourceLabel(week.sourcesUsed || [], lang));
+      const sourceEl = root.querySelector<HTMLElement>('.log__source');
+      if (sourceEl) {
+        sourceEl.hidden = false;
+        sourceEl.removeAttribute('data-source-empty');
+        sourceEl.textContent = prepared.source;
       }
 
-      const dFmt = (iso: string, o: Intl.DateTimeFormatOptions) =>
-        new Intl.DateTimeFormat(locale, { ...o, timeZone: 'UTC' }).format(new Date(`${iso}T12:00:00Z`));
-      const windowLabel = (d: Day) => (d.start + 3 < 12 ? `${d.start}–${d.start + 3} am` : `${d.start} am–12 pm`);
-      const ft = (mtr: number) => Math.round(mtr * 3.28);
-      const rating = (s: number) => (s >= 85 ? 3 : s >= 72 ? 2 : s >= 58 ? 1 : 0);
-
-      $('[data-range]').textContent = `${dFmt(days[0].date, { month: 'short', day: 'numeric' })} – ${dFmt(days[days.length - 1].date, { month: 'short', day: 'numeric' })}`;
-      $('[data-answer]').innerHTML = t.answer
-        .replace('{day}', `<span class="hl">${dFmt(top.date, { weekday: 'long', month: 'short', day: 'numeric' })}</span>`)
-        .replace('{window}', windowLabel(top));
+      $('[data-range]').textContent = prepared.range;
+      $('[data-answer]').innerHTML = prepared.answerHtml;
 
       const detail = $('[data-detail]');
-      function show(d: Day, fromClick = false) {
+      function show(d: ForecastDay, fromClick = false) {
+        const view = detailForDay(d, locale, t);
         detail.hidden = false;
-        $('[data-detail-title]').textContent = `${dFmt(d.date, { weekday: 'long', month: 'short', day: 'numeric' })} · ${t.window} ${windowLabel(d)}`;
-        $('[data-d-swell]').textContent = `${Number(d.swell).toFixed(1)} m (${ft(d.swell)} ft) · ${Math.round(d.period)} s · ${compass(d.swellDir)}`;
-        $('[data-d-wind]').textContent = `${Math.round(d.windSpeed)} km/h ${compass(d.windDir)} · ${t[d.windKind]}`;
-        const lvl = d.tideLevel < 0.34 ? t.low : d.tideLevel < 0.67 ? t.mid : t.high;
-        $('[data-d-tide]').textContent = `${lvl}, ${d.tideRising ? t.rising : t.falling}`;
+        $('[data-detail-title]').textContent = view.title;
+        $('[data-d-swell]').textContent = view.swell;
+        $('[data-d-wind]').textContent = view.wind;
+        $('[data-d-tide]').textContent = view.tide;
         if (!fromClick) return;
         detail.classList.remove('is-fresh');
         void detail.offsetWidth;
@@ -182,25 +224,29 @@ const i18n = {
 
       const wrap = $('[data-days]');
       wrap.innerHTML = '';
-      days.forEach((d) => {
-        const isBest = d.date === top.date;
+      prepared.days.forEach((d) => {
         const btn = document.createElement('button');
         btn.type = 'button';
-        btn.className = `day${isBest ? ' day--best is-selected' : ''}${d.score == null ? ' day--gone' : ''}`;
+        btn.className = `day${d.isBest ? ' day--best is-selected' : ''}${d.gone ? ' day--gone' : ''}`;
         btn.setAttribute('role', 'listitem');
-        btn.setAttribute('aria-pressed', String(isBest));
-        const r = d.score == null ? -1 : rating(d.score);
-        const dots = r < 0 ? '' : Array.from({ length: 4 }, (_, k) => `<i class="${k <= r ? 'on' : ''}"></i>`).join('');
+        btn.setAttribute('aria-pressed', String(d.isBest));
+        btn.dataset.date = d.date;
+        const dots =
+          d.rating < 0 ? '' : Array.from({ length: 4 }, (_, k) => `<i class="${k <= d.rating ? 'on' : ''}"></i>`).join('');
         btn.innerHTML = `
-          ${isBest ? `<svg class="day__circle" viewBox="0 0 100 140" preserveAspectRatio="none" aria-hidden="true"><path d="M70 6C40-2 8 14 6 60s14 76 46 74 46-30 42-72S74 4 44 10"/></svg><span class="day__best hand">${t.best}</span>` : ''}
-          <span class="day__dow">${dFmt(d.date, { weekday: 'short' })}</span>
-          <span class="day__num">${dFmt(d.date, { day: 'numeric' })}</span>
-          <svg class="day__wave" viewBox="0 0 60 48" aria-hidden="true"><path d="${d.score == null ? 'M2 44 H58' : wavePath(d.swell)}"/><path class="day__sea" d="M2 46 H58"/></svg>
-          <span class="day__h">${d.score == null ? '—' : `${Number(d.swell).toFixed(1)}<small>m</small>`}</span>
-          <span class="day__wind" title="${compass(d.windDir)}">${d.score == null ? '' : `<svg viewBox="0 0 20 20" style="transform:rotate(${(d.windDir + 180) % 360}deg)" aria-hidden="true"><path d="M10 17V3M5 8l5-5 5 5"/></svg>${compass(d.windDir)}`}</span>
+          ${d.isBest ? `<svg class="day__circle" viewBox="0 0 100 140" preserveAspectRatio="none" aria-hidden="true"><path d="M70 6C40-2 8 14 6 60s14 76 46 74 46-30 42-72S74 4 44 10"/></svg><span class="day__best hand">${t.best}</span>` : ''}
+          <span class="day__dow">${d.dow}</span>
+          <span class="day__num">${d.dayNum}</span>
+          <svg class="day__wave" viewBox="0 0 60 48" aria-hidden="true"><path d="${d.waveD}"/><path class="day__sea" d="M2 46 H58"/></svg>
+          <span class="day__h data">${d.heightHtml}</span>
+          <span class="day__wind" title="${d.windLabel}">${
+            d.gone
+              ? ''
+              : `<svg viewBox="0 0 20 20" style="transform:rotate(${(d.windDir + 180) % 360}deg)" aria-hidden="true"><path d="M10 17V3M5 8l5-5 5 5"/></svg>${compass(d.windDir)}`
+          }</span>
           <span class="day__dots" aria-hidden="true">${dots}</span>
-          <span class="day__rate hand">${d.score == null ? t.gone : t.ratings[r]}</span>`;
-        if (d.score != null) {
+          <span class="day__rate">${d.rateLabel}</span>`;
+        if (!d.gone) {
           btn.addEventListener('click', () => {
             wrap.querySelectorAll('.day').forEach((el) => {
               el.classList.remove('is-selected');
@@ -216,8 +262,9 @@ const i18n = {
         }
         wrap.append(btn);
       });
-      show(top);
+      show(prepared.top);
       root.classList.add('is-live');
+      root.querySelector<HTMLElement>('[data-surfline-fallback]')?.remove();
       const bestEl = wrap.querySelector<HTMLElement>('.day--best');
       const scroller = root.querySelector<HTMLElement>('.log__days-wrap');
       if (bestEl && scroller && scroller.scrollWidth > scroller.clientWidth) {
@@ -225,6 +272,17 @@ const i18n = {
       }
     } catch {
       delete root.dataset.ready;
+      // Keep Surfline fallback visible when the blend cannot load.
+      if (!root.querySelector('[data-surfline-fallback]')) {
+        const answer = root.querySelector('[data-answer]');
+        const fallback = document.createElement('p');
+        fallback.className = 'log__fallback';
+        fallback.dataset.surflineFallback = '';
+        fallback.innerHTML = `<a class="pen-link" href="https://www.surfline.com/surf-report/la-saladita/584204204e65fad6a770921e" target="_blank" rel="noopener noreferrer">${
+          lang === 'es' ? 'Abrir Surfline · La Saladita' : 'Open Surfline · La Saladita'
+        } →</a>`;
+        answer?.after(fallback);
+      }
     }
   }
 
@@ -242,7 +300,7 @@ const i18n = {
       linear-gradient(90deg, var(--rule) 1px, transparent 1px);
     background-size: 22px 22px;
     background-position: -1px -1px;
-    border: 1px solid rgba(21, 52, 72, 0.12);
+    border: 1px solid rgba(43, 34, 29, 0.12);
     box-shadow: var(--shadow-lift);
     transform: rotate(-0.4deg);
   }
@@ -254,9 +312,8 @@ const i18n = {
   }
 
   .log__range {
-    font-size: 1.5rem;
-    color: var(--pencil);
-    min-height: 1.6rem;
+    min-height: 1.2rem;
+    margin-bottom: 0.2rem;
   }
 
   .log__answer {
@@ -273,26 +330,23 @@ const i18n = {
     font-size: 1.15rem;
     font-weight: 500;
     max-width: 44ch;
+    margin-bottom: 0.55rem;
+  }
+
+  .log__fallback {
+    margin: 0 0 1.2rem;
   }
 
   .log__days-wrap {
     position: relative;
-    margin-inline: -1.1rem;
-    padding-inline: 1.1rem;
-    overflow-x: auto;
-    scrollbar-width: none;
-  }
-
-  .log__days-wrap::-webkit-scrollbar {
-    display: none;
+    overflow: visible;
   }
 
   .log__days {
     display: grid;
-    grid-auto-flow: column;
-    grid-auto-columns: 5.2rem;
-    gap: 0.4rem;
-    padding: 1.5rem 0.2rem 0.6rem;
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+    gap: 0.35rem;
+    padding: 1.65rem 0 0.6rem;
   }
 
   .day {
@@ -309,12 +363,12 @@ const i18n = {
   }
 
   .day:hover:not(:disabled) {
-    background: rgba(231, 216, 192, 0.45);
+    background: rgba(231, 213, 180, 0.45);
   }
 
   .day.is-selected {
-    background: rgba(241, 210, 122, 0.28);
-    border-color: rgba(21, 52, 72, 0.35);
+    background: rgba(248, 206, 101, 0.28);
+    border-color: rgba(43, 34, 29, 0.35);
   }
 
   .day:disabled {
@@ -324,11 +378,11 @@ const i18n = {
 
   .day__circle {
     position: absolute;
-    inset: -0.6rem -0.45rem -0.4rem;
-    width: calc(100% + 0.9rem);
-    height: calc(100% + 1rem);
+    inset: -0.35rem -0.2rem -0.2rem;
+    width: auto;
+    height: auto;
     fill: none;
-    stroke: #c0392b;
+    stroke: var(--accent);
     stroke-width: 2.2;
     stroke-linecap: round;
     pointer-events: none;
@@ -337,12 +391,12 @@ const i18n = {
 
   .day__best {
     position: absolute;
-    top: -1.55rem;
+    top: -1.2rem;
     left: 50%;
     transform: translateX(-50%) rotate(-6deg);
-    font-size: 1.25rem;
+    font-size: clamp(0.85rem, 3.2vw, 1.15rem);
     font-weight: 700;
-    color: #b0342a;
+    color: var(--accent);
     white-space: nowrap;
   }
 
@@ -378,17 +432,15 @@ const i18n = {
   }
 
   .day__h {
-    font-family: var(--font-display);
-    font-size: 1.1rem;
-    font-weight: 600;
+    font-size: 1.35rem;
   }
 
   .day__h small {
-    font-family: var(--font-body);
-    font-size: 0.7rem;
-    font-weight: 500;
+    font-family: var(--font-data);
+    font-size: 0.65em;
+    font-weight: 400;
     margin-left: 0.1rem;
-    color: var(--pencil);
+    color: inherit;
   }
 
   .day__wind {
@@ -397,7 +449,7 @@ const i18n = {
     gap: 0.15rem;
     font-size: 0.72rem;
     font-weight: 600;
-    color: var(--ink-2);
+    color: var(--ink);
     min-height: 1rem;
   }
 
@@ -421,7 +473,7 @@ const i18n = {
     width: 6px;
     height: 6px;
     border-radius: 50%;
-    border: 1.2px solid var(--ink-2);
+    border: 1.2px solid var(--ink);
   }
 
   .day__dots i.on {
@@ -430,11 +482,14 @@ const i18n = {
   }
 
   .day__rate {
-    font-size: 1.1rem;
+    font-family: var(--font-body);
+    font-size: 0.8rem;
+    font-weight: 600;
     line-height: 1;
+    color: var(--pencil);
   }
 
-  .log.is-live .hl {
+  .log:has(.is-live) .hl {
     background-size: 0% 0.62em;
     animation: markerSwipe 0.55s var(--ease-out) forwards;
   }
@@ -462,9 +517,9 @@ const i18n = {
   .log__detail {
     margin-top: 0.8rem;
     padding: 0.9rem 1rem;
-    background: var(--paper-3);
-    border: 1.5px dashed rgba(21, 52, 72, 0.4);
-    border-radius: 4px;
+    background: var(--paper);
+    border: 1.5px solid var(--sr-card-line);
+    border-radius: var(--radius);
   }
 
   .log__detail-title {
@@ -488,11 +543,6 @@ const i18n = {
     display: flex;
     align-items: center;
     gap: 0.35rem;
-    font-size: 0.8rem;
-    font-weight: 700;
-    letter-spacing: 0.06em;
-    text-transform: uppercase;
-    color: var(--pencil);
   }
 
   .log__detail dt .sketch {
@@ -518,21 +568,29 @@ const i18n = {
     color: var(--pencil);
   }
 
+  @media (min-width: 640px) {
+    .log__days {
+      grid-template-columns: repeat(8, minmax(0, 1fr));
+      gap: 0.5rem;
+      padding-top: 1.5rem;
+    }
+
+    .day__circle {
+      inset: -0.5rem -0.35rem -0.3rem;
+    }
+
+    .day__best {
+      top: -1.45rem;
+      font-size: 1.2rem;
+    }
+  }
+
   @media (min-width: 800px) {
     .log__page {
       padding: 2rem 2rem 1.6rem;
     }
 
-    .log__days-wrap {
-      margin-inline: 0;
-      padding-inline: 0;
-      overflow: visible;
-    }
-
     .log__days {
-      grid-auto-flow: unset;
-      grid-template-columns: repeat(8, minmax(0, 1fr));
-      grid-auto-columns: unset;
       gap: 0.6rem;
     }
 

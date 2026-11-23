@@ -3,10 +3,13 @@ import SurfLog from './SurfLog.astro';
 import SurfSpotCard from './SurfSpotCard.astro';
 import EatDay from './EatDay.astro';
 import GuideNav from './GuideNav.astro';
+import StayBlock from './StayBlock.astro';
+import SwellLine from './SwellLine.astro';
 import Sketch from './Sketch.astro';
 import type { SketchName } from './Sketch.astro';
 import type { Lang } from '../utils/i18n';
 import { getSurfSpots } from '../utils/surf';
+import { contentDateModified } from '../utils/meta';
 import { buildWhatsAppUrl } from '../utils/wa';
 
 interface Props {
@@ -16,7 +19,10 @@ interface Props {
 
 const { lang, t } = Astro.props;
 const surfSpots = getSurfSpots();
-const experiencesUrl = `https://lasaladitarentals.com/${lang === 'es' ? 'es' : 'en'}/experiences-in-la-saladita?utm_source=guide&utm_medium=tips`;
+const experiencesUrl =
+  lang === 'es'
+    ? 'https://lasaladitarentals.com/es/experiences?utm_source=guide&utm_medium=tips'
+    : 'https://lasaladitarentals.com/experiences?utm_source=guide&utm_medium=tips';
 const askUrl = buildWhatsAppUrl(t['ask.message']);
 
 const faqs: { key: string; icon: SketchName }[] = [
@@ -36,7 +42,7 @@ const faqLd = {
   '@context': 'https://schema.org',
   '@type': 'FAQPage',
   inLanguage: lang,
-  dateModified: '2026-09-25',
+  dateModified: contentDateModified(),
   author: {
     '@type': 'Organization',
     name: 'Saladita Rentals',
@@ -96,6 +102,8 @@ const specLabels = {
     </div>
   </section>
 
+  <StayBlock lang={lang} t={t} />
+
   <section class="section" id="section-eat" aria-labelledby="eat-title">
     <div class="container">
       <div class="section__header">
@@ -133,6 +141,8 @@ const specLabels = {
       </div>
     </div>
   </section>
+
+  <SwellLine class="guide-swell" />
 </main>
 
 <script type="application/ld+json" set:html={JSON.stringify(faqLd)} />
@@ -157,9 +167,8 @@ const specLabels = {
     margin: 3rem auto 0;
     max-width: 36rem;
     padding: 1.8rem 1.4rem 1.5rem;
-    background: #f6dc8f;
-    background-image: linear-gradient(to bottom, rgba(255, 255, 255, 0.25), transparent 30%);
-    box-shadow: 0 16px 26px -16px rgba(21, 52, 72, 0.45), 0 2px 0 rgba(21, 52, 72, 0.06);
+    background: var(--sr-sol-25);
+    box-shadow: 0 16px 26px -16px rgba(43, 34, 29, 0.25), 0 2px 0 rgba(43, 34, 29, 0.06);
     transform: rotate(-1.2deg);
   }
 
@@ -194,14 +203,9 @@ const specLabels = {
     content: '✓';
     position: absolute;
     left: 0;
-    font-family: var(--font-hand);
     font-size: 1.3rem;
     line-height: 1.1;
     color: var(--ink);
-  }
-
-  .sticky-note .btn--ink {
-    box-shadow: 3px 4px 0 rgba(21, 52, 72, 0.25);
   }
 
   /* FAQ — notebook Q&A */
@@ -216,11 +220,11 @@ const specLabels = {
     grid-template-columns: 2.8rem 1fr;
     gap: 0.9rem;
     padding-block: 1.3rem;
-    border-top: 1.5px dashed rgba(21, 52, 72, 0.25);
+    border-top: 1.5px dashed rgba(43, 34, 29, 0.2);
   }
 
   .faq__item:last-child {
-    border-bottom: 1.5px dashed rgba(21, 52, 72, 0.25);
+    border-bottom: 1.5px dashed rgba(43, 34, 29, 0.2);
   }
 
   .faq__item :global(.faq__icon) {
@@ -230,8 +234,17 @@ const specLabels = {
   }
 
   .faq__item h3 {
+    font-family: var(--font-display);
+    font-weight: 600;
     font-size: 1.25rem;
     margin-bottom: 0.35rem;
+  }
+
+  .guide-swell {
+    display: block;
+    width: 100%;
+    height: 32px;
+    color: var(--ink-2);
   }
 
   .faq__item p {
@@ -265,7 +278,7 @@ const specLabels = {
     }
 
     .faq__item:nth-last-child(2) {
-      border-bottom: 1.5px dashed rgba(21, 52, 72, 0.25);
+      border-bottom: 1.5px dashed rgba(43, 34, 29, 0.2);
     }
   }
 </style>

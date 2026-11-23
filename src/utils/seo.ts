@@ -1,5 +1,6 @@
 import places from '../data/places.json';
 import spots from '../data/surf-spots.json';
+import { contentDateModified } from './meta';
 
 const site = 'https://guide.lasaladitarentals.com';
 
@@ -35,7 +36,7 @@ export function buildJsonLd(lang: 'en' | 'es') {
   };
 
   const eats = places
-    .filter((p) => 'slot' in p && p.slot)
+    .filter((p) => ('slots' in p && Array.isArray(p.slots) && p.slots.length > 0) || ('slot' in p && p.slot))
     .map((p) => ({
       '@type': p.id === 'hacienda-cafe' ? 'GroceryStore' : 'FoodEstablishment',
       name: p.name,
@@ -49,7 +50,7 @@ export function buildJsonLd(lang: 'en' | 'es') {
     '@id': pageUrl,
     url: pageUrl,
     inLanguage: lang,
-    dateModified: '2026-09-25',
+    dateModified: contentDateModified(),
     author: { '@id': org['@id'] },
     publisher: { '@id': org['@id'] },
     about: { '@id': destination['@id'] },

@@ -1,4 +1,5 @@
 ---
+import Brand from './Brand.astro';
 import type { Lang } from '../utils/i18n';
 import { getTranslations } from '../utils/i18n';
 
@@ -14,25 +15,35 @@ const whatsapp = 'https://wa.me/525611073849';
 const instagram = 'https://instagram.com/saladitarentals';
 const email = 'mailto:hello@lasaladitarentals.com';
 const getThere = lang === 'es' ? '/es/como-llegar' : '/get-there';
+const housesUrl =
+  lang === 'es'
+    ? 'https://lasaladitarentals.com/es?utm_source=guide&utm_medium=footer'
+    : 'https://lasaladitarentals.com/?utm_source=guide&utm_medium=footer';
 ---
 
 <footer class="footer">
   <div class="footer__inner container">
     <div class="footer__brand">
-      <img class="footer__logo" src="/logo.png" alt="Saladita Rentals" width="64" height="64" />
+      <Brand tone="light" height={28} />
       <p class="footer__tagline">{tagline}</p>
       <p class="footer__hand hand">{lang === 'es' ? 'nos vemos en el agua' : 'see you in the water'}</p>
     </div>
 
-    <nav class="footer__links" aria-label={lang === 'es' ? 'Contacto' : 'Contact'}>
+    <nav class="footer__col" aria-label={lang === 'es' ? 'Explorar' : 'Explore'}>
+      <p class="eyebrow footer__heading">{lang === 'es' ? 'Explorar' : 'Explore'}</p>
       <a href={getThere}>{t['footer.getThere']}</a>
-      <a href={whatsapp} target="_blank" rel="noopener noreferrer" data-track-cta data-place-id="footer-whatsapp" data-cta-type="whatsapp">WhatsApp</a>
-      <a href={instagram} target="_blank" rel="noopener noreferrer" data-track-cta data-place-id="footer-instagram" data-cta-type="link">Instagram</a>
-      <a href={email} data-track-cta data-place-id="footer-email" data-cta-type="link">Email</a>
+      <a href={housesUrl} target="_blank" rel="noopener noreferrer">{t['footer.houses']}</a>
       <a href="https://lasaladitarentals.com" target="_blank" rel="noopener noreferrer">lasaladitarentals.com</a>
     </nav>
 
-    <button class="footer__share" type="button" data-share data-copied={t['footer.copied']}>
+    <nav class="footer__col" aria-label={lang === 'es' ? 'Contacto' : 'Contact'}>
+      <p class="eyebrow footer__heading">{lang === 'es' ? 'Contacto' : 'Contact'}</p>
+      <a href={whatsapp} target="_blank" rel="noopener noreferrer" data-track-cta data-place-id="footer-whatsapp" data-cta-type="whatsapp">WhatsApp</a>
+      <a href={instagram} target="_blank" rel="noopener noreferrer" data-track-cta data-place-id="footer-instagram" data-cta-type="link">Instagram</a>
+      <a href={email} data-track-cta data-place-id="footer-email" data-cta-type="link">Email</a>
+    </nav>
+
+    <button class="btn btn--line footer__share" type="button" data-share data-copied={t['footer.copied']}>
       {shareLabel}
     </button>
   </div>
@@ -77,10 +88,8 @@ const getThere = lang === 'es' ? '/es/como-llegar' : '/get-there';
     gap: 1.8rem;
   }
 
-  .footer__logo {
-    width: 64px;
-    height: auto;
-    margin-bottom: 0.5rem;
+  .footer__brand :global(.brand) {
+    margin-bottom: 0.65rem;
   }
 
   .footer__tagline {
@@ -91,41 +100,50 @@ const getThere = lang === 'es' ? '/es/como-llegar' : '/get-there';
   .footer__hand {
     margin-top: 0.3rem;
     font-size: 1.7rem;
-    color: var(--sand);
+    color: var(--sage);
     transform: rotate(-2deg);
     transform-origin: left;
   }
 
-  .footer__links {
+  .footer__col {
     display: flex;
-    flex-wrap: wrap;
-    gap: 0.4rem 1.4rem;
-    font-size: var(--text-small);
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 0.15rem;
   }
 
-  .footer__links a {
+  .footer__heading {
+    color: var(--sage);
+    margin-bottom: 0.35rem;
+  }
+
+  .footer__col a {
     display: inline-flex;
     align-items: center;
     min-height: 44px;
-    color: var(--sand);
+    color: var(--paper);
     text-decoration: underline;
     text-underline-offset: 0.25em;
-    text-decoration-color: rgba(231, 216, 192, 0.45);
+    text-decoration-color: var(--sr-piedra);
+  }
+
+  .footer__col a:hover {
+    text-decoration-color: var(--paper);
   }
 
   .footer__share {
     justify-self: start;
-    min-height: 44px;
-    padding: 0.6rem 1.2rem;
-    border: 1.5px solid var(--sand);
-    border-radius: var(--radius-hand);
-    color: var(--sand);
-    font-weight: 700;
+    border-color: var(--paper);
+    color: var(--paper);
+  }
+
+  .footer__share:hover {
+    background: rgba(242, 228, 202, 0.08);
   }
 
   @media (min-width: 800px) {
     .footer__inner {
-      grid-template-columns: 1fr 1.4fr auto;
+      grid-template-columns: 1.2fr 1fr 1fr auto;
       align-items: start;
     }
   }
